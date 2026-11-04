@@ -1,0 +1,232 @@
+[
+ {
+  "mind": "human",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 86,
+  "conceptual": 0,
+  "unnamed_candidates": 0,
+  "candidates": []
+ },
+ {
+  "mind": "dog",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 81,
+  "conceptual": 0,
+  "unnamed_candidates": 0,
+  "candidates": []
+ },
+ {
+  "mind": "bat",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 81,
+  "conceptual": 0,
+  "unnamed_candidates": 0,
+  "candidates": []
+ },
+ {
+  "mind": "smell_only",
+  "world": "lawful",
+  "live_features": 456,
+  "perceptual": 9,
+  "conceptual": 0,
+  "unnamed_candidates": 33,
+  "candidates": [
+   {
+    "feature": 353,
+    "active": 0.09829141260162602,
+    "autocorr": 0.9337537918762849,
+    "r2_named": 0.1554468752229038,
+    "r2_senses": 0.26923118844551175
+   },
+   {
+    "feature": 263,
+    "active": 0.0782520325203252,
+    "autocorr": 0.8901121909026201,
+    "r2_named": -0.11223016837034328,
+    "r2_senses": 0.171242950374359
+   },
+   {
+    "feature": 480,
+    "active": 0.08908155487804878,
+    "autocorr": 0.8900628776586078,
+    "r2_named": 0.13661503303165434,
+    "r2_senses": 0.2768048666529709
+   },
+   {
+    "feature": 68,
+    "active": 0.10766006097560976,
+    "autocorr": 0.8861254132130777,
+    "r2_named": 0.039058223154994076,
+    "r2_senses": 0.1333706150640146
+   },
+   {
+    "feature": 466,
+    "active": 0.14392784552845528,
+    "autocorr": 0.885980443579153,
+    "r2_named": 0.06839587920404122,
+    "r2_senses": 0.06981061694792767
+   },
+   {
+    "feature": 133,
+    "active": 0.07485391260162602,
+    "autocorr": 0.8838761034619649,
+    "r2_named": 0.10503482388259144,
+    "r2_senses": 0.26782043388238685
+   },
+   {
+    "feature": 381,
+    "active": 0.06215066056910569,
+    "autocorr": 0.8752357121828951,
+    "r2_named": 0.12220087517127298,
+    "r2_senses": 0.21582948302840987
+   },
+   {
+    "feature": 362,
+    "active": 0.06567581300813008,
+    "autocorr": 0.8716095782710961,
+    "r2_named": 0.04806349341693683,
+    "r2_senses": 0.1481181422131962
+   },
+   {
+    "feature": 310,
+    "active": 0.08568343495934959,
+    "autocorr": 0.8703094415978511,
+    "r2_named": 0.075587928696501,
+    "r2_senses": 0.17157730878826527
+   },
+   {
+    "feature": 286,
+    "active": 0.0896849593495935,
+    "autocorr": 0.8669436321799064,
+    "r2_named": 0.04317931836824718,
+    "r2_senses": 0.24323388319715356
+   }
+  ]
+ },
+ {
+  "mind": "chimera",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 68,
+  "conceptual": 1,
+  "unnamed_candidates": 1,
+  "candidates": [
+   {
+    "feature": 459,
+    "active": 0.20042555894308944,
+    "autocorr": 0.8088108624019348,
+    "r2_named": 0.24609005671365058,
+    "r2_senses": 0.011410398855556836
+   }
+  ]
+ },
+ {
+  "mind": "blind",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 50,
+  "conceptual": 0,
+  "unnamed_candidates": 3,
+  "candidates": [
+   {
+    "feature": 407,
+    "active": 0.06783536585365854,
+    "autocorr": 0.8402994518846018,
+    "r2_named": -0.8131272471070246,
+    "r2_senses": 0.02343620061127849
+   },
+   {
+    "feature": 472,
+    "active": 0.16177591463414634,
+    "autocorr": 0.8242220786306472,
+    "r2_named": 0.12627955494980347,
+    "r2_senses": 0.18165313879432132
+   },
+   {
+    "feature": 508,
+    "active": 0.06789888211382114,
+    "autocorr": 0.8092456914110443,
+    "r2_named": -0.6748083506811837,
+    "r2_senses": -0.5047955814975287
+   }
+  ]
+ },
+ {
+  "mind": "hearing_only",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 5,
+  "conceptual": 2,
+  "unnamed_candidates": 8,
+  "candidates": [
+   {
+    "feature": 308,
+    "active": 0.17524136178861788,
+    "autocorr": 0.8712017261294748,
+    "r2_named": 0.2249771188552948,
+    "r2_senses": 0.0298708574034815
+   },
+   {
+    "feature": 222,
+    "active": 0.19858358739837398,
+    "autocorr": 0.8651673412029911,
+    "r2_named": 0.25325424201709357,
+    "r2_senses": 0.028507019275519352
+   },
+   {
+    "feature": 301,
+    "active": 0.17050940040650406,
+    "autocorr": 0.8455749530052269,
+    "r2_named": 0.10223962927137509,
+    "r2_senses": 0.013170046601069019
+   },
+   {
+    "feature": 117,
+    "active": 0.08530233739837398,
+    "autocorr": 0.8414328150568262,
+    "r2_named": -0.017375328102333665,
+    "r2_senses": 0.14402063628510653
+   },
+   {
+    "feature": 98,
+    "active": 0.10480182926829268,
+    "autocorr": 0.8369380063116976,
+    "r2_named": -0.31705808588336715,
+    "r2_senses": -0.13078756640750533
+   },
+   {
+    "feature": 482,
+    "active": 0.20919080284552846,
+    "autocorr": 0.8113431997654486,
+    "r2_named": 0.16833518017050808,
+    "r2_senses": 0.030621734353143304
+   },
+   {
+    "feature": 280,
+    "active": 0.15501143292682926,
+    "autocorr": 0.8094436129535835,
+    "r2_named": 0.1287233198896245,
+    "r2_senses": 0.02760441266302538
+   },
+   {
+    "feature": 238,
+    "active": 0.06329395325203252,
+    "autocorr": 0.8013551083958396,
+    "r2_named": 0.003793357213324522,
+    "r2_senses": 0.19343485222660928
+   }
+  ]
+ },
+ {
+  "mind": "vision_only",
+  "world": "lawful",
+  "live_features": 512,
+  "perceptual": 43,
+  "conceptual": 0,
+  "unnamed_candidates": 0,
+  "candidates": []
+ }
+]

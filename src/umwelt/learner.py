@@ -26,6 +26,7 @@ class LearnerConfig:
     lr: float = 3e-4
     horizons: tuple = (5,)  # far heads: predict o_{t+k} given the next k actions
     obs_dropout: float = 0.0  # training only: chance a step's senses are blanked, so prediction must lean on memory
+    objective: str = "pixel"  # pixel: predict observations (this module); jepa: predict embeddings (learner_jepa)
 
 
 def _dense(key, n_in, n_out):
@@ -140,7 +141,7 @@ def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, v
         ep = jax.random.randint(k1, (cfg.batch,), 0, E)
         start = jax.random.randint(k2, (cfg.batch,), 0, T - cfg.window + 1)
         idx = start[:, None] + jnp.arange(cfg.window)[None]
-        o = obs_j[ep[:, None], idx]
+        o = obs_j[ep[:, None], idx].astype(jnp.float32)
         a = act_j[ep[:, None], idx]
         keep = jax.random.bernoulli(k3, 1.0 - cfg.obs_dropout, o.shape[:2])[..., None]
         (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in, o * keep)
@@ -169,12 +170,18 @@ def _errors_jit(p, obs, act):
 
 
 def batched(fn, p, obs, act, chunk=64):
-    out = [np.asarray(fn(p, jnp.asarray(obs[i : i + chunk]), jnp.asarray(act[i : i + chunk]))) for i in range(0, len(obs), chunk)]
+    out = [np.asarray(fn(p, jnp.asarray(obs[i : i + chunk], jnp.float32), jnp.asarray(act[i : i + chunk], jnp.float32)))
+           for i in range(0, len(obs), chunk)]
     return np.concatenate(out, 0)
 
 
-def standardizer(obs_train):
-    mu = obs_train.reshape(-1, obs_train.shape[-1]).mean(0)
-    sd = obs_train.reshape(-1, obs_train.shape[-1]).std(0)
+def standardizer(obs_train, chunk=128):
+    """Per-dimension mean and standard deviation, accumulated in float64 over chunks of episodes."""
+    n, s1, s2 = 0, 0.0, 0.0
+    for i in range(0, len(obs_train), chunk):
+        x = np.asarray(obs_train[i : i + chunk], np.float64).reshape(-1, obs_train.shape[-1])
+        n, s1, s2 = n + len(x), s1 + x.sum(0), s2 + (x * x).sum(0)
+    mu = s1 / n
+    sd = np.sqrt(np.maximum(s2 / n - mu * mu, 0.0))
     sd = np.where(sd < 1e-3, 1.0, sd)
     return mu.astype(np.float32), sd.astype(np.float32)

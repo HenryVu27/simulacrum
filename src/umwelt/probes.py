@@ -274,6 +274,9 @@ def run_battery(Htr, Ttr, Hte, Tte, seed=0, hidden=256, stride_tr=8, stride_te=4
     c_tr, c_te = R["cause"]
     m_tr = np.isin(c_tr, (1, 2)) & pres_tr & inert
     m_te = np.isin(c_te, (1, 2)) & pres_te & inert
+    if m_tr.sum() < 200 or m_te.sum() < 50:  # e.g. a ghost world, where nothing is ever pushed
+        out["cause"] = float("nan")
+        return out
     probe = Probe(Xtr, (c_tr == 1).astype(np.float32), m_tr, "bin", hidden, seed + 6, groups)
     logit = probe(Xte)
     scores, counts = [], []

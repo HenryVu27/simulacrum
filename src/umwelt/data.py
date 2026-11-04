@@ -65,9 +65,15 @@ def generate(world: str, n_episodes: int, T: int = 256, seed: int = 0, chunk: in
     return {k: np.concatenate([p[k] for p in parts], 0) for k in parts[0]}
 
 
+def _dir(world, n_episodes, T, seed):
+    return DATA_DIR / f"{world}_s{seed}_e{n_episodes}_t{T}"
+
+
 def save(world: str, n_episodes: int, T: int = 256, seed: int = 0):
-    """World names ending in _mj are simulated by the MuJoCo audit engine instead of Flatland."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    """World names ending in _mj are simulated by the MuJoCo audit engine instead of Flatland.
+
+    Each array is stored as its own .npy file so runs can memory-map it instead of holding it in RAM.
+    """
     t0 = time.time()
     if world.endswith("_mj"):
         from umwelt import world_mj
@@ -75,15 +81,23 @@ def save(world: str, n_episodes: int, T: int = 256, seed: int = 0):
         d = world_mj.generate(world[:-3], n_episodes, T, seed)
     else:
         d = generate(world, n_episodes, T, seed)
-    path = DATA_DIR / f"{world}_s{seed}_e{n_episodes}_t{T}.npz"
-    np.savez(path, **d)
-    print(f"{world}: {n_episodes} episodes x {T} steps in {time.time() - t0:.0f}s -> {path.name}")
-    return path
+    out = _dir(world, n_episodes, T, seed)
+    out.mkdir(parents=True, exist_ok=True)
+    for k, v in d.items():
+        np.save(out / f"{k}.npy", v)
+    print(f"{world}: {n_episodes} episodes x {T} steps in {time.time() - t0:.0f}s -> {out.name}")
+    return out
 
 
 def load(world: str, n_episodes: int, T: int = 256, seed: int = 0):
-    path = DATA_DIR / f"{world}_s{seed}_e{n_episodes}_t{T}.npz"
-    if not path.exists():
+    out = _dir(world, n_episodes, T, seed)
+    legacy = out.with_suffix(".npz")
+    if not out.exists() and legacy.exists():  # convert an older single-file recording once
+        out.mkdir(parents=True)
+        with np.load(legacy) as f:
+            for k in f.files:
+                np.save(out / f"{k}.npy", f[k])
+        legacy.unlink()
+    if not out.exists():
         save(world, n_episodes, T, seed)
-    with np.load(path) as f:
-        return {k: f[k] for k in f.files}
+    return {f.stem: np.load(f, mmap_mode="r") for f in sorted(out.glob("*.npy"))}

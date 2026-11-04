@@ -10,7 +10,7 @@ from pathlib import Path
 import jax
 import numpy as np
 
-from umwelt import learner, presets, probes, translate, voe
+from umwelt import learner, learner_jepa, presets, probes, translate, voe
 from umwelt.data import load
 
 RESULTS = Path(os.environ.get("UMWELT_RESULTS", Path(__file__).resolve().parents[2] / "results"))
@@ -26,12 +26,12 @@ def _jsonable(x):
     return x
 
 
-def _voe_scores(params, suite, preset, mu, sd):
+def _voe_scores(params, suite, preset, mu, sd, L=learner):
     out = {}
     for name, (d, crit) in suite.items():
         o = (presets.observe(d, preset) - mu) / sd
         a = presets.actions(d, preset)
-        s, ci = voe.surprise(learner.batched(learner._errors_jit, params, o, a), crit)
+        s, ci = voe.surprise(learner.batched(L._errors_jit, params, o, a), crit)
         s_copy, _ = voe.surprise(voe.copy_errors(o), crit, n_boot=1)
         out[name] = {"S": s, "ci": ci, "S_copy": s_copy}
     return out
@@ -39,16 +39,19 @@ def _voe_scores(params, suite, preset, mu, sd):
 
 def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=1024, n_test=256, n_probe=1024,
               n_keep=128, controls=True, tag="main"):
+    if (RESULTS / "skip" / f"{world}_s{seed}").exists():
+        print(f"[{world} s{seed}] skipped: results/skip/{world}_s{seed} exists", flush=True)
+        return
     out_dir = RESULTS / "runs" / tag / f"{world}_s{seed}"
     out_dir.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
     d = load(world, n_train + n_test, 256, seed=0)
-    tr = np.arange(n_train)
-    te = np.arange(n_train, n_train + n_test)
-    pr = tr[:n_probe]
+    tr = slice(0, n_train)  # slices, not index arrays, so memory-mapped data is viewed rather than copied
+    te = slice(n_train, n_train + n_test)
+    pr = slice(0, n_probe)
     gt_keys = [k for k in d if k.startswith("gt_")]
-    T_tr = probes.targets({k: d[k][pr] for k in gt_keys})
-    T_te = probes.targets({k: d[k][te] for k in gt_keys})
+    T_tr = probes.targets({k: np.asarray(d[k][pr]) for k in gt_keys})
+    T_te = probes.targets({k: np.asarray(d[k][te]) for k in gt_keys})
     suite = voe.build_suite()
     keep_tr, keep_te = {}, {}
 
@@ -61,11 +64,11 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
             continue
         p = presets.PRESETS[name]
         t0 = time.time()
-        o = presets.observe(d, p)
+        o = presets.observe(d, p, dtype=np.float16)
         a = presets.actions(d, p)
         mu, sd = learner.standardizer(o[tr])
-        o -= mu
-        o /= sd
+        for i in range(0, len(o), 128):
+            o[i : i + 128] = (o[i : i + 128].astype(np.float32) - mu) / sd
         print(f"[{world} s{seed}] {name}: obs dim {o.shape[-1]}, training", flush=True)
         timing, last = {}, [time.time()]
 
@@ -74,11 +77,12 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
             timing[label] = round(now - last[0], 1)
             last[0] = now
 
-        params, log = learner.train(o[tr], a[tr], cfg, seed=seed, recurrent=p.recurrent, verbose=False)
+        L = learner_jepa if cfg.objective == "jepa" else learner
+        params, log = L.train(o[tr], a[tr], cfg, seed=seed, recurrent=p.recurrent, verbose=False)
         tick("train")
-        H_pr = learner.batched(learner._latents_jit, params, o[pr], a[pr])
-        H_te = learner.batched(learner._latents_jit, params, o[te], a[te])
-        test_err = float(learner.batched(learner._errors_jit, params, o[te], a[te])[:, 16:].mean())
+        H_pr = learner.batched(L._latents_jit, params, o[pr], a[pr])
+        H_te = learner.batched(L._latents_jit, params, o[te], a[te])
+        test_err = float(learner.batched(L._errors_jit, params, o[te], a[te])[:, 16:].mean())
         tick("latents")
         rec = {"world": world, "seed": seed, "preset": name, "obs_dim": int(o.shape[-1]),
                "config": asdict(cfg), "train_log": log, "test_error": test_err}
@@ -86,14 +90,14 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         tick("probes_mlp")
         rec["probes_linear"] = probes.run_battery(H_pr, T_tr, H_te, T_te, seed, hidden=0)
         tick("probes_linear")
-        rec["voe"] = _voe_scores(params, suite, p, mu, sd)
+        rec["voe"] = _voe_scores(params, suite, p, mu, sd, L)
         tick("voe")
         if controls:
-            p0 = learner.init(jax.random.PRNGKey(10_000 + seed), o.shape[-1], cfg, p.recurrent)
-            H0_pr = learner.batched(learner._latents_jit, p0, o[pr], a[pr])
-            H0_te = learner.batched(learner._latents_jit, p0, o[te], a[te])
+            p0 = L.init(jax.random.PRNGKey(10_000 + seed), o.shape[-1], cfg, p.recurrent)
+            H0_pr = learner.batched(L._latents_jit, p0, o[pr], a[pr])
+            H0_te = learner.batched(L._latents_jit, p0, o[te], a[te])
             rec["probes_untrained"] = probes.run_battery(H0_pr, T_tr, H0_te, T_te, seed)
-            rec["voe_untrained"] = _voe_scores(p0, suite, p, mu, sd)
+            rec["voe_untrained"] = _voe_scores(p0, suite, p, mu, sd, L)
             tick("untrained")
             rec["probes_raw"] = probes.run_battery(o[pr], T_tr, o[te], T_te, seed)
             tick("raw")

@@ -4,7 +4,7 @@ Each preset turns the recorded superset of senses into one mind's observation st
 """
 
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -89,16 +89,27 @@ def _channel(d, s: Sense):
     return d[f"obs_{s.kind}"].astype(np.float32)
 
 
-def observe(d, preset: Preset):
-    """The observation stream (episodes, time, dim) this mind receives from recorded data d."""
+def observe(d, preset: Preset, dtype=np.float32, chunk=128):
+    """The observation stream (episodes, time, dim) this mind receives from recorded data d.
+
+    Built in chunks of episodes so a large recording never has to sit in memory as float32.
+    """
     rng = np.random.default_rng(zlib.crc32(preset.name.encode()))
-    parts = []
-    for s in preset.senses:
-        x = _channel(d, s)
-        if s.noise > 0:
-            x = x + rng.normal(0.0, s.noise, x.shape).astype(np.float32)
-        parts.append(x)
-    return np.concatenate(parts, -1).astype(np.float32)
+    E = len(d["action"])
+    out = None
+    for i in range(0, E, chunk):
+        part = {k: v[i : i + chunk] for k, v in d.items() if k.startswith("obs_") or k == "action"}
+        xs = []
+        for s in preset.senses:
+            x = _channel(part, s)
+            if s.noise > 0:
+                x = x + rng.normal(0.0, s.noise, x.shape).astype(np.float32)
+            xs.append(x)
+        x = np.concatenate(xs, -1)
+        if out is None:
+            out = np.empty((E,) + x.shape[1:], dtype)
+        out[i : i + chunk] = x
+    return out
 
 
 def actions(d, preset: Preset):

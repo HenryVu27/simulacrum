@@ -1,0 +1,384 @@
+{
+ "checks": [
+  {
+   "name": "V1 oracle is the ceiling",
+   "pass": true,
+   "numbers": "exceeded by: none"
+  },
+  {
+   "name": "V2 trained beats untrained on 5+ concepts",
+   "pass": true,
+   "numbers": "fails: none"
+  },
+  {
+   "name": "V3 untrained minds show no surprise",
+   "pass": false,
+   "numbers": "surprised: dog/causality, oracle/permanence"
+  },
+  {
+   "name": "V3 excluding the oracle (not preregistered: the oracle sees the hidden event directly)",
+   "pass": false,
+   "numbers": "surprised: dog/causality"
+  },
+  {
+   "name": "H1 permanence needs memory",
+   "pass": false,
+   "numbers": "human 0.18, memoryless 0.18, raw 0.17"
+  },
+  {
+   "name": "H2 smell lives in the past",
+   "pass": false,
+   "numbers": "past bias smell -0.003, vision -0.000; smell_only object_now 0.05, so a near-zero bias may be noise"
+  },
+  {
+   "name": "H3 Held and Hein: efference shapes self, not objects",
+   "pass": false,
+   "numbers": "self_location human 0.49 vs passive_novest 0.49; self_motion 0.88 vs 0.53; object_seen human 0.58 vs passive 0.58"
+  },
+  {
+   "name": "H4 counting needs a sense that separates objects",
+   "pass": false,
+   "numbers": "vision_only -0.00, bat 0.08, smell_only 0.06, hearing_only 0.02"
+  },
+  {
+   "name": "H5 translation runs from richer to poorer minds",
+   "pass": true,
+   "numbers": "human->blind 0.74 vs blind->human 0.37; human->vision_only 0.88 vs vision_only->human 0.77; dog->smell_only 0.82 vs smell_only->dog 0.20"
+  },
+  {
+   "name": "H6 surprise at impossible permanence",
+   "pass": false,
+   "numbers": "interval above 0 for none; memoryless null False; share of minds less surprised after impermanent training 0.62"
+  },
+  {
+   "name": "H7 world forces permanence and cause; the mind decides seeing, counting, self-motion",
+   "pass": false,
+   "numbers": "object_hidden mind 0.95 world 0.04; cause mind 0.23 world 0.74; object_seen mind 0.96 world 0.03; number mind 0.87 world 0.05; self_motion mind 0.99 world 0.01"
+  }
+ ],
+ "shares": {
+  "object_seen": {
+   "mind": 0.9565121678527481,
+   "world": 0.0341502233655555,
+   "interaction": 0.008479744088660434,
+   "seed_noise": 0.0008578646910052315,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "object_hidden": {
+   "mind": 0.9539502824964438,
+   "world": 0.03925066097985979,
+   "interaction": 0.00661913797020053,
+   "seed_noise": 0.0001799185530011104,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "object_now": {
+   "mind": 0.9689051009231905,
+   "world": 0.02643972439689382,
+   "interaction": 0.004580899010847836,
+   "seed_noise": 7.427566829734593e-05,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "object_past": {
+   "mind": 0.9853596219238429,
+   "world": 0.012458460119591485,
+   "interaction": 0.002069611864196077,
+   "seed_noise": 0.00011230609156315547,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "object_allo_seen": {
+   "mind": 0.7222792507874501,
+   "world": 0.17504560287451956,
+   "interaction": 0.09951198808872608,
+   "seed_noise": 0.003163158225809025,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "object_allo_hidden": {
+   "mind": 0.5025180425100679,
+   "world": 0.46259072232047066,
+   "interaction": 0.024510929779442154,
+   "seed_noise": 0.010380305347803643,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "number": {
+   "mind": 0.8729529087180876,
+   "world": 0.046961192833620054,
+   "interaction": 0.07032244582043827,
+   "seed_noise": 0.009763452616481311,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "self_motion": {
+   "mind": 0.9876372667237752,
+   "world": 0.006417986089990618,
+   "interaction": 0.005557540889039193,
+   "seed_noise": 0.0003872062960135842,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "self_location": {
+   "mind": 0.9953519779381534,
+   "world": 0.0016911220839326193,
+   "interaction": 0.002862438665323029,
+   "seed_noise": 9.446131237682898e-05,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "cause": {
+   "mind": 0.2344227803755091,
+   "world": 0.7350738509941059,
+   "interaction": 0.02899064852978728,
+   "seed_noise": 0.0015127200997034345,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "elapsed": {
+   "mind": 0.47217375660395006,
+   "world": 0.4786268809730539,
+   "interaction": 0.04333450903504038,
+   "seed_noise": 0.005864853378039573,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  },
+  "relations": {
+   "mind": 0.8645782226871778,
+   "world": 0.038813337349056114,
+   "interaction": 0.09181819504563762,
+   "seed_noise": 0.004790244895845907,
+   "minds": [
+    "bat",
+    "blind",
+    "chimera",
+    "deafblind",
+    "dog",
+    "hearing_only",
+    "human",
+    "memoryless",
+    "passive",
+    "passive_novest",
+    "smell_only",
+    "touch_only",
+    "vision_only"
+   ],
+   "worlds": [
+    "ghost",
+    "impermanent",
+    "lawful",
+    "nonlocal"
+   ]
+  }
+ }
+}

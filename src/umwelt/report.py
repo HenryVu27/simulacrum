@@ -56,7 +56,7 @@ def voe_table(runs, world, field="voe"):
     return acc
 
 
-def anova_shares(runs, concept, exclude=("oracle",)):
+def anova_shares(runs, concept, exclude=("oracle",), normalized=False):
     runs = {k: v for k, v in runs.items() if not k[0].endswith("_mj")}
     """Two-way ANOVA (mind x world, seeds as replicates). Returns sums-of-squares shares."""
     cells = defaultdict(list)
@@ -65,6 +65,8 @@ def anova_shares(runs, concept, exclude=("oracle",)):
             if m in exclude:
                 continue
             v = r["probes"].get(concept, np.nan)
+            if normalized:
+                v = skill(v, w, concept)
             if np.isfinite(v):
                 cells[(m, w)].append(v)
     minds = sorted({m for m, _ in cells})
@@ -87,6 +89,50 @@ def anova_shares(runs, concept, exclude=("oracle",)):
     tot = ss_cells + ss_resid + 1e-12
     return {"mind": ss_mind / tot, "world": ss_world / tot, "interaction": ss_inter / tot, "seed_noise": ss_resid / tot,
             "minds": complete, "worlds": worlds}
+
+
+SUBSET = ("object_seen", "object_hidden", "object_allo_seen", "object_allo_hidden")
+_BASE = {}
+
+
+def object_baselines(world):
+    """Score of a mind that knows nothing (always predicts the training mean) on each object subset.
+
+    The subset scores share one scale (variance over all present samples), so a constant prediction can
+    score above or below 0 on a subset whose objects sit closer to or farther from the mean. Skill above
+    this baseline, (score - base) / (1 - base), is 0 for no information and 1 for perfect.
+    """
+    if world in _BASE:
+        return _BASE[world]
+    from umwelt import probes
+    from umwelt.data import load
+
+    try:
+        d = load(world, 1280)
+    except Exception:
+        return None
+    gt = {k: v for k, v in d.items() if k.startswith("gt_")}
+    Ttr = probes.targets({k: np.asarray(v[:1024]) for k, v in gt.items()})
+    Tte = probes.targets({k: np.asarray(v[1024:1280]) for k, v in gt.items()})
+    out = {}
+    for key, names in (("ego", ("object_seen", "object_hidden")), ("allo", ("object_allo_seen", "object_allo_hidden"))):
+        ytr, ptr = probes._rows(Ttr, key, 8), probes._rows(Ttr, "present", 8)
+        yte, pte, vte = probes._rows(Tte, key, 4), probes._rows(Tte, "present", 4), probes._rows(Tte, "vis", 4)
+        mean = np.array([[ytr[ptr[:, k], k, j].mean() if ptr[:, k].any() else 0.0 for j in range(2)] for k in range(ptr.shape[1])])
+        Y = yte.reshape(len(yte), -1)
+        pred = np.broadcast_to(mean.reshape(1, -1), Y.shape)
+        m2 = lambda m: np.repeat(m, 2, axis=1)
+        out[names[0]] = probes._r2_cols(pred, Y, m2(pte & vte), m2(pte))
+        out[names[1]] = probes._r2_cols(pred, Y, m2(pte & ~vte), m2(pte))
+    _BASE[world] = out
+    return out
+
+
+def skill(score, world, concept):
+    b = object_baselines(world) if concept in SUBSET else None
+    if b is None or score is None or not np.isfinite(score):
+        return score
+    return (score - b[concept]) / (1 - b[concept])
 
 
 def _fmt(x, nd=2):
@@ -120,6 +166,9 @@ def checks(runs, trans, base="lawful", alt="impermanent", with_anova=True):
     loud = [f"{m}/{s}" for m, ss in V0.items() for s, vs in ss.items()
             if any(abs(v["S"]) >= 0.01 and not (v["ci"][0] <= 0 <= v["ci"][1]) for v in vs)]
     out.append(("V3 untrained minds show no surprise", not loud, "surprised: " + (", ".join(loud) or "none")))
+    loud_x = [x for x in loud if not x.startswith("oracle/")]
+    out.append(("V3 excluding the oracle (not preregistered: the oracle sees the hidden event directly)", not loud_x,
+                "surprised: " + (", ".join(loud_x) or "none")))
 
     def g(m, c, t=L):
         return t.get(m, {}).get(c, np.nan)
@@ -132,7 +181,8 @@ def checks(runs, trans, base="lawful", alt="impermanent", with_anova=True):
     if {"smell_only", "vision_only"} <= set(L):
         b = {m: g(m, "object_past") - g(m, "object_now") for m in ("smell_only", "vision_only")}
         out.append(("H2 smell lives in the past", b["smell_only"] > 0 and b["smell_only"] > b["vision_only"],
-                    f"past bias smell {_fmt(b['smell_only'])}, vision {_fmt(b['vision_only'])}"))
+                    f"past bias smell {_fmt(b['smell_only'], 3)}, vision {_fmt(b['vision_only'], 3)}; smell_only object_now "
+                    f"{_fmt(g('smell_only', 'object_now'))}, so a near-zero bias may be noise"))
     if {"human", "passive", "passive_novest"} <= set(L):
         ok = (g("passive_novest", "self_location") < g("human", "self_location") - 0.05
               and g("passive_novest", "self_motion") < g("human", "self_motion") - 0.05
@@ -157,7 +207,8 @@ def checks(runs, trans, base="lawful", alt="impermanent", with_anova=True):
                 ab, ba = M[names.index(a), names.index(b)], M[names.index(b), names.index(a)]
                 res.append(f"{a}->{b} {_fmt(ab)} vs {b}->{a} {_fmt(ba)}")
                 ok &= ab > ba
-        out.append(("H5 translation runs from richer to poorer minds", ok, "; ".join(res)))
+        if res:
+            out.append(("H5 translation runs from richer to poorer minds", ok, "; ".join(res)))
     VL = voe_table(runs, base)
     VI = voe_table(runs, alt)
 
@@ -279,6 +330,32 @@ def figures(runs, trans, out):
     return paths
 
 
+def diagnostics(runs):
+    """Not preregistered: does any learner change or more training give the human mind object memory?"""
+    arms = [("preregistered learner, 4,000 updates (main sweep)", runs.get(("lawful", 0), {}).get("human"))]
+    for tag, label in [("ab_h5", "A/B: 5-step head (rerun)"), ("ab_h15", "A/B: 5 and 15-step heads"),
+                       ("ab_h30", "A/B: 5, 15 and 30-step heads"), ("ab_drop", "A/B: 5 and 15-step heads, 30% observational dropout"),
+                       ("jepa", "latent prediction (JEPA style), 4,000 updates"), ("long", "preregistered learner, 16,000 updates")]:
+        f = RESULTS / "runs" / tag / "lawful_s0" / "human.json"
+        arms.append((label, json.loads(f.read_text()) if f.exists() else None))
+    raw = runs.get(("lawful", 0), {}).get("human", {}).get("probes_raw")
+    cols = ("object_seen", "object_hidden", "object_allo_hidden", "number", "self_location")
+    lines = ["", "## Diagnostics (not preregistered): where does object memory come from?", "",
+             "Human mind, lawful world. If memory were learned, object_hidden, object_allo_hidden and number would rise "
+             "above the raw-senses row.", "", "| learner | " + " | ".join(cols) + " |", "|---" * (len(cols) + 1) + "|"]
+    if raw:
+        lines.append("| raw current senses, no learning | " + " | ".join(_fmt(raw.get(c, np.nan)) for c in cols) + " |")
+    for label, r in arms:
+        if r:
+            lines.append(f"| {label} | " + " | ".join(_fmt(r["probes"].get(c, np.nan)) for c in cols) + " |")
+    f = RESULTS / "memory_headroom_human.json"
+    if f.exists():
+        h = json.loads(f.read_text())
+        for k, v in h.items():
+            lines.append(f"| probe on raw senses, {k.replace('_', ' ')} | " + " | ".join(_fmt(v.get(c, np.nan)) for c in cols) + " |")
+    return lines
+
+
 ORDER = ["oracle", "human", "dog", "vision_only", "bat", "chimera", "blind", "hearing_only", "smell_only",
          "deafblind", "touch_only", "passive", "passive_novest", "memoryless"]
 
@@ -306,7 +383,10 @@ def build(tag="main"):
                      if np.isfinite(A[m].get(c, np.nan)) and np.isfinite(B[m].get(c, np.nan))]
             if len(pairs) > 3:
                 a, b = np.array(pairs).T
-                lines.append(f"\nAgreement between engines, {w} world: Pearson r = {np.corrcoef(a, b)[0, 1]:.2f} over {len(pairs)} mind-concept scores.")
+                d = np.abs(a - b)
+                lines.append(f"\nAgreement between engines, {w} world: Pearson r = {np.corrcoef(a, b)[0, 1]:.3f} over {len(pairs)} "
+                             f"mind-concept scores (mostly driven by differences between minds); mean absolute difference "
+                             f"{d.mean():.3f}, largest {d.max():.3f}.")
     for w in worlds:
         T, T0, R = table(runs, w), table(runs, w, "probes_untrained"), table(runs, w, "probes_raw")
         Tl = table(runs, w, "probes_linear")
@@ -332,6 +412,24 @@ def build(tag="main"):
         for c, s in shares.items():
             if s:
                 lines.append(f"| {c} | {s['mind']:.2f} | {s['world']:.2f} | {s['interaction']:.2f} | {s['seed_noise']:.2f} |")
+    lines += ["", "## Object scores as skill above a no-information baseline (not preregistered; corrects a scale artifact)", "",
+              "A mind that knows nothing scores the baseline in the first row; skill = (score - baseline) / (1 - baseline).", ""]
+    for w in worlds:
+        b = object_baselines(w)
+        if not b:
+            continue
+        T = table(runs, w)
+        lines += [f"### {w}", "", "| mind | " + " | ".join(SUBSET) + " |", "|---" * (len(SUBSET) + 1) + "|",
+                  "| no-information baseline (raw scale) | " + " | ".join(_fmt(b[c]) for c in SUBSET) + " |"]
+        for m in [m for m in ORDER if m in T]:
+            lines.append(f"| {m} | " + " | ".join(_fmt(skill(T[m].get(c), w, c)) for c in SUBSET) + " |")
+        lines.append("")
+    lines += ["### Mind versus world on skill scores", "", "| concept | mind | world | interaction | seed noise |", "|---|---|---|---|---|"]
+    for c in SUBSET:
+        sh = anova_shares(runs, c, normalized=True)
+        if sh:
+            lines.append(f"| {c} | {sh['mind']:.2f} | {sh['world']:.2f} | {sh['interaction']:.2f} | {sh['seed_noise']:.2f} |")
+    lines += diagnostics(runs)
     lines += ["", "## Figures", ""] + [f"![{p.stem}]({p.name})" for p in figs]
     (out / "REPORT.md").write_text("\n".join(lines) + "\n")
     summary = {"checks": [{"name": n, "pass": bool(ok), "numbers": t} for n, ok, t in chk],

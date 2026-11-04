@@ -1,0 +1,35 @@
+{
+ "checks": [
+  {
+   "name": "V1 oracle is the ceiling",
+   "pass": true,
+   "numbers": "exceeded by: none"
+  },
+  {
+   "name": "V2 trained beats untrained on 5+ concepts",
+   "pass": true,
+   "numbers": "fails: none"
+  },
+  {
+   "name": "V3 untrained minds show no surprise",
+   "pass": false,
+   "numbers": "surprised: oracle/permanence"
+  },
+  {
+   "name": "V3 excluding the oracle (not preregistered: the oracle sees the hidden event directly)",
+   "pass": true,
+   "numbers": "surprised: none"
+  },
+  {
+   "name": "H1 permanence needs memory",
+   "pass": false,
+   "numbers": "human 0.17, memoryless 0.18, raw 0.17"
+  },
+  {
+   "name": "H6 surprise at impossible permanence",
+   "pass": false,
+   "numbers": "interval above 0 for ['human']; memoryless null True; share of minds less surprised after impermanent training n/a"
+  }
+ ],
+ "shares": {}
+}

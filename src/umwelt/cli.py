@@ -24,6 +24,7 @@ def main():
     r.add_argument("--steps", type=int, default=learner.LearnerConfig.steps)
     r.add_argument("--horizons", type=int, nargs="+", default=list(learner.LearnerConfig.horizons))
     r.add_argument("--obs-dropout", type=float, default=learner.LearnerConfig.obs_dropout)
+    r.add_argument("--objective", default="pixel", choices=["pixel", "jepa"])
     r.add_argument("--no-controls", action="store_true")
     r.add_argument("--tag", default="main")
 
@@ -41,7 +42,8 @@ def main():
     elif args.cmd == "run":
         from umwelt.experiment import run_world
 
-        cfg = learner.LearnerConfig(steps=args.steps, horizons=tuple(args.horizons), obs_dropout=args.obs_dropout)
+        cfg = learner.LearnerConfig(steps=args.steps, horizons=tuple(args.horizons), obs_dropout=args.obs_dropout,
+                                    objective=args.objective)
         run_world(args.world, args.seed, args.presets, cfg, controls=not args.no_controls, tag=args.tag)
     elif args.cmd == "atlas":
         from umwelt.atlas import build as build_atlas
