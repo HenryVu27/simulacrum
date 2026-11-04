@@ -1,0 +1,42 @@
+# umwelt
+
+Which concepts does the world force on any mind, and which does a body add?
+
+umwelt trains many artificial minds that share one learning rule and one world but differ in their
+senses and body: a human-like mind, a dog-like mind, a blind one, Condillac's smell-only statue, an
+echolocating bat, a yoked passive observer in the style of Held and Hein's kittens, a memoryless mind
+and an oracle that sees the true state. It then measures what each mind knows (object permanence,
+number, causes, self-location, time, spatial relations), how surprised it is by impossible events, and
+whether one mind's inner world can be translated into another's. A second axis breaks the world's
+physics on purpose (objects that jump, objects that pass through walls, causes that act at a distance),
+so each concept's variance can be split into a share the mind contributes and a share the world forces.
+
+Start with `STATUS.md`. The design and its predictions are in `docs/preregistration.md`; the related
+work and the honest novelty claim are in `docs/related-work.md`.
+
+## Layout
+
+| Path | Holds |
+|---|---|
+| `src/umwelt/world.py` | Flatland: 2D physics in JAX with breakable rules (lawful, impermanent, ghost, nonlocal) |
+| `src/umwelt/senses.py` | Every sense as a function of world state: vision rays, ears, nostrils on a scent field, skin, body sense, compass, echolocation |
+| `src/umwelt/presets.py` | The 14 minds, as settings on sense, action and memory dials |
+| `src/umwelt/data.py` | Records each world once, so every mind sees the same history |
+| `src/umwelt/learner.py` | The shared learner: a recurrent world model predicting its next sensation |
+| `src/umwelt/probes.py` | The concept battery, with untrained, raw-sense and oracle controls |
+| `src/umwelt/voe.py` | Violation-of-expectation quadruplets: permanence, solidity, causality |
+| `src/umwelt/translate.py` | Translation maps and representational similarity between minds |
+| `src/umwelt/report.py` | Preregistered checks, mind-versus-world variance split, figures |
+| `cloud/modal_app.py` | The same sweep on cloud GPUs |
+
+## Run
+
+```bash
+uv sync
+uv run pytest -q
+uv run umwelt data                       # record the four worlds
+uv run umwelt run --world lawful --seed 0 # train all 14 minds and run every test
+uv run umwelt report                     # results/report_main/REPORT.md
+```
+
+`--presets` picks a subset of minds, `--steps` sets training length, `--tag` keeps runs apart.

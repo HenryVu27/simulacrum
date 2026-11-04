@@ -1,0 +1,9 @@
+results/data/
+results/runs/**/*_params.pkl
+results/runs/**/*_latents.pkl
+results/runs/pilot/
+results/pilot.log
+results/logs/
+.venv/
+__pycache__/
+*.pyc
