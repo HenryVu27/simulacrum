@@ -1,0 +1,19 @@
+   Building umwelt @ file:///Users/henryvu/personal/umwelt
+      Built umwelt @ file:///Users/henryvu/personal/umwelt
+Uninstalled 1 package in 0.80ms
+Installed 1 package in 2ms
+{'platform': 'macOS-27.0.1-arm64-arm-64bit-Mach-O', 'backend': 'cpu', 'device': 'cpu', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': ''}
+{'minds': 1, 'hidden': 128, 'batch': 32, 'ms_per_update': 31.773177862487497, 'mind_updates_per_s': 31.473087279086247, 'minutes_per_4000_updates_all_minds': 2.1182118574991664}
+{'minds': 1, 'hidden': 128, 'batch': 256, 'ms_per_update': 184.8281708022114, 'mind_updates_per_s': 5.410430648421671, 'minutes_per_4000_updates_all_minds': 12.32187805348076}
+{'minds': 1, 'hidden': 512, 'batch': 32, 'ms_per_update': 97.6018604269484, 'mind_updates_per_s': 10.245706338235891, 'minutes_per_4000_updates_all_minds': 6.506790695129894}
+{'minds': 1, 'hidden': 512, 'batch': 256, 'ms_per_update': 570.0851708999835, 'mind_updates_per_s': 1.754123859109188, 'minutes_per_4000_updates_all_minds': 38.0056780599989}
+{'minds': 1, 'hidden': 1024, 'batch': 256, 'ms_per_update': 1541.9797166949138, 'mind_updates_per_s': 0.6485169611331882, 'minutes_per_4000_updates_all_minds': 102.79864777966093}
+{'minds': 8, 'hidden': 128, 'batch': 32, 'ms_per_update': 170.59186454862356, 'mind_updates_per_s': 46.89555402403009, 'minutes_per_4000_updates_all_minds': 11.372790969908237}
+{'minds': 32, 'hidden': 128, 'batch': 32, 'ms_per_update': 782.6332333032042, 'mind_updates_per_s': 40.8876069125507, 'minutes_per_4000_updates_all_minds': 52.17554888688028}
+{'minds': 128, 'hidden': 128, 'batch': 32, 'ms_per_update': 9851.986391702667, 'mind_updates_per_s': 12.992303776201059, 'minutes_per_4000_updates_all_minds': 656.7990927801778}
+train: {'ms_per_update': 33.69074874999933, 'minutes_per_4000_updates': 2.246049916666622}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 257s {'train': 131.4, 'latents': 1.9, 'probes_mlp': 38.7, 'probes_linear': 4.4, 'voe': 0.7, 'untrained': 37.8, 'raw': 41.0} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 4.9 min
+e2e: {'seconds_total': 295.33096262498293, 'timing': {'train': 131.4, 'latents': 1.9, 'probes_mlp': 38.7, 'probes_linear': 4.4, 'voe': 0.7, 'untrained': 37.8, 'raw': 41.0}, 'test_error': 0.22724440693855286}
+wrote results/hardware/mac-cpu/bench.json

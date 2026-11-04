@@ -11,3 +11,7 @@ results/cache/
 results/calibration/cache/
 results/calibration/errors/*.npy
 results/runs/**/*_test_errors.npy
+# hardware checks (docs/gpu.md): keep summaries and logs, not the arrays (they can be regenerated)
+results/hardware/**/*.npz
+results/hardware/**/*.npy
+results/runs/bench_*/

@@ -95,9 +95,8 @@ def save(world: str, n_episodes: int, T: int = 256, seed: int = 0):
                 if k not in files:
                     files[k] = np.lib.format.open_memmap(tmp / f"{k}.npy", "w+", v.dtype, (n_episodes,) + v.shape[1:])
                 files[k][i : i + len(v)] = v
-        for f in files.values():
-            f.flush()
-        del files
+        for k in list(files):
+            files.pop(k).flush()  # flush and release every memory map: Windows cannot rename a folder with open files
     tmp.rename(out)
     print(f"{world}: {n_episodes} episodes x {T} steps in {time.time() - t0:.0f}s -> {out.name}")
     return out

@@ -1,0 +1,4 @@
+dark: 8448 episodes x 256 steps in 41s -> dark_s0_e8448_t256
+[dark_n8192] human trained in 331s, test error 0.2192
+[dark_n8192] memoryless trained in 254s, test error 0.2241
+[dark_n8192] M = 0.022 | all: M=0.022 (94% of steps) dark: M=-0.028 (26% of steps) lights_on: M=0.136 (1% of steps) object_returns: M=0.106 (4% of steps) other: M=0.010 (63% of steps)

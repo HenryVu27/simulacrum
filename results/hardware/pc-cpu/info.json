@@ -1,0 +1,82 @@
+{
+ "tag": "pc-cpu",
+ "env": {
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "AMD64",
+  "python": "3.13.12",
+  "jax": "0.12.0.1",
+  "numpy": "2.5.4",
+  "backend": "cpu",
+  "device": "cpu",
+  "matmul_precision": "None",
+  "xla_flags": ""
+ },
+ "ref": "results/hardware/mac-cpu/data_dark.npz",
+ "seconds": {
+  "generate_lawful": 1.65,
+  "generate_dark": 2.31,
+  "train": 28.25
+ },
+ "data_lawful": {
+  "action": "a899599741b732f5",
+  "obs_vision": "8bfa1cf1610cff2a",
+  "obs_ray_tex": "083e5bc0a75ccddd",
+  "obs_hearing": "049acf1b7291f3d6",
+  "obs_smell": "48d996eb876fbc05",
+  "obs_touch": "b187a9ac59aae034",
+  "obs_proprio": "860f2d1020a605d2",
+  "obs_compass": "b0e4627d468afb07",
+  "obs_oracle": "329e3e3e11c400fe",
+  "gt_agent_pos": "0a7a5f6fb01c56db",
+  "gt_agent_th": "c38f824fe7eaa475",
+  "gt_agent_vel": "c7d1c73eafa01423",
+  "gt_cause": "82b92b10d1623ef7",
+  "gt_light": "111ce3c2a38d83a2",
+  "gt_obj_active": "b41b8cfc132694e8",
+  "gt_obj_kind": "4e0cca3f0a187c7c",
+  "gt_obj_pos": "cffce4852e05036f",
+  "gt_obj_vel": "7a9de1201fbc87c4",
+  "gt_vis180": "13e390bb16576a28"
+ },
+ "data_dark": {
+  "action": "a899599741b732f5",
+  "obs_vision": "8bfa1cf1610cff2a",
+  "obs_ray_tex": "083e5bc0a75ccddd",
+  "obs_hearing": "049acf1b7291f3d6",
+  "obs_smell": "48d996eb876fbc05",
+  "obs_touch": "b187a9ac59aae034",
+  "obs_proprio": "860f2d1020a605d2",
+  "obs_compass": "b0e4627d468afb07",
+  "obs_oracle": "329e3e3e11c400fe",
+  "gt_agent_pos": "0a7a5f6fb01c56db",
+  "gt_agent_th": "c38f824fe7eaa475",
+  "gt_agent_vel": "c7d1c73eafa01423",
+  "gt_cause": "82b92b10d1623ef7",
+  "gt_light": "029297e9aa156089",
+  "gt_obj_active": "b41b8cfc132694e8",
+  "gt_obj_kind": "4e0cca3f0a187c7c",
+  "gt_obj_pos": "cffce4852e05036f",
+  "gt_obj_vel": "7a9de1201fbc87c4",
+  "gt_vis180": "cef66719ac984f0b"
+ },
+ "senses": {
+  "oracle": "dec706261dcfaac1",
+  "human": "0b38194e985dcb49",
+  "dog": "5c4b29aff556c44a",
+  "blind": "f9fda7dae2f8bf79",
+  "deafblind": "54006353a9e87ca8",
+  "vision_only": "6f72cd875ec9bdc9",
+  "smell_only": "33e5cee6367302b2",
+  "hearing_only": "442b3e6599959db3",
+  "touch_only": "24c3325cda4c6de4",
+  "bat": "f66b09e23c581f10",
+  "chimera": "a286c76f6138d924",
+  "passive": "989782bfe209de7d",
+  "passive_novest": "cfc26a9a272939ec",
+  "memoryless": "1cb779182f33729b"
+ },
+ "train": {
+  "final_loss": 0.5468173623085022,
+  "test_error": 0.3943542540073395
+ }
+}
