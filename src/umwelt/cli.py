@@ -1,4 +1,4 @@
-"""Command line: umwelt data | run | report."""
+"""Command line: umwelt data | run | report | report-v2 | atlas."""
 
 import argparse
 
@@ -27,9 +27,13 @@ def main():
     r.add_argument("--objective", default="pixel", choices=["pixel", "jepa"])
     r.add_argument("--no-controls", action="store_true")
     r.add_argument("--tag", default="main")
+    r.add_argument("--data-seed", type=int, default=0, help="which recording of the world to train and test on")
 
     rp = sub.add_parser("report", help="aggregate results into tables, figures and REPORT.md")
     rp.add_argument("--tag", default="main")
+
+    r2 = sub.add_parser("report-v2", help="check Amendment 2 (the memory world) and write results/report_v2")
+    r2.add_argument("--world", default="occlusion")
 
     sub.add_parser("atlas", help="enumerate coherent positions on classic aporias")
 
@@ -44,7 +48,8 @@ def main():
 
         cfg = learner.LearnerConfig(steps=args.steps, horizons=tuple(args.horizons), obs_dropout=args.obs_dropout,
                                     objective=args.objective)
-        run_world(args.world, args.seed, args.presets, cfg, controls=not args.no_controls, tag=args.tag)
+        run_world(args.world, args.seed, args.presets, cfg, controls=not args.no_controls, tag=args.tag,
+                  data_seed=args.data_seed)
     elif args.cmd == "atlas":
         from umwelt.atlas import build as build_atlas
 
@@ -53,6 +58,10 @@ def main():
         from umwelt.report import build
 
         build(args.tag)
+    elif args.cmd == "report-v2":
+        from umwelt.report_v2 import build as build_v2
+
+        build_v2(args.world)
 
 
 if __name__ == "__main__":

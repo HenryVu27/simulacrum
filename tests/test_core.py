@@ -90,3 +90,48 @@ def test_permanence_quadruplet_is_balanced_for_a_memoryless_predictor():
     o = observe(d, PRESETS["vision_only"])
     s, _ = voe.surprise(voe.copy_errors(o), np.array([tc]), n_boot=1)
     assert abs(s) < 0.1
+
+
+def test_dark_blinds_eyes_but_not_echolocation():
+    d = generate("dark", 8, T=128, seed=1, chunk=8)
+    dark = ~d["gt_light"]
+    assert 0.05 < dark.mean() < 0.6
+    assert not (d["gt_vis180"] & dark[..., None]).any()  # nothing counts as seen in the dark
+    clean = {**d, "obs_vision": d["obs_vision"]}
+    human = observe(clean, PRESETS["vision_only"])  # 64 rays x (r, g, b, depth), plus noise 0.02
+    v = human.reshape(*human.shape[:2], 64, 4)
+    assert np.abs(v[dark][..., :3]).mean() < 0.03 and np.abs(v[dark][..., 3] - 1).mean() < 0.03
+    assert v[~dark][..., 3].std() > 0.05
+    bat = observe(d, PRESETS["bat"])[..., :32]  # echo depth keeps varying in the dark
+    assert bat[dark].std() > 0.05
+
+
+def test_look_back_turns_away_and_returns():
+    from umwelt.world import LOOK_FACE, policy
+
+    rules = WORLDS["lookback"]
+    s = reset(jax.random.PRNGKey(4), wall_half=rules.wall_half)
+    s = s._replace(pol_timer=jnp.int32(0), pol_mode=jnp.int32(0))
+    key = jax.random.PRNGKey(5)
+    headings, modes = [], []
+    for t in range(200):
+        key, ka, ks = jax.random.split(key, 3)
+        a, pol = policy(s, ka, rules)
+        s = s._replace(**pol)
+        s, _ = step(s, a, rules, ks)
+        headings.append(float(s.agent_th))
+        modes.append(int(s.pol_mode))
+    modes = np.array(modes)
+    assert (modes == 4).mean() > 0.2
+    th = np.unwrap(np.array(headings))
+    # within some look-back routine the heading swings at least 120 degrees and comes back within 30
+    start = np.flatnonzero((modes == 4) & (np.roll(modes, 1) != 4))
+    swings = []
+    for i in start:
+        j = i
+        while j < len(modes) and modes[j] == 4:
+            j += 1
+        if j < len(modes):
+            seg = th[i + LOOK_FACE - 1 : j] - th[i + LOOK_FACE - 1]  # heading at the end of the face phase
+            swings.append((np.abs(seg).max(), abs(seg[-1])))
+    assert any(big > np.deg2rad(110) and end < np.deg2rad(30) for big, end in swings), swings

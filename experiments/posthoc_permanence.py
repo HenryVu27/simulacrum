@@ -7,7 +7,8 @@ Scores are skill above a mind that knows nothing (0) up to perfect (1). A mind w
 should stay above its raw-senses curve for some steps after an object disappears; a reactive mind
 falls to that curve at once.
 
-    uv run python experiments/posthoc_permanence.py lawful 0
+    uv run python experiments/posthoc_permanence.py lawful 0            # world, learner seed
+    uv run python experiments/posthoc_permanence.py occlusion 0 v2 1   # plus run tag and data seed
 """
 
 import json
@@ -43,16 +44,27 @@ def curve(Htr, Ttr, Hte, Tte, seed=0, stride_tr=8, stride_te=4):
         base = probes._r2_cols(const, Y, m2(m), m2(pres))
         out[name] = (score - base) / (1 - base)  # skill above a mind that knows nothing
         out[name + " (n)"] = int(m.sum())
+    if "dark" in Tte:  # exploratory (Amendment 2): hidden because the lights are out, or out of view while lit
+        dark = probes._rows(Tte, "dark", stride_te)
+        for name, rng in BINS[1:3]:
+            for label, dm in (("dark", dark), ("lit", ~dark)):
+                m = pres & ~vis & (since >= rng[0]) & (since <= rng[1]) & dm
+                score = probes._r2_cols(pred, Y, m2(m), m2(pres))
+                base = probes._r2_cols(const, Y, m2(m), m2(pres))
+                out[f"{name}, {label}"] = (score - base) / (1 - base)
+                out[f"{name}, {label} (n)"] = int(m.sum())
     return out
 
 
-def main(world="lawful", seed=0, tag="main"):
+def main(world="lawful", seed=0, tag="main", data_seed=0):
     run = RESULTS / "runs" / tag / f"{world}_s{seed}"
-    d = load(world, 1280)
+    d = load(world, 1280, seed=data_seed)
     tr, te = slice(0, 1024), slice(1024, 1280)
     gt = {k: v for k, v in d.items() if k.startswith("gt_")}
     Ttr = probes.targets({k: np.asarray(v[tr]) for k, v in gt.items()})
     Tte = probes.targets({k: np.asarray(v[te]) for k, v in gt.items()})
+    if "gt_light" in gt:
+        Tte["dark"] = np.repeat(~np.asarray(gt["gt_light"][te])[..., None], probes.K, -1)
     results = {}
     for f in sorted(run.glob("*_params.pkl")):
         mind = f.name[: -len("_params.pkl")]
@@ -81,4 +93,6 @@ def main(world="lawful", seed=0, tag="main"):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "lawful", int(sys.argv[2]) if len(sys.argv) > 2 else 0)
+    a = sys.argv[1:]
+    main(a[0] if a else "lawful", int(a[1]) if len(a) > 1 else 0, a[2] if len(a) > 2 else "main",
+         int(a[3]) if len(a) > 3 else 0)

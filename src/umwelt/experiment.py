@@ -38,14 +38,14 @@ def _voe_scores(params, suite, preset, mu, sd, L=learner):
 
 
 def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=1024, n_test=256, n_probe=1024,
-              n_keep=128, controls=True, tag="main"):
+              n_keep=128, controls=True, tag="main", data_seed=0):
     if (RESULTS / "skip" / f"{world}_s{seed}").exists():
         print(f"[{world} s{seed}] skipped: results/skip/{world}_s{seed} exists", flush=True)
         return
     out_dir = RESULTS / "runs" / tag / f"{world}_s{seed}"
     out_dir.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
-    d = load(world, n_train + n_test, 256, seed=0)
+    d = load(world, n_train + n_test, 256, seed=data_seed)
     tr = slice(0, n_train)  # slices, not index arrays, so memory-mapped data is viewed rather than copied
     te = slice(n_train, n_train + n_test)
     pr = slice(0, n_probe)
@@ -84,7 +84,7 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         H_te = learner.batched(L._latents_jit, params, o[te], a[te])
         test_err = float(learner.batched(L._errors_jit, params, o[te], a[te])[:, 16:].mean())
         tick("latents")
-        rec = {"world": world, "seed": seed, "preset": name, "obs_dim": int(o.shape[-1]),
+        rec = {"world": world, "seed": seed, "data_seed": data_seed, "preset": name, "obs_dim": int(o.shape[-1]),
                "config": asdict(cfg), "train_log": log, "test_error": test_err}
         rec["probes"] = probes.run_battery(H_pr, T_tr, H_te, T_te, seed)
         tick("probes_mlp")
