@@ -227,6 +227,8 @@ Agreement between engines, lawful world: Pearson r = 0.998 over 168 mind-concept
 
 ## Mind versus world (two-way ANOVA shares, oracle excluded)
 
+Sample-size-weighted (Type I/II) sums of squares; the design is unbalanced because only the lawful world has two seeds.
+
 | concept | mind | world | interaction | seed noise |
 |---|---|---|---|---|
 | object_seen | 0.96 | 0.03 | 0.01 | 0.00 |

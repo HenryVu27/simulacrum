@@ -18,9 +18,14 @@ Last updated: 2026-11-04, morning after the overnight build. Read this first, th
 
 ## Main results
 
-1. **The test battery works.** The oracle scores 0.95 to 0.98 on object location in every world and
-   engine. Seeds reproduce to within about 0.01. Flatland and MuJoCo agree: Pearson r above 0.99
-   across 144 mind-concept scores in the lawful world, mean absolute difference about 0.02.
+1. **The test battery works.**
+   - The oracle scores 0.949 to 0.969 on object location in every world and engine.
+   - Seeds reproduce: across 168 lawful-world scores, the mean difference is 0.006 and the largest
+     is 0.04.
+   - Flatland and MuJoCo agree: Pearson r 0.997 across 168 mind-concept scores in the lawful world,
+     mean absolute difference 0.017, largest 0.12. The pooled r is helped by large differences between
+     concepts. Within single concepts it is lowest for cause (0.91).
+   - An independent verifier recomputed these numbers from the raw result files.
 2. **At this scale every mind is reactive.** No mind remembers objects beyond what its senses give at
    the moment:
    - A/B test: prediction horizons of 5, 15 and 30 steps and 30 percent observational dropout all
@@ -47,8 +52,11 @@ Last updated: 2026-11-04, morning after the overnight build. Read this first, th
    explains. The likely source is the diffusing scent field, which our vocabulary does not name. Not
    yet tested.
 7. **Mind versus world (H7, failed as written, mostly right).** Two-way ANOVA (analysis of variance)
-   over 13 minds and 4 worlds:
+   over 13 minds and 4 worlds. The design is unbalanced (lawful has two seeds, the others one), and the
+   report uses sample-size-weighted (Type I/II) sums of squares:
    - Causal attribution is the one concept the world decides: world share 0.74, mind share 0.23.
+     Other ways of handling the imbalance give world 0.74 to 0.79 and mind 0.18 to 0.23. The world
+     share comes mostly from the nonlocal world, where pushes act at a distance.
    - Seeing, counting, self-motion, self-location and spatial relations are set by the mind
      (mind share 0.86 to 1.00).
    - H7 fails only on hidden objects (mind share 0.95). That follows from result 2: with no memory,
@@ -59,7 +67,9 @@ Last updated: 2026-11-04, morning after the overnight build. Read this first, th
 
 ## Deviations from the preregistration
 
-- Amendment 1 (before the sweep): seeds trimmed, controls limited to lawful worlds, allocentric probes added.
+- Amendment 1 (before the sweep): seeds trimmed, controls limited to the lawful worlds (in practice
+  seed 0 only), allocentric probes added. The same commit changed learner, probe and runner code;
+  the amendment text says what and why.
 - Skipped for time: impermanent_mj and ghost_mj audit worlds. The lawful_mj audit ran in full.
 - Added after seeing data, labeled as such in the report:
   - skill scores above a no-information baseline, which fix a scale artifact in the seen and hidden

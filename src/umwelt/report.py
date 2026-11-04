@@ -408,6 +408,7 @@ def build(tag="main"):
     shares = {c: anova_shares(runs, c) for c in CONCEPTS}
     if any(shares.values()):
         lines += ["", "## Mind versus world (two-way ANOVA shares, oracle excluded)", "",
+                  "Sample-size-weighted (Type I/II) sums of squares; the design is unbalanced because only the lawful world has two seeds.", "",
                   "| concept | mind | world | interaction | seed noise |", "|---|---|---|---|---|"]
         for c, s in shares.items():
             if s:
