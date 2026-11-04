@@ -200,3 +200,49 @@ memory less than lawful does; a confirmatory run there would repeat v1 and test 
 - If neither passes, the v2 confirmatory run is not done. The report states that making memory pay at specific
   moments was not enough for this learner at this budget, and the next amendment changes the learner, not the
   world.
+
+## Amendment 4 (2026-11-04, after calibration stage 2, before any confirmatory run)
+
+Still no probe, surprise test or hidden-state analysis has been run on any mind trained in a v2 world.
+
+### What stage 2 found (16,000 updates)
+
+| world | M | M, dark steps | M, first lit step | M, object returns | M, other steps |
+|---|---|---|---|---|---|
+| lawful (reference) | 0.021 | | | 0.012 | 0.021 |
+| dark | -0.279 | -0.919 | 0.302 | 0.255 | -0.104 |
+| occlusion | -0.402 | -1.041 | 0.334 | 0.228 | -0.328 |
+
+The bar of 0.10 failed again, by more. Diagnosis, prediction error only:
+
+1. Not sequence length. Training uses 96-step windows and testing whole 256-step episodes, but the recurrent
+   mind's error is as high in steps 16 to 96 as later.
+2. Memorization. Retrained at 4,000 updates and scored on 256 training episodes and 256 held-out episodes
+   (`experiments/overfit_check.py`): the human mind's error rises 9 percent from training to held-out episodes
+   (0.212 to 0.232), the memoryless mind's 4 percent (0.213 to 0.222). With 1,024 training episodes, each step
+   is seen about 47 times at 4,000 updates; a mind with memory can recognize an episode by its room and recall
+   when its lights come back. Late in a dark spell, its held-out error is about twice its training error.
+3. Hedging. On training episodes, the human mind's error 28 steps into the dark (0.32) matches what an ideal
+   predictor pays there (dark spells last 8 to 30 steps, so the lights come back next step with probability
+   one in three; blending the remembered scene with black at that weight costs about 0.33).
+4. The bar was nearly unreachable. Memory can only pay where the senses change in a way the present does not
+   predict: the first lit step after a dark spell (1 percent of steps) and objects coming back into view (3 to
+   4 percent). Even a perfect memory with perfect timing would cut overall error by at most about 15 percent
+   (dark world: object-return steps 3 percent of steps, memoryless error 1.06 there against 0.207 overall), and
+   any real mind pays hedging costs in the dark. The overall bar measured the rarity of those moments more than
+   whether the world rewards memory.
+
+### Change
+
+- Training (all minds, calibration and confirmatory): 8,192 training episodes instead of 1,024, 256 held-out
+  episodes, 4,000 updates. Each step is then seen about 6 times, so memorizing episodes stops paying. The
+  learner itself is unchanged. This is the training change Amendment 3 required when stage 2 failed.
+- Manipulation check, replacing M1: on held-out episodes, memory value at object-return steps (an object coming
+  back into view after at least 3 steps out of it, which includes the first lit step) is at least 0.10, and
+  overall M is at least 0 (memory does not hurt overall). The original bar of 0.10 on overall M was failed at
+  both budgets, and every hypothesis below is reported with that label.
+- Calibration stage 3: human and memoryless in dark and occlusion with 8,192 training episodes, data seed 0,
+  learner seed 0. The world that passes the new check with the larger event-level M is chosen. If neither
+  passes, there is no confirmatory run in v2.
+- Confirmatory run: as in Amendment 2, with 8,192 training episodes and 4,000 updates, on data seed 1. P1 to P4
+  are unchanged. Probes are still fit on 1,024 training episodes.

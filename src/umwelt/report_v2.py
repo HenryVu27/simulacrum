@@ -22,7 +22,7 @@ def calibration():
     rows = {}
     for p in sorted((RESULTS / "calibration").glob("*.json")):
         r = json.loads(p.read_text())
-        rows[r["world"]] = r
+        rows[(r["world"], r.get("updates", 4000))] = r
     return rows
 
 
@@ -98,23 +98,47 @@ def figures(world, cal, runs, trans, cs, v1c, out):
     paths = []
 
     if cal:
-        ws = [w for w in ("lawful", "occluders", "dark", "lookback", "occlusion") if w in cal]
-        fig, ax = plt.subplots(figsize=(7, 0.45 * len(ws) + 1.3))
-        vals = [cal[w]["M"] for w in ws]
-        ax.barh(range(len(ws)), vals, color=[BLUE if w == world else "#9ec5f4" for w in ws], height=0.6)
+        keys = [(w, u) for w in ("lawful", "occluders", "lookback", "dark", "occlusion") for u in (4000, 16000) if (w, u) in cal]
+        fig, ax = plt.subplots(figsize=(7.5, 0.4 * len(keys) + 1.4))
+        vals = [cal[k]["M"] for k in keys]
+        ax.barh(range(len(keys)), vals, color=[BLUE if u == 16000 else "#9ec5f4" for _, u in keys], height=0.62)
         for i, v in enumerate(vals):
-            ax.text(v + 0.004, i, f"{v:.3f}", va="center", fontsize=9, color=R.INK)
+            ax.text(v + (0.004 if v >= 0 else -0.004), i, f"{v:.3f}", va="center", ha="left" if v >= 0 else "right",
+                    fontsize=9, color=R.INK)
+        ax.axvline(0, color=R.INK2, linewidth=0.8)
         ax.axvline(0.10, color=R.INK2, linewidth=1, linestyle=(0, (3, 3)))
-        ax.text(0.10, len(ws) - 0.45, " preregistered bar, 0.10", fontsize=8, color=R.INK2, va="bottom")
-        ax.set_yticks(range(len(ws)), ws, fontsize=9)
+        ax.text(0.10, -0.6, " preregistered bar, 0.10", fontsize=8, color=R.INK2, va="bottom")
+        ax.set_yticks(range(len(keys)), [f"{w}, {u:,} updates" for w, u in keys], fontsize=9)
         ax.invert_yaxis()
         ax.set_xlabel("memory value M: share of prediction error that memory removes", fontsize=9)
-        ax.set_title("How much each world rewards remembering (calibration, human vs memoryless)", loc="left",
-                     fontsize=10, color=R.INK)
+        ax.set_title("How much each world rewards remembering (human vs memoryless)", loc="left", fontsize=10, color=R.INK)
         for s in ("top", "right"):
             ax.spines[s].set_visible(False)
         fig.tight_layout()
         p = out / "memory_value.png"
+        fig.savefig(p, dpi=160)
+        plt.close(fig)
+        paths.append(p)
+
+    dc = [(k, cal[k]) for k in sorted(cal) if "dark_course" in cal[k]]
+    if dc:
+        fig, axs = plt.subplots(1, len(dc), figsize=(3.6 * len(dc), 3.4), sharey=True)
+        axs = np.atleast_1d(axs)
+        for ax, ((w, u), c) in zip(axs, dc):
+            for m, col in (("human", BLUE), ("memoryless", GRAY)):
+                y = c["dark_course"][m] + c["after_lights_on"][m]
+                ax.plot(range(1, 31), y[:30], color=col, linewidth=2, label=m)
+                ax.plot(range(31, 42), y[30:], color=col, linewidth=2)
+            ax.axvline(30.5, color=R.INK2, linewidth=0.8, linestyle=(0, (3, 3)))
+            ax.set_xticks([1, 10, 20, 30, 31, 41], ["1", "10", "20", "30", "on", "+10"], fontsize=8)
+            ax.set_title(f"{w}, {u:,} updates", loc="left", fontsize=10, color=R.INK)
+            _clean(ax)
+        axs[0].set_ylabel("one-step prediction error", fontsize=9)
+        axs[0].set_xlabel("steps into the dark, then steps after the lights return", fontsize=9)
+        axs[0].legend(fontsize=8, frameon=False)
+        fig.suptitle("Where memory helps and hurts: error through a dark spell", x=0.01, ha="left", fontsize=11, color=R.INK)
+        fig.tight_layout()
+        p = out / "dark_course.png"
         fig.savefig(p, dpi=160)
         plt.close(fig)
         paths.append(p)
@@ -223,14 +247,15 @@ def build(world, tag="v2"):
          f"Chosen world: **{world}**. Preregistration: `docs/preregistration.md`, Amendment 2. Confirmatory data: "
          "data seed 1 (fresh episodes), learner seeds 0 and 1, all minds.", "", "## Calibration (exploratory, picks the world)", "",
          "Memory value M = 1 - err(human) / err(memoryless): the share of one-step prediction error on held-out episodes "
-         "that memory removes. Data seed 0, learner seed 0. Only prediction error was looked at.", "",
+         "that memory removes. Data seed 0, learner seed 0. Only prediction error was looked at. Stage 1 used 4,000 "
+         "updates (Amendment 2); stage 2 used 16,000 (Amendment 3).", "",
          "| world | M | err human | err memoryless | M on dark steps | M on first lit step | M when an object returns | M on other steps |",
          "|---|---|---|---|---|---|---|---|"]
-    for w in ("lawful", "occluders", "dark", "lookback", "occlusion"):
-        if w in cal:
-            c = cal[w]
-            g = lambda k: R._fmt(c[k]["M"], 3) if c.get(k) and c[k]["M"] is not None else "n/a"
-            L.append(f"| {w} | {c['M']:.3f} | {c['all']['err_human']:.4f} | {c['all']['err_memoryless']:.4f} | "
+    for k in [(w, u) for u in (4000, 16000) for w in ("lawful", "occluders", "lookback", "dark", "occlusion")]:
+        if k in cal:
+            c = cal[k]
+            g = lambda key: R._fmt(c[key]["M"], 3) if c.get(key) and c[key]["M"] is not None else "n/a"
+            L.append(f"| {k[0]}, {k[1]:,} updates | {c['M']:.3f} | {c['all']['err_human']:.4f} | {c['all']['err_memoryless']:.4f} | "
                      f"{g('dark')} | {g('lights_on')} | {g('object_returns')} | {g('other')} |")
     L += ["", "## Validation (v1 criteria, in the chosen world)", ""]
     L += [f"- {R._verdict(ok)} {name}: {detail}" for name, ok, detail in valid]
@@ -269,7 +294,7 @@ def build(world, tag="v2"):
                                                   for s in R.SCENARIOS) + " |")
     L += ["", "## Figures", ""] + [f"![{p.stem}]({p.name})" for p in figs]
     (out / "REPORT.md").write_text("\n".join(L) + "\n")
-    summary = {"world": world, "calibration": cal, "M": M,
+    summary = {"world": world, "calibration": {f"{w}_u{u}": v for (w, u), v in cal.items()}, "M": M,
                "hypotheses": [{"name": n, "pass": bool(ok), "detail": d} for n, ok, d in hyp],
                "validation": [{"name": n, "pass": bool(ok), "detail": d} for n, ok, d in valid],
                "curves": {m: {"trained": mean_curve(cs, m), "raw_senses": mean_curve(cs, m, "raw_senses")} for m in R.ORDER}}
