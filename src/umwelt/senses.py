@@ -155,7 +155,7 @@ def proprio(s: State):
 def sense_all(s: State, c: Contacts):
     color, depth, tex, hit_obj = raycast(s)
     front = np.abs(RAY_REL) <= np.pi / 2
-    vis180 = jnp.any((hit_obj[None, :] == jnp.arange(N_SLOTS)[:, None]) & front[None], 1)
+    vis180 = jnp.any((hit_obj[None, :] == jnp.arange(N_SLOTS)[:, None]) & front[None], 1) & (s.dark == 0)
     return dict(
         vision=jnp.concatenate([color, depth[:, None]], -1),  # (R, 4)
         ray_tex=tex,  # (R,)

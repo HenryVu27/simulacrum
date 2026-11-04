@@ -26,17 +26,18 @@ def _gt(s):
         obj_active=s.obj_active,
         obj_kind=s.obj_kind.astype(jnp.int8),
         cause=cause_labels(s),
+        light=s.dark == 0,  # eyes see nothing in the dark; presets.py applies this at the eye
     )
 
 
 def rollout(key, rules: WorldRules, T: int):
     k0, key = jax.random.split(key)
-    s = reset(k0)
+    s = reset(k0, wall_half=rules.wall_half)
 
     def body(carry, _):
         s, key = carry
         key, ka, kp = jax.random.split(key, 3)
-        action, pol = policy(s, ka)
+        action, pol = policy(s, ka, rules)
         s = s._replace(**pol)
         s, c = step(s, action, rules, kp)
         obs = sense_all(s, c)

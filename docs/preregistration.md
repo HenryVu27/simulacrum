@@ -82,3 +82,83 @@ Made after the pilot and an A/B test, before any main-sweep result existed.
    rather than relative to the agent. They separate object memory from self-localization. No prediction.
 5. MuJoCo audit worlds: lawful_mj, impermanent_mj and ghost_mj, seed 0. The surprise-test movies are rendered
    by the Flatland sense functions for every mind, including those trained on MuJoCo data.
+
+## Amendment 2 (2026-11-04, v2 memory world, before any mind is trained in it)
+
+Written after the v1 sweep, and before any learner was trained on data from the worlds below. The commit
+that adds this section is the timestamp.
+
+### Why
+
+In v1 no mind remembered hidden objects. The reason is in the prediction errors: in the lawful world, memory
+cut the human mind's held-out one-step error by 2 percent (human 0.227, memoryless 0.232). The learner had
+almost no reason to remember. Objects did leave and return to view often (about 13 returns per episode), but
+the agent turned slowly, so a returning object entered at the edge of view one ray at a time and only that
+first ray depended on memory. v2 changes the world, not the learner, so that remembering pays.
+
+### Worlds
+
+Each v2 world is the lawful world with some rule parameters switched on (`src/umwelt/world.py`):
+
+- lookback: half of all new goals are a look-away-and-back routine (stand still, face an object, turn 120 to
+  180 degrees away, hold 0 to 24 steps, turn back), and the body turns three times faster (turn gain 6
+  instead of 2), so turning around takes about five steps.
+- dark: the lights go out at random (2 percent chance per lit step) for 8 to 30 steps. Eyes see black and no
+  depth. Echolocation, hearing, smell, touch and body sense are unaffected. This is the lights-out paradigm in
+  which infants reach in the dark for objects they saw before the lights went out (Hood and Willatts 1986;
+  Clifton and colleagues 1991).
+- occluders: internal walls twice as long (half-length 1.5 to 2.5 instead of 0.75 to 1.5) and objects roll
+  farther (friction 0.2 instead of 0.6), so moving objects pass behind walls and come back out.
+- occlusion: all three together.
+
+The learner, the probes, the surprise tests and the minds are unchanged from v1.
+
+### Calibration (exploratory, picks the world)
+
+- Train human and memoryless in each v2 world: data seed 0, learner seed 0, 4,000 updates.
+- Measure memory value M = 1 - err(human) / err(memoryless), where err is the mean one-step prediction error
+  on 256 held-out episodes after a 16-step burn-in (the `test_error` of v1).
+- Only prediction error is looked at. No probe, surprise test or hidden-state analysis is run on calibration
+  models, and they are not kept.
+- Selection rule: choose the world with the largest M among those with M of at least 0.10. If none reaches
+  0.10, the report says so, the world with the largest M is chosen anyway, and every hypothesis below is
+  labeled as tested under a weak manipulation.
+
+### Confirmatory run
+
+- The chosen world, fresh data (data seed 1: 1,024 training and 256 test episodes), learner seeds 0 and 1,
+  all 14 minds, the full v1 battery. Untrained and raw-sense controls on learner seed 0.
+- Permanence decay curves (`experiments/posthoc_permanence.py`, post hoc in v1, preregistered here) for every
+  trained mind: skill above a no-information baseline at locating each object relative to the agent, by time
+  since the object was last in view. The no-information baseline is the training-set mean location of each
+  kind. Raw-sense curves for human, vision_only, dog, smell_only and memoryless.
+
+### Hypotheses (chosen world; averaged over the two learner seeds)
+
+- M1. Manipulation check. M is at least 0.10 on the fresh data, for each learner seed.
+- P1. Permanence needs memory. The human's permanence skill for objects out of view 1 to 5 steps, and 6 to
+  20 steps, each exceeds (a) the human raw-senses curve by more than 0.05 and (b) the memoryless mind by
+  more than 0.05.
+- P2. Updating a hidden object's place needs knowledge of your own motion (Held and Hein, applied to objects).
+  passive_novest (no efference copy, no body sense) has permanence skill at 6 to 20 steps more than 0.05
+  below the human's. The passive mind (no efference copy, but body sense) has no prediction.
+- P3. Counting needs memory when objects hide. number(human) exceeds number(memoryless) by more than 0.05.
+- P4. Surprise. The human's permanence surprise S has a 95 percent interval above 0, the memoryless mind's
+  interval includes 0, and the human's S exceeds its S in the v1 lawful world (mean of v1 seeds 0 and 1).
+
+### Exploratory (no prediction)
+
+- Which other minds remember, and through which sense: bat and chimera keep echolocation in the dark, dog and
+  smell_only have a scent trail, blind and hearing_only lose nothing to darkness.
+- Hidden moments split into dark spells versus looked away or behind a wall.
+- Egocentric versus allocentric memory (object_hidden versus object_allo_hidden).
+- Translation between minds and concept import, compared with v1.
+
+### Known limits, stated in advance
+
+- Making the world reward memory changes the world. A positive result says a recurrent predictor of this
+  size develops object permanence when the world makes it pay, not that it develops it in any world.
+- Turn gain changes the body for every mind in lookback and occlusion, including minds whose senses are not
+  affected by turning (smell_only).
+- The surprise-test movies are unchanged from v1 (lit, still agent, short wall as the screen), so they test
+  transfer from the v2 training world to a standard test.

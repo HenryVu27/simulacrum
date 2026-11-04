@@ -40,13 +40,29 @@ class WorldRules:
     solid: bool = True  # objects collide with internal walls, each other and the agent
     teleport_p: float = 0.0  # per-step chance that an object jumps to a random place
     nonlocal_push: bool = False  # pushing one object moves a different one, consistently
+    # v2 memory worlds. The defaults are the v1 values, so v1 worlds are unchanged.
+    look_back: float = 0.0  # share of new goals that are look-away-and-back routines
+    turn_gain: float = 2.0  # top turning speed, radians per second
+    dark_p: float = 0.0  # per-step chance, while lit, that the lights go out
+    dark_len: tuple = (8, 30)  # how many steps a dark spell lasts
+    wall_half: tuple = (0.75, 1.5)  # half-length range of the internal walls
+    friction: float = 0.6  # how fast objects slow down, per second
 
+
+LOOK = dict(look_back=0.5, turn_gain=6.0)
+DARK = dict(dark_p=0.02)
+OCCLUDE = dict(wall_half=(1.5, 2.5), friction=0.2)
 
 WORLDS = {
     "lawful": WorldRules("lawful"),
     "impermanent": WorldRules("impermanent", teleport_p=0.02),
     "ghost": WorldRules("ghost", solid=False),
     "nonlocal": WorldRules("nonlocal", nonlocal_push=True),
+    # v2: lawful physics, but the world makes remembering pay (Amendment 2 of the preregistration).
+    "lookback": WorldRules("lookback", **LOOK),
+    "dark": WorldRules("dark", **DARK),
+    "occluders": WorldRules("occluders", **OCCLUDE),
+    "occlusion": WorldRules("occlusion", **LOOK, **DARK, **OCCLUDE),
 }
 
 
@@ -70,6 +86,9 @@ class State(NamedTuple):
     pol_pt: jax.Array  # (2,)
     pol_ou: jax.Array
     t: jax.Array
+    dark: jax.Array  # steps of darkness left; 0 means lit
+    pol_off: jax.Array  # look-back routine: how far to turn away, signed radians
+    pol_hold: jax.Array  # look-back routine: how long to look away
 
 
 class Contacts(NamedTuple):
@@ -83,7 +102,7 @@ def boundary_walls():
     return jnp.array([[0, 0, a, 0], [a, 0, a, a], [a, a, 0, a], [0, a, 0, 0]], dtype=jnp.float32)
 
 
-def reset(key, n_active=None):
+def reset(key, n_active=None, wall_half=(0.75, 1.5)):
     ks = jax.random.split(key, 8)
     n = jax.random.randint(ks[0], (), 2, N_SLOTS + 1) if n_active is None else jnp.asarray(n_active)
     kind = jax.random.permutation(ks[1], kinds.N_KINDS)[:N_SLOTS].astype(jnp.int32)
@@ -95,7 +114,7 @@ def reset(key, n_active=None):
     obj_pos = jnp.where(active[:, None], centers[:N_SLOTS], FAR)
     wc = jax.random.uniform(ks[4], (N_INTERNAL_WALLS, 2), minval=2.5, maxval=7.5)
     ang = jax.random.uniform(ks[5], (N_INTERNAL_WALLS,), maxval=jnp.pi)
-    half = jax.random.uniform(ks[6], (N_INTERNAL_WALLS,), minval=0.75, maxval=1.5)
+    half = jax.random.uniform(ks[6], (N_INTERNAL_WALLS,), minval=wall_half[0], maxval=wall_half[1])
     dvec = jnp.stack([jnp.cos(ang), jnp.sin(ang)], -1) * half[:, None]
     internal = jnp.concatenate([wc - dvec, wc + dvec], -1)
     return State(
@@ -118,6 +137,9 @@ def reset(key, n_active=None):
         pol_pt=jnp.full((2,), ARENA / 2),
         pol_ou=jnp.zeros(()),
         t=jnp.zeros((), jnp.int32),
+        dark=jnp.zeros((), jnp.int32),
+        pol_off=jnp.zeros(()),
+        pol_hold=jnp.zeros((), jnp.int32),
     )
 
 
@@ -125,29 +147,49 @@ def wrap(a):
     return (a + jnp.pi) % (2 * jnp.pi) - jnp.pi
 
 
-def policy(s: State, key):
-    """Shared exploratory behaviour: approach and push objects, visit places, pause, wander."""
+LOOK_FACE, LOOK_TURN = 8, 10  # look-back routine: steps to face the object, and to turn away or back
+
+
+def policy(s: State, key, rules: WorldRules = WorldRules()):
+    """Shared exploratory behaviour: approach and push objects, visit places, pause, wander.
+
+    Memory worlds add mode 4, look away and back: standing still, face an object, turn 120 to 180
+    degrees away from it, hold for 0 to 24 steps, then turn back to it.
+    """
     ks = jax.random.split(key, 6)
     expired = s.pol_timer <= 0
-    new_mode = jax.random.choice(ks[0], 4, p=jnp.array([0.5, 0.2, 0.15, 0.15]))
+    if rules.look_back > 0:
+        p = jnp.array([0.5, 0.2, 0.15, 0.15, 0.0]) * (1 - rules.look_back) + jnp.eye(5)[4] * rules.look_back
+        new_mode = jax.random.choice(ks[0], 5, p=p)
+    else:
+        new_mode = jax.random.choice(ks[0], 4, p=jnp.array([0.5, 0.2, 0.15, 0.15]))
     logits = jnp.where(s.obj_active, 0.0, -jnp.inf)
     new_obj = jax.random.categorical(ks[1], logits)
     mode = jnp.where(expired, new_mode, s.pol_mode)
     obj = jnp.where(expired, new_obj, s.pol_obj)
     pt = jnp.where(expired, jax.random.uniform(ks[2], (2,), minval=1.0, maxval=ARENA - 1.0), s.pol_pt)
     timer = jnp.where(expired, jax.random.randint(ks[3], (), 10, 60), s.pol_timer - 1)
+    off, hold = s.pol_off, s.pol_hold
+    if rules.look_back > 0:
+        kl = jax.random.split(jax.random.fold_in(key, 1), 3)
+        sign = jnp.where(jax.random.bernoulli(kl[0]), 1.0, -1.0)
+        off = jnp.where(expired, sign * jax.random.uniform(kl[1], minval=2.1, maxval=jnp.pi), off)
+        hold = jnp.where(expired, jax.random.randint(kl[2], (), 0, 25), hold)
+        timer = jnp.where(expired & (mode == 4), LOOK_FACE + 2 * LOOK_TURN + hold, timer)
 
-    target = jnp.where(mode == 0, s.obj_pos[obj], pt)
+    target = jnp.where((mode == 0) | (mode == 4), s.obj_pos[obj], pt)
     d = target - s.agent_pos
     err = wrap(jnp.arctan2(d[1], d[0]) - s.agent_th)
     seek = jnp.array([jnp.clip(1.0 - jnp.abs(err) / 1.2, 0.0, 1.0) * 0.9, jnp.clip(2.5 * err, -1.0, 1.0)])
+    away = (timer > LOOK_TURN) & (timer <= LOOK_TURN + hold + LOOK_TURN)
+    look = jnp.array([0.0, jnp.clip(2.5 * wrap(err + off * away), -1.0, 1.0)])
     pol_ou = 0.8 * s.pol_ou + 0.4 * jax.random.normal(ks[4])
     wander = jnp.array([0.6, jnp.clip(pol_ou, -1.0, 1.0)])
-    action = jnp.select([mode <= 1, mode == 2], [seek, jnp.zeros(2)], wander)
+    action = jnp.select([mode <= 1, mode == 2, mode == 4], [seek, jnp.zeros(2), look], wander)
     action = jnp.clip(action + 0.1 * jax.random.normal(ks[5], (2,)), -1.0, 1.0)
     # Reaching a place ends that goal early.
     timer = jnp.where((mode == 1) & (jnp.linalg.norm(d) < 0.4), 0, timer)
-    return action, dict(pol_mode=mode, pol_timer=timer, pol_obj=obj, pol_pt=pt, pol_ou=pol_ou)
+    return action, dict(pol_mode=mode, pol_timer=timer, pol_obj=obj, pol_pt=pt, pol_ou=pol_ou, pol_off=off, pol_hold=hold)
 
 
 def _wall_collide(pos, vel, r, walls, mask):
@@ -174,14 +216,14 @@ def step(s: State, action, rules: WorldRules, key):
     act = s.obj_active
 
     # Agent motor: turn, then thrust along the new heading against drag.
-    om = action[1] * 2.0
+    om = action[1] * rules.turn_gain
     th = wrap(s.agent_th + om * DT)
     heading = jnp.array([jnp.cos(th), jnp.sin(th)])
     avel = s.agent_vel + (action[0] * 3.0 * heading - 1.5 * s.agent_vel) * DT
 
     # Objects: friction, plus a wandering force for animate kinds.
     ou = 0.9 * s.ou + 0.35 * jax.random.normal(ks[0], s.ou.shape)
-    ovel = s.obj_vel * (1 - 0.6 * DT) + ou * DT * 3.0 * anim[:, None]
+    ovel = s.obj_vel * (1 - rules.friction * DT) + ou * DT * 3.0 * anim[:, None]
     speed = jnp.linalg.norm(ovel, axis=-1, keepdims=True)
     ovel = jnp.where(anim[:, None] & (speed > 1.2), ovel / (speed + 1e-6) * 1.2, ovel)
 
@@ -258,6 +300,14 @@ def step(s: State, action, rules: WorldRules, key):
     opos = jnp.where(act[:, None], opos, FAR)
     ovel = jnp.where(act[:, None], ovel, 0.0)
 
+    # Dark worlds: the lights sometimes go out for a while. Only eyes are affected (see presets.py).
+    dark = s.dark
+    if rules.dark_p > 0:
+        kd = jax.random.split(jax.random.fold_in(key, 1))
+        start = (s.dark <= 0) & (jax.random.uniform(kd[0]) < rules.dark_p)
+        spell = jax.random.randint(kd[1], (), rules.dark_len[0], rules.dark_len[1] + 1)
+        dark = jnp.where(start, spell, jnp.maximum(s.dark - 1, 0))
+
     since_push = jnp.where(pushed, 0, jnp.minimum(s.since_push + 1, 1000))
     since_hit = jnp.where(hit, 0, jnp.minimum(s.since_hit + 1, 1000))
     since_push = jnp.where(jump, 1000, since_push)
@@ -275,6 +325,7 @@ def step(s: State, action, rules: WorldRules, key):
         since_push=since_push,
         since_hit=since_hit,
         t=s.t + 1,
+        dark=dark,
     )
     return new, Contacts(obj_imp * act, agent_obj_imp * act, agent_wall_imp)
 

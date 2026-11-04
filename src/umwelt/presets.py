@@ -72,6 +72,8 @@ def _pool(x, n):
 def _channel(d, s: Sense):
     if s.kind == "vision":
         v = d["obs_vision"].astype(np.float32)
+        if "gt_light" in d:  # in the dark, eyes see black and no depth; echolocation is unaffected
+            v = np.where(d["gt_light"][..., None, None], v, np.array([0.0, 0.0, 0.0, 1.0], np.float32))
         keep = np.abs(np.rad2deg(RAY_REL)) <= s.fov_deg / 2
         v = _pool(v[..., keep, :], s.n_rays)
         if s.color == "dichromat":
@@ -98,7 +100,7 @@ def observe(d, preset: Preset, dtype=np.float32, chunk=128):
     E = len(d["action"])
     out = None
     for i in range(0, E, chunk):
-        part = {k: v[i : i + chunk] for k, v in d.items() if k.startswith("obs_") or k == "action"}
+        part = {k: v[i : i + chunk] for k, v in d.items() if k.startswith("obs_") or k in ("action", "gt_light")}
         xs = []
         for s in preset.senses:
             x = _channel(part, s)

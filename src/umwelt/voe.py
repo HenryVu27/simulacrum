@@ -65,6 +65,9 @@ def _render(agent_pos, agent_th, wall0, kind, pos, active, impulse):
         pol_pt=jnp.zeros((T, 2)),
         pol_ou=z,
         t=jnp.arange(T),
+        dark=jnp.zeros(T, jnp.int32),
+        pol_off=z,
+        pol_hold=jnp.zeros(T, jnp.int32),
     )
     contacts = Contacts(jnp.asarray(impulse, jnp.float32), jnp.zeros((T, N_SLOTS)), z)
     obs = jax.vmap(sense_all)(states, contacts)
