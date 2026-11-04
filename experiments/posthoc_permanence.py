@@ -58,7 +58,10 @@ def curve(Htr, Ttr, Hte, Tte, seed=0, stride_tr=8, stride_te=4):
 
 def main(world="lawful", seed=0, tag="main", data_seed=0):
     run = RESULTS / "runs" / tag / f"{world}_s{seed}"
-    d = load(world, 1280, seed=data_seed)
+    n_train = json.loads((run / "human.json").read_text()).get("n_train", 1024)
+    full = load(world, n_train + 256, seed=data_seed)
+    # Probes are fit on the first 1,024 training episodes (as in the runner) and scored on the run's held-out ones.
+    d = {k: np.concatenate([v[:1024], v[n_train : n_train + 256]]) for k, v in full.items()}
     tr, te = slice(0, 1024), slice(1024, 1280)
     gt = {k: v for k, v in d.items() if k.startswith("gt_")}
     Ttr = probes.targets({k: np.asarray(v[tr]) for k, v in gt.items()})

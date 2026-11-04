@@ -1,7 +1,7 @@
 #!/bin/bash
 # Amendment 2 confirmatory run: the chosen memory world, fresh data (data seed 1), learner seeds 0 and 1,
 # all 14 minds. Four single-threaded queues; minds the hypotheses need come first in each queue.
-#   experiments/sweep_v2.sh occlusion 16000      # world, learner updates (Amendment 3)
+#   experiments/sweep_v2.sh dark                # Amendment 4: 8,192 training episodes, 4,000 updates
 set -u
 W="$1"
 STEPS="${2:-4000}"
@@ -9,9 +9,9 @@ cd "$(dirname "$0")/.."
 mkdir -p results/logs
 export XLA_FLAGS="--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1"
 LOG="results/logs/v2_$W"
-run() { uv run umwelt run --world "$W" --tag v2 --data-seed 1 --steps "$STEPS" "$@"; }
+run() { uv run umwelt run --world "$W" --tag v2 --data-seed 1 --n-train 8192 --steps "$STEPS" "$@"; }
 # Record the world once before the queues start, so no two processes write it at the same time.
-uv run python -c "from umwelt.data import save; save('$W', 1280, 256, 1)" > "${LOG}_data.log" 2>&1
+uv run python -c "from umwelt.data import load; load('$W', 8448, 256, 1)" > "${LOG}_data.log" 2>&1
 queue() {
   local q="$1"; shift
   run --seed 0 --presets "$@" >> "${LOG}_q$q.log" 2>&1

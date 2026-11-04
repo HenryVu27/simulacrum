@@ -73,12 +73,12 @@ def summarize(world, steps, n_train):
              "object_returns": returns, "other": light & lit_prev & ~returns}
     burn = np.arange(light.shape[1]) >= 16  # same burn-in as v1 test_error
     out = {"world": world, "updates": steps, "episodes": n_train}
-    for name, m in masks.items():
+    for key, m in masks.items():
         m = m & burn[None]
         if not m.any():
             continue
         h, z = errs["human"][m].mean(), errs["memoryless"][m].mean()
-        out[name] = {"share_of_steps": float(m.mean()), "err_human": float(h), "err_memoryless": float(z),
+        out[key] = {"share_of_steps": float(m.mean()), "err_human": float(h), "err_memoryless": float(z),
                      "M": float(1 - h / z)}
     out["M"] = out["all"]["M"]
     if (~lit).any():  # error through a dark spell: k steps into the dark, and k steps after the lights return
@@ -106,8 +106,9 @@ if __name__ == "__main__":
     ap.add_argument("--steps", type=int, default=4000)
     ap.add_argument("--mind", choices=MINDS)
     ap.add_argument("--episodes", type=int, default=1024, help="training episodes (Amendment 4: 8192)")
+    ap.add_argument("--summarize-only", action="store_true", help="recompute the summary from saved errors")
     args = ap.parse_args()
-    for m in [args.mind] if args.mind else MINDS:
+    for m in [] if args.summarize_only else [args.mind] if args.mind else MINDS:
         train_and_score(args.world, m, args.steps, args.episodes)
     if all((OUT / "errors" / f"{_name(args.world, args.steps, args.episodes)}_{m}.npy").exists() for m in MINDS):
         summarize(args.world, args.steps, args.episodes)
