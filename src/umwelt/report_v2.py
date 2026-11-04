@@ -102,9 +102,9 @@ def hypotheses(world, runs, cs, v1_runs):
         null = all(v["ci"][0] <= 0 <= v["ci"][1] for v in mp)
         s2, s1 = np.mean([v["S"] for v in hp]), np.mean([v["S"] for v in v1p])
         out.append(("P4 surprise at impossible permanence", above and null and s2 > s1,
-                    "human " + ", ".join(f"S {v['S']:.3f} [{v['ci'][0]:.3f}, {v['ci'][1]:.3f}]" for v in hp)
-                    + "; memoryless " + ", ".join(f"S {v['S']:.3f} [{v['ci'][0]:.3f}, {v['ci'][1]:.3f}]" for v in mp)
-                    + f"; human mean S {s2:.3f} here vs {s1:.3f} in v1 lawful"))
+                    "human " + ", ".join(f"S {v['S']:.4f} [{v['ci'][0]:.4f}, {v['ci'][1]:.4f}]" for v in hp)
+                    + "; memoryless " + ", ".join(f"S {v['S']:.4f} [{v['ci'][0]:.4f}, {v['ci'][1]:.4f}]" for v in mp)
+                    + f"; human mean S {s2:.4f} here vs {s1:.4f} in v1 lawful (all three parts must hold)"))
     return out, M
 
 
@@ -137,6 +137,7 @@ def figures(world, cal, runs, trans, cs, v1c, out):
         for i, v in enumerate(vals):
             ax.text(v + (0.004 if v >= 0 else -0.004), i, f"{v:.3f}", va="center", ha="left" if v >= 0 else "right",
                     fontsize=9, color=R.INK)
+        ax.set_xlim(min(min(vals), 0) - 0.09, max(max(vals), 0.10) + 0.05)  # room for labels beside the bars
         ax.axvline(0, color=R.INK2, linewidth=0.8)
         ax.axvline(0.10, color=R.INK2, linewidth=1, linestyle=(0, (3, 3)))
         ax.text(0.10, -0.6, " preregistered bar, 0.10", fontsize=8, color=R.INK2, va="bottom")
@@ -160,9 +161,9 @@ def figures(world, cal, runs, trans, cs, v1c, out):
             for m, col in (("human", BLUE), ("memoryless", GRAY)):
                 y = c["dark_course"][m] + c["after_lights_on"][m]
                 ax.plot(range(1, 31), y[:30], color=col, linewidth=2, label=m)
-                ax.plot(range(31, 42), y[30:], color=col, linewidth=2)
-            ax.axvline(30.5, color=R.INK2, linewidth=0.8, linestyle=(0, (3, 3)))
-            ax.set_xticks([1, 10, 20, 30, 31, 41], ["1", "10", "20", "30", "on", "+10"], fontsize=8)
+                ax.plot(range(34, 45), y[30:], color=col, linewidth=2)
+            ax.axvline(32, color=R.INK2, linewidth=0.8, linestyle=(0, (3, 3)))
+            ax.set_xticks([1, 10, 20, 30, 34, 44], ["1", "10", "20", "30", "lit", "+10"], fontsize=8)
             ax.set_title(f"{w}\n{_stage(u, n)}", loc="left", fontsize=9, color=R.INK)
             _clean(ax)
         axs[0].set_ylabel("one-step prediction error", fontsize=9)
@@ -218,7 +219,6 @@ def figures(world, cal, runs, trans, cs, v1c, out):
             ax.scatter(v1, y, color=ORANGE, s=40, zorder=3, label="v1 lawful")
             ax.scatter(v2, y, color=BLUE, s=40, zorder=3, label=world)
             ax.set_yticks(y, allm, fontsize=9)
-            ax.invert_yaxis()
             ax.axvline(0, color=R.INK2, linewidth=0.8)
             ax.set_title(f"object out of view {b}", loc="left", fontsize=10, color=R.INK)
             ax.set_xlabel("skill locating the hidden object", fontsize=9)
@@ -226,6 +226,7 @@ def figures(world, cal, runs, trans, cs, v1c, out):
                 ax.spines[s].set_visible(False)
             ax.grid(axis="x", color=R.GRID, linewidth=0.8)
             ax.set_axisbelow(True)
+        axs[0].invert_yaxis()  # the y axis is shared, so invert it once
         axs[0].legend(fontsize=8, frameon=False, loc="lower right")
         fig.tight_layout()
         p = out / "memory_by_mind.png"
@@ -276,8 +277,9 @@ def build(world, tag="v2"):
     figs = figures(world, cal, runs, trans, cs, v1c, out)
 
     L = ["# umwelt v2: a world where remembering pays", "",
-         f"Chosen world: **{world}**. Preregistration: `docs/preregistration.md`, Amendment 2. Confirmatory data: "
-         "data seed 1 (fresh episodes), learner seeds 0 and 1, all minds.", "", "## Calibration (exploratory, picks the world)", "",
+         f"Chosen world: **{world}**. Preregistration: `docs/preregistration.md`, Amendments 2 to 4 (the design run "
+         "here is Amendment 4's: 8,192 training episodes, 4,000 updates, and the replacement manipulation check M1). "
+         "Confirmatory data: data seed 1 (fresh episodes), learner seeds 0 and 1, all minds.", "", "## Calibration (exploratory, picks the world)", "",
          "Memory value M = 1 - err(human) / err(memoryless): the share of one-step prediction error on held-out episodes "
          "that memory removes. Data seed 0, learner seed 0. Only prediction error was looked at. Stage 1 used 4,000 "
          "updates (Amendment 2); stage 2 used 16,000 (Amendment 3); stage 3 used 8,192 training episodes (Amendment 4).", "",
@@ -291,14 +293,20 @@ def build(world, tag="v2"):
                      f"{g('dark')} | {g('lights_on')} | {g('object_returns')} | {g('other')} |")
     L += ["", "## Validation (v1 criteria, in the chosen world)", ""]
     L += [f"- {R._verdict(ok)} {name}: {detail}" for name, ok, detail in valid]
-    L += ["", "## Preregistered hypotheses (Amendment 2)", ""]
-    L += [f"- {R._verdict(ok)} {name}: {detail}" for name, ok, detail in hyp]
+    L += ["", "## Preregistered hypotheses (Amendments 2 and 4)", ""]
+    weak = not (hyp and hyp[0][1])
+    if weak:
+        L += ["The manipulation check M1 failed, so by Amendments 2 and 4 every hypothesis P1 to P4 below is tested "
+              "under a weaker manipulation than preregistered.", ""]
+    L += [f"- {R._verdict(ok)} {name}" + (" (weak manipulation)" if weak and name.startswith("P") else "") + f": {detail}"
+          for name, ok, detail in hyp]
     L += ["", "## v1 hypotheses re-run in the chosen world (exploratory)", ""]
     L += [f"- {R._verdict(ok)} {name}: {detail}" for name, ok, detail in v1style]
     L += ["", "## Permanence decay curves, every mind (mean of learner seeds)", "",
           "Skill at locating each object relative to the agent, by steps since it was last in view. 0 is a mind that "
           "knows nothing (always guesses the kind's average place), 1 is perfect. Comparisons within a column share one "
-          "baseline; comparisons across columns do not, because objects far from their average place inflate skill.", "",
+          "baseline; comparisons across columns do not, because objects far from their average place inflate skill. "
+          "Raw-sense rows do not depend on the learner seed (same data, same probe seed), so each is one measurement.", "",
           "| mind | in view | 1-5 | 6-20 | 21-60 | 60+ | 1-5 dark | 1-5 lit | 6-20 dark | 6-20 lit |", "|---|---|---|---|---|---|---|---|---|---|"]
     for m in R.ORDER:
         c = mean_curve(cs, m)

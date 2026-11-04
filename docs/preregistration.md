@@ -246,3 +246,12 @@ The bar of 0.10 failed again, by more. Diagnosis, prediction error only:
   passes, there is no confirmatory run in v2.
 - Confirmatory run: as in Amendment 2, with 8,192 training episodes and 4,000 updates, on data seed 1. P1 to P4
   are unchanged. Probes are still fit on 1,024 training episodes.
+
+### Erratum to Amendment 4 (added after the confirmatory run)
+
+Point 4 of the diagnosis says perfect memory would cut overall error by at most about 15 percent. An
+independent recomputation from the error arrays puts the ceiling higher: memoryless error at object-return steps
+is 18 to 19 percent of its total error after the burn-in (dark world, stages 2 and 3), and 22 to 23 percent with
+the first lit steps added. The 15 percent came from rounding the share of return steps (3.7 percent) down to 3
+and ignoring the burn-in. The conclusion is softened, not reversed: a bar of 0.10 on overall M asked a learner to
+capture about half of what a perfect memory with perfect timing could, and no learner here came close.

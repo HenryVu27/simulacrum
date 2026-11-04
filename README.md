@@ -18,7 +18,7 @@ work and the honest novelty claim are in `docs/related-work.md`.
 
 | Path | Holds |
 |---|---|
-| `src/umwelt/world.py` | Flatland: 2D physics in JAX with breakable rules (lawful, impermanent, ghost, nonlocal) |
+| `src/umwelt/world.py` | Flatland: 2D physics in JAX with breakable rules (lawful, impermanent, ghost, nonlocal) and v2 memory worlds (lookback, dark, occluders, occlusion) |
 | `src/umwelt/senses.py` | Every sense as a function of world state: vision rays, ears, nostrils on a scent field, skin, body sense, compass, echolocation |
 | `src/umwelt/presets.py` | The 14 minds, as settings on sense, action and memory dials |
 | `src/umwelt/data.py` | Records each world once, so every mind sees the same history |
@@ -27,6 +27,8 @@ work and the honest novelty claim are in `docs/related-work.md`.
 | `src/umwelt/voe.py` | Violation-of-expectation quadruplets: permanence, solidity, causality |
 | `src/umwelt/translate.py` | Translation maps and representational similarity between minds |
 | `src/umwelt/report.py` | Preregistered checks, mind-versus-world variance split, figures |
+| `src/umwelt/report_v2.py` | v2 (memory world) checks for Amendments 2 to 4, decay curves, calibration figures |
+| `experiments/` | Calibration, overfitting check, world statistics, decay curves, sweep scripts |
 | `cloud/modal_app.py` | The same sweep on cloud GPUs |
 
 ## Run
@@ -37,6 +39,8 @@ uv run pytest -q
 uv run umwelt data                       # record the four worlds
 uv run umwelt run --world lawful --seed 0 # train all 14 minds and run every test
 uv run umwelt report                     # results/report_main/REPORT.md
+experiments/sweep_v2.sh dark             # v2 confirmatory run (8,192 training episodes)
+uv run umwelt report-v2 --world dark     # results/report_v2/REPORT.md
 ```
 
 `--presets` picks a subset of minds, `--steps` sets training length, `--tag` keeps runs apart.

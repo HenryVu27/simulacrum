@@ -1,7 +1,94 @@
 # STATUS
 
-Last updated: 2026-11-04, morning after the overnight build. Read this first, then
-`results/report_main/REPORT.md`.
+Last updated: 2026-11-04, afternoon (v2). Read this first. v2 details: `results/report_v2/REPORT.md`.
+v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
+
+## v2 in one paragraph
+
+v1 found that no mind remembers hidden objects. v2 asked whether that changes when the world makes memory
+pay. It does not, at this learner's size. Four memory worlds were built (`lookback`, `dark`, `occluders`,
+`occlusion`). Calibration then showed why the learner had no reason to remember: memory can only pay at rare
+moments (an object coming back into view, the lights returning), about 4 percent of steps. A remembering
+mind also memorized its 1,024 training episodes. With 8,192 training episodes, the dark world (the v1 lawful
+world plus random lights-out spells) narrowly passed the replacement manipulation check. On fresh data it
+then fell short (memory value at object returns 0.093 and 0.057 against a bar of 0.10). All four
+preregistered v2 hypotheses fail: no mind knows more about a hidden object than its raw senses give, and
+none is surprised by a vanishing object. The world lever is spent. The next lever is the learner.
+
+## v2 results
+
+1. **Making memory pay is harder than it looks.** Memory value M is the share of a memoryless mind's
+   held-out prediction error that a mind with memory removes. Lawful world: 0.019. Calibration ran in three
+   stages, each preregistered before it ran (Amendments 2 to 4):
+   - At 4,000 updates no world reached the bar of 0.10. Long walls (0.013) and look-away-and-back with fast
+     turns (0.003) added nothing. The dark worlds went negative (-0.045, -0.068), yet at the moments they
+     were built for, memory helped a lot: 22 to 30 percent less error on the first lit step, 19 to 23
+     percent when an object returns.
+   - At 16,000 updates M fell further (dark -0.279, occlusion -0.402).
+   - Diagnosis, from prediction error only. (a) Memorization: the remembering mind's error rises 9 percent
+     from training to held-out episodes (memoryless 4 percent). It can recognize an episode by its room and
+     recall when its lights come back. (b) Hedging: on training episodes, its error late in a dark spell
+     matches what an ideal predictor pays. (c) The bar was set too high: memory moments are about 4 percent of
+     steps but carry 18 to 23 percent of the memoryless mind's error, so even perfect memory with perfect
+     timing cuts overall error by about a fifth, and a bar of 0.10 asked for half of that. (Amendment 4 said
+     "at most about 15 percent"; an independent recomputation corrected it, see the erratum.)
+   - With 8,192 training episodes: dark M 0.022 (0.106 at object returns), occlusion 0.017 (0.094). Dark was
+     chosen.
+2. **The manipulation check failed on fresh data.** Confirmatory run: dark world, data seed 1, learner seeds 0
+   and 1, all 14 minds. Overall M 0.016 and 0.013 (memory no longer hurts). M at object returns 0.093 and
+   0.057, below the bar of 0.10 (bootstrap intervals over episodes: seed 0 0.081 to 0.105, a near miss; seed 1
+   0.047 to 0.067, a clear miss). Dark was chosen because it scored 0.106, just over the bar, so some drop on
+   fresh data was expected (a winner's curse). Every hypothesis below is labeled as tested under a weaker
+   manipulation than preregistered.
+3. **P1 to P4 fail.**
+   - P1, permanence: for objects out of view 1 to 5 steps, the human mind scores 0.02, its raw senses 0.00,
+     memoryless -0.03. At 6 to 20 steps: -0.02, -0.02, -0.04.
+   - P2, passive_novest is not below human (6 to 20 steps: -0.01 versus -0.02).
+   - P3, counting: human -0.06, memoryless -0.07.
+   - P4, surprise: human permanence S 0.004 in both seeds, intervals include 0, the same as in v1.
+4. **Exploratory: a brief trace in the first moments of darkness, probably not memory updated by
+   self-motion.** For objects hidden 1 to 5 steps and in a dark spell, the human mind scores 0.014 and 0.088
+   (seeds 0 and 1) against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The
+   minds with no efference copy do as well or better (passive 0.046 and 0.063, passive_novest 0.059 and
+   0.084), so the likeliest reading is that the last lit scene persists briefly in the hidden state, not that
+   the mind tracks objects through its own motion. (Every recurrent mind with eyes also beats memoryless here,
+   but memoryless sits below its own raw senses, so that comparison flatters them.)
+5. **Exploratory: what counts as hidden depends on the body.** Bat and chimera locate objects the eyes cannot
+   see (about 0.17 to 0.19 at 1 to 5 steps, in v1 and v2 alike), because echolocation covers 360 degrees and
+   works in the dark. That is sensing, not memory.
+6. **Exploratory: darkness takes self-location from eyes, not from a compass.** Self-location drops from 0.49
+   to 0.29 for human and from 0.54 to 0.35 for vision_only. Chimera (smell, echolocation, compass) holds 0.68
+   in both worlds. Without an efference copy or body sense, self-motion knowledge falls from 0.53 in v1 to
+   0.30 in the dark (human: 0.84), because the dark also removes optic flow.
+7. **H5 replicates in a second world.** Translation runs from richer minds to poorer ones: human to blind 0.74
+   versus 0.15, human to vision_only 0.96 versus 0.85, dog to smell_only 0.84 versus 0.18.
+
+## v2 engineering
+
+- New world rules (`src/umwelt/world.py`): look-away-and-back policy, turn gain, lights-out spells (applied at
+  the eye in `presets.py`, so echolocation, hearing, smell and touch are unaffected), wall length, friction.
+  Defaults reproduce v1 bit for bit (95 recorded arrays and the surprise-test movies checked).
+- Memory-light pipeline: recordings stream to disk, observation streams are memory-mapped, training batches
+  are gathered on the host. Bit-identical to the old learner after 60 updates. 8,448-episode worlds now fit
+  beside other jobs on this Mac.
+- `experiments/calibrate.py` (memory value per world), `experiments/overfit_check.py` (training versus
+  held-out error), `experiments/world_stats.py` (how often objects leave and return), `experiments/sweep_v2.sh`,
+  `umwelt report-v2`. Tests: 9 passing.
+
+## Next steps, in order
+
+1. Change the learner, not the world. The next-frame objective gives memory little gradient, because memory
+   moments are a few percent of the loss. Candidates, cheapest first: weight the loss toward moments when
+   the senses change in ways the present cannot predict; predict further ahead across dark spells; a larger
+   recurrent core; a learner that attends over past frames. The last two want a GPU (the RTX 5080 machine,
+   through WSL2, would do).
+2. Test the smell-only mind's unnamed features against scent-field variables (from v1, still open).
+3. Nonlinear translation maps, to separate "different frame" from "different content" for the oracle.
+4. Aporia Atlas: join aporias that share claims and tag umwelt results to premises.
+
+---
+
+# v1 (2026-11-04, overnight)
 
 ## What exists
 
@@ -86,7 +173,7 @@ Two jobs from another project ran on this Mac overnight (`b1_probe.py generate -
 10 GB, and `another project's job`). They were left alone. They slowed the sweep through memory
 pressure. `caffeinate` held the Mac awake until the sweep scripts exited.
 
-## Next steps, in order
+## v1 next steps (superseded above)
 
 1. Make memory pay. Add moving objects that pass behind occluders and reappear, a narrower field of
    view, and look-away-and-back behavior. Then rerun the human and memoryless contrast first. This
