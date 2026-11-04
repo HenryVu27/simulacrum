@@ -91,10 +91,11 @@ def _channel(d, s: Sense):
     return d[f"obs_{s.kind}"].astype(np.float32)
 
 
-def observe(d, preset: Preset, dtype=np.float32, chunk=128):
+def observe(d, preset: Preset, dtype=np.float32, chunk=128, path=None):
     """The observation stream (episodes, time, dim) this mind receives from recorded data d.
 
-    Built in chunks of episodes so a large recording never has to sit in memory as float32.
+    Built in chunks of episodes so a large recording never has to sit in memory as float32. With path,
+    the stream is written to a memory-mapped .npy file there instead of held in memory.
     """
     rng = np.random.default_rng(zlib.crc32(preset.name.encode()))
     E = len(d["action"])
@@ -109,7 +110,8 @@ def observe(d, preset: Preset, dtype=np.float32, chunk=128):
             xs.append(x)
         x = np.concatenate(xs, -1)
         if out is None:
-            out = np.empty((E,) + x.shape[1:], dtype)
+            shape = (E,) + x.shape[1:]
+            out = np.empty(shape, dtype) if path is None else np.lib.format.open_memmap(path, "w+", dtype, shape)
         out[i : i + chunk] = x
     return out
 

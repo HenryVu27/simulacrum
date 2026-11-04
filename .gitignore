@@ -7,3 +7,7 @@ results/logs/
 .venv/
 __pycache__/
 *.pyc
+results/cache/
+results/calibration/cache/
+results/calibration/errors/*.npy
+results/runs/**/*_test_errors.npy

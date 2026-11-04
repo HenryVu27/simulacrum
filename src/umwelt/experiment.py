@@ -64,7 +64,9 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
             continue
         p = presets.PRESETS[name]
         t0 = time.time()
-        o = presets.observe(d, p, dtype=np.float16)
+        (RESULTS / "cache").mkdir(exist_ok=True)
+        cache = RESULTS / "cache" / f"{tag}_{world}_s{seed}_d{data_seed}_{name}.npy"
+        o = presets.observe(d, p, dtype=np.float16, path=cache)  # memory-mapped: large recordings fit
         a = presets.actions(d, p)
         mu, sd = learner.standardizer(o[tr])
         for i in range(0, len(o), 128):
@@ -82,9 +84,11 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         tick("train")
         H_pr = learner.batched(L._latents_jit, params, o[pr], a[pr])
         H_te = learner.batched(L._latents_jit, params, o[te], a[te])
-        test_err = float(learner.batched(L._errors_jit, params, o[te], a[te])[:, 16:].mean())
+        step_err = learner.batched(L._errors_jit, params, o[te], a[te])  # (episodes, T-1), for event-level checks
+        np.save(out_dir / f"{name}_test_errors.npy", step_err.astype(np.float16))
+        test_err = float(step_err[:, 16:].mean())
         tick("latents")
-        rec = {"world": world, "seed": seed, "data_seed": data_seed, "preset": name, "obs_dim": int(o.shape[-1]),
+        rec = {"world": world, "seed": seed, "data_seed": data_seed, "n_train": n_train, "preset": name, "obs_dim": int(o.shape[-1]),
                "config": asdict(cfg), "train_log": log, "test_error": test_err}
         rec["probes"] = probes.run_battery(H_pr, T_tr, H_te, T_te, seed)
         tick("probes_mlp")
@@ -111,6 +115,8 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
             pickle.dump((keep_tr[name], keep_te[name]), f)
         with open(path, "w") as f:
             json.dump(_jsonable(rec), f, indent=1)
+        del o
+        cache.unlink()
         pb = rec["probes"]
         print(f"[{world} s{seed}] {name}: {rec['seconds']:.0f}s {timing} test_err {test_err:.3f} | "
               + " ".join(f"{k}={pb[k]:.2f}" for k in probes.CONCEPTS)

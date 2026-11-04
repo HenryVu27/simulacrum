@@ -53,16 +53,20 @@ def rollout_batch(keys, rules: WorldRules, T: int):
     return jax.vmap(rollout, in_axes=(0, None, None))(keys, rules, T)
 
 
-def generate(world: str, n_episodes: int, T: int = 256, seed: int = 0, chunk: int = 128):
+def chunks(world: str, n_episodes: int, T: int = 256, seed: int = 0, chunk: int = 128):
+    """Yield (first episode, record) for consecutive chunks of episodes."""
     rules = WORLDS[world]
     keys = jax.random.split(jax.random.PRNGKey(seed), n_episodes)
-    parts = []
     for i in range(0, n_episodes, chunk):
         a, o, g = rollout_batch(keys[i : i + chunk], rules, T)
         rec = {"action": np.asarray(a, np.float32)}
         rec.update({f"obs_{k}": np.asarray(o[k], np.float16) for k in OBS_KEYS})
         rec.update({f"gt_{k}": np.asarray(v) for k, v in g.items()})
-        parts.append(rec)
+        yield i, rec
+
+
+def generate(world: str, n_episodes: int, T: int = 256, seed: int = 0, chunk: int = 128):
+    parts = [rec for _, rec in chunks(world, n_episodes, T, seed, chunk)]
     return {k: np.concatenate([p[k] for p in parts], 0) for k in parts[0]}
 
 
@@ -76,16 +80,25 @@ def save(world: str, n_episodes: int, T: int = 256, seed: int = 0):
     Each array is stored as its own .npy file so runs can memory-map it instead of holding it in RAM.
     """
     t0 = time.time()
+    out = _dir(world, n_episodes, T, seed)
+    tmp = out.with_name(out.name + ".partial")  # renamed when complete, so a crash never leaves a half recording
+    tmp.mkdir(parents=True, exist_ok=True)
     if world.endswith("_mj"):
         from umwelt import world_mj
 
-        d = world_mj.generate(world[:-3], n_episodes, T, seed)
-    else:
-        d = generate(world, n_episodes, T, seed)
-    out = _dir(world, n_episodes, T, seed)
-    out.mkdir(parents=True, exist_ok=True)
-    for k, v in d.items():
-        np.save(out / f"{k}.npy", v)
+        for k, v in world_mj.generate(world[:-3], n_episodes, T, seed).items():
+            np.save(tmp / f"{k}.npy", v)
+    else:  # stream chunks straight to disk, so a large recording never sits in memory
+        files = {}
+        for i, rec in chunks(world, n_episodes, T, seed):
+            for k, v in rec.items():
+                if k not in files:
+                    files[k] = np.lib.format.open_memmap(tmp / f"{k}.npy", "w+", v.dtype, (n_episodes,) + v.shape[1:])
+                files[k][i : i + len(v)] = v
+        for f in files.values():
+            f.flush()
+        del files
+    tmp.rename(out)
     print(f"{world}: {n_episodes} episodes x {T} steps in {time.time() - t0:.0f}s -> {out.name}")
     return out
 

@@ -11,6 +11,7 @@ spell, step by step.
     uv run python experiments/calibrate.py occlusion                         # both minds, 4,000 updates
     uv run python experiments/calibrate.py occlusion --steps 16000 --mind human
     uv run python experiments/calibrate.py occlusion --steps 16000           # summarize once both exist
+    uv run python experiments/calibrate.py occlusion --episodes 8192 --mind human   # Amendment 4
 """
 
 import argparse
@@ -28,15 +29,18 @@ MINDS = ("human", "memoryless")
 OUT = RESULTS / "calibration"
 
 
-def _name(world, steps):
-    return world if steps == 4000 else f"{world}_u{steps}"  # 4,000-update runs keep their Amendment 2 names
+def _name(world, steps, n_train):
+    # Amendment 2 runs (4,000 updates, 1,024 episodes) keep their plain names.
+    return world + ("" if steps == 4000 else f"_u{steps}") + ("" if n_train == 1024 else f"_n{n_train}")
 
 
-def train_and_score(world, mind, steps):
-    d = load(world, 1280, 256, seed=0)
-    tr, te = slice(0, 1024), slice(1024, 1280)
+def train_and_score(world, mind, steps, n_train):
+    d = load(world, n_train + 256, 256, seed=0)
+    tr, te = slice(0, n_train), slice(n_train, n_train + 256)
     p = presets.PRESETS[mind]
-    o = presets.observe(d, p, dtype=np.float16)
+    (OUT / "cache").mkdir(parents=True, exist_ok=True)
+    cache = OUT / "cache" / f"{_name(world, steps, n_train)}_{mind}.npy"
+    o = presets.observe(d, p, dtype=np.float16, path=cache)  # memory-mapped: large recordings fit
     a = presets.actions(d, p)
     mu, sd = learner.standardizer(o[tr])
     for i in range(0, len(o), 128):
@@ -46,16 +50,20 @@ def train_and_score(world, mind, steps):
                                 verbose=False, log_every=1000)
     err = learner.batched(learner._errors_jit, params, o[te], a[te])  # (E, T-1): error predicting step t+1
     secs = time.time() - t0
+    del o
+    cache.unlink()
+    name = _name(world, steps, n_train)
     (OUT / "errors").mkdir(parents=True, exist_ok=True)
-    np.save(OUT / "errors" / f"{_name(world, steps)}_{mind}.npy", err.astype(np.float32))
-    (OUT / "errors" / f"{_name(world, steps)}_{mind}_log.json").write_text(json.dumps({"seconds": secs, "log": log}))
-    print(f"[{world} u{steps}] {mind} trained in {secs:.0f}s, test error {err[:, 16:].mean():.4f}", flush=True)
+    np.save(OUT / "errors" / f"{name}_{mind}.npy", err.astype(np.float32))
+    (OUT / "errors" / f"{name}_{mind}_log.json").write_text(json.dumps({"seconds": secs, "log": log}))
+    print(f"[{name}] {mind} trained in {secs:.0f}s, test error {err[:, 16:].mean():.4f}", flush=True)
 
 
-def summarize(world, steps):
-    errs = {m: np.load(OUT / "errors" / f"{_name(world, steps)}_{m}.npy") for m in MINDS}
-    d = load(world, 1280, 256, seed=0)
-    te = slice(1024, 1280)
+def summarize(world, steps, n_train):
+    name = _name(world, steps, n_train)
+    errs = {m: np.load(OUT / "errors" / f"{name}_{m}.npy") for m in MINDS}
+    d = load(world, n_train + 256, 256, seed=0)
+    te = slice(n_train, n_train + 256)
     vis = np.asarray(d["gt_vis180"][te]) & np.asarray(d["gt_obj_active"][te])
     lit = np.asarray(d["gt_light"][te]) if "gt_light" in d else np.ones(vis.shape[:2], bool)  # v1 data: always lit
     light, lit_prev = lit[:, 1:], lit[:, :-1]
@@ -64,7 +72,7 @@ def summarize(world, steps):
     masks = {"all": np.ones_like(light, bool), "dark": ~light, "lights_on": light & ~lit_prev,
              "object_returns": returns, "other": light & lit_prev & ~returns}
     burn = np.arange(light.shape[1]) >= 16  # same burn-in as v1 test_error
-    out = {"world": world, "updates": steps}
+    out = {"world": world, "updates": steps, "episodes": n_train}
     for name, m in masks.items():
         m = m & burn[None]
         if not m.any():
@@ -83,11 +91,11 @@ def summarize(world, steps):
         out["dark_course"] = {m: [float(errs[m][(into == k) & burn[None]].mean()) for k in range(1, 31)] for m in MINDS}
         out["after_lights_on"] = {m: [float(errs[m][(after == k) & burn[None]].mean()) for k in range(0, 11)] for m in MINDS}
     for m in MINDS:
-        log = json.loads((OUT / "errors" / f"{_name(world, steps)}_{m}_log.json").read_text())
+        log = json.loads((OUT / "errors" / f"{name}_{m}_log.json").read_text())
         out[f"seconds_{m}"] = round(log["seconds"])
         out[f"train_log_{m}"] = log["log"]
-    (OUT / f"{_name(world, steps)}.json").write_text(json.dumps(out, indent=1))
-    print(f"[{world} u{steps}] M = {out['M']:.3f} | " + " ".join(
+    (OUT / f"{name}.json").write_text(json.dumps(out, indent=1))
+    print(f"[{name}] M = {out['M']:.3f} | " + " ".join(
         f"{k}: M={v['M']:.3f} ({v['share_of_steps']:.0%} of steps)" for k, v in out.items()
         if isinstance(v, dict) and "M" in v), flush=True)
 
@@ -97,8 +105,9 @@ if __name__ == "__main__":
     ap.add_argument("world")
     ap.add_argument("--steps", type=int, default=4000)
     ap.add_argument("--mind", choices=MINDS)
+    ap.add_argument("--episodes", type=int, default=1024, help="training episodes (Amendment 4: 8192)")
     args = ap.parse_args()
     for m in [args.mind] if args.mind else MINDS:
-        train_and_score(args.world, m, args.steps)
-    if all((OUT / "errors" / f"{_name(args.world, args.steps)}_{m}.npy").exists() for m in MINDS):
-        summarize(args.world, args.steps)
+        train_and_score(args.world, m, args.steps, args.episodes)
+    if all((OUT / "errors" / f"{_name(args.world, args.steps, args.episodes)}_{m}.npy").exists() for m in MINDS):
+        summarize(args.world, args.steps, args.episodes)

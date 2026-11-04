@@ -126,32 +126,40 @@ def loss_fn(p, obs, act, burn_in, obs_in=None):
 
 
 def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, verbose=True):
-    """obs (E, T, D) standardized, act (E, T, 2). Returns trained params and a loss log."""
+    """obs (E, T, D) standardized, act (E, T, 2). Returns trained params and a loss log.
+
+    Batches are gathered on the host, so obs can be a memory-mapped array larger than free memory.
+    """
     E, T, D = obs.shape
     key = jax.random.PRNGKey(seed)
     key, kinit = jax.random.split(key)
     p = init(kinit, D, cfg, recurrent)
     opt = optax.chain(optax.clip_by_global_norm(1.0), optax.adamw(cfg.lr, weight_decay=1e-4))
     state = opt.init(p)
-    obs_j, act_j = jnp.asarray(obs), jnp.asarray(act)
 
     @jax.jit
-    def update(p, state, key):
+    def sample(key):
         k1, k2, k3 = jax.random.split(key, 3)
         ep = jax.random.randint(k1, (cfg.batch,), 0, E)
         start = jax.random.randint(k2, (cfg.batch,), 0, T - cfg.window + 1)
-        idx = start[:, None] + jnp.arange(cfg.window)[None]
-        o = obs_j[ep[:, None], idx].astype(jnp.float32)
-        a = act_j[ep[:, None], idx]
+        return ep, start, k3
+
+    @jax.jit
+    def update(p, state, o, a, k3):
         keep = jax.random.bernoulli(k3, 1.0 - cfg.obs_dropout, o.shape[:2])[..., None]
         (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in, o * keep)
         upd, state = opt.update(g, state, p)
         return optax.apply_updates(p, upd), state, loss, aux
 
+    window = np.arange(cfg.window)[None]
     log = []
     for i in range(cfg.steps):
         key, k = jax.random.split(key)
-        p, state, loss, (l1, l5) = update(p, state, k)
+        ep, start, k3 = sample(k)
+        ep, idx = np.asarray(ep)[:, None], np.asarray(start)[:, None] + window
+        o = jnp.asarray(obs[ep, idx], jnp.float32)
+        a = jnp.asarray(act[ep, idx], jnp.float32)
+        p, state, loss, (l1, l5) = update(p, state, o, a, k3)
         if i % log_every == 0 or i == cfg.steps - 1:
             log.append((i, float(loss), float(l1), float(l5)))
             if verbose:

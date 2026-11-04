@@ -28,6 +28,7 @@ def main():
     r.add_argument("--no-controls", action="store_true")
     r.add_argument("--tag", default="main")
     r.add_argument("--data-seed", type=int, default=0, help="which recording of the world to train and test on")
+    r.add_argument("--n-train", type=int, default=1024, help="training episodes (Amendment 4: 8192)")
 
     rp = sub.add_parser("report", help="aggregate results into tables, figures and REPORT.md")
     rp.add_argument("--tag", default="main")
@@ -49,7 +50,7 @@ def main():
         cfg = learner.LearnerConfig(steps=args.steps, horizons=tuple(args.horizons), obs_dropout=args.obs_dropout,
                                     objective=args.objective)
         run_world(args.world, args.seed, args.presets, cfg, controls=not args.no_controls, tag=args.tag,
-                  data_seed=args.data_seed)
+                  data_seed=args.data_seed, n_train=args.n_train)
     elif args.cmd == "atlas":
         from umwelt.atlas import build as build_atlas
 

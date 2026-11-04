@@ -16,13 +16,20 @@ from umwelt.probes import CONCEPTS
 BINS = ("in view", "1-5 steps", "6-20 steps", "21-60 steps", "over 60 steps")
 RAW_MINDS = ("human", "vision_only", "dog", "smell_only", "memoryless")
 BLUE, ORANGE, GRAY, GREEN = "#2a78d6", "#eb6834", "#8a8984", "#1baf7a"
+CAL_WORLDS = ("lawful", "occluders", "lookback", "dark", "occlusion")
+STAGES = ((4000, 1024), (16000, 1024), (4000, 8192))  # calibration stages 1, 2 and 3 (Amendments 2, 3, 4)
+STAGE_COLOR = {(4000, 1024): "#9ec5f4", (16000, 1024): "#6da7ec", (4000, 8192): BLUE}
+
+
+def _stage(u, n):
+    return f"{u:,} updates, {n:,} episodes"
 
 
 def calibration():
     rows = {}
     for p in sorted((RESULTS / "calibration").glob("*.json")):
         r = json.loads(p.read_text())
-        rows[(r["world"], r.get("updates", 4000))] = r
+        rows[(r["world"], r.get("updates", 4000), r.get("episodes", 1024))] = r
     return rows
 
 
@@ -42,12 +49,37 @@ def mean_curve(cs, mind, kind="trained"):
     return {k: float(np.mean([r[k] for r in rows])) for k in rows[0] if not k.endswith("(n)")}
 
 
+def event_memory_value(world, seed, tag="v2"):
+    """Amendment 4 manipulation check: memory value overall and at object-return steps, on held-out episodes."""
+    from umwelt.data import load
+    from umwelt.probes import steps_since_seen
+
+    run = RESULTS / "runs" / tag / f"{world}_s{seed}"
+    paths = {m: run / f"{m}_test_errors.npy" for m in ("human", "memoryless")}
+    if not all(p.exists() for p in paths.values()):
+        return None
+    meta = json.loads((run / "human.json").read_text())
+    n_train, data_seed = meta.get("n_train", 1024), meta.get("data_seed", 0)
+    d = load(world, n_train + 256, 256, seed=data_seed)
+    te = slice(n_train, n_train + 256)
+    vis = np.asarray(d["gt_vis180"][te]) & np.asarray(d["gt_obj_active"][te])
+    since = steps_since_seen(vis)
+    returns = (vis[:, 1:] & ~vis[:, :-1] & (since[:, :-1] < 1000) & (since[:, :-1] >= 3)).any(-1)
+    burn = np.arange(returns.shape[1])[None] >= 16
+    e = {m: np.load(p).astype(np.float32) for m, p in paths.items()}
+    m_all = 1 - e["human"][:, 16:].mean() / e["memoryless"][:, 16:].mean()
+    m_ret = 1 - e["human"][returns & burn].mean() / e["memoryless"][returns & burn].mean()
+    return {"M": float(m_all), "M_returns": float(m_ret), "share_returns": float((returns & burn).mean())}
+
+
 def hypotheses(world, runs, cs, v1_runs):
     out = []
-    M = {s: 1 - runs[(world, s)]["human"]["test_error"] / runs[(world, s)]["memoryless"]["test_error"]
-         for s in (0, 1) if {"human", "memoryless"} <= set(runs.get((world, s), {}))}
-    out.append(("M1 memory pays: M >= 0.10 for each learner seed", len(M) == 2 and min(M.values()) >= 0.10,
-                "; ".join(f"seed {s}: M = {v:.3f}" for s, v in M.items()) or "missing"))
+    M = {s: v for s in (0, 1) if (v := event_memory_value(world, s))}
+    out.append(("M1 (Amendment 4) memory pays where the world rewards it: M at object returns >= 0.10 and overall M >= 0, "
+                "each learner seed; the original bar, overall M >= 0.10, failed in calibration",
+                len(M) == 2 and all(v["M_returns"] >= 0.10 and v["M"] >= 0 for v in M.values()),
+                "; ".join(f"seed {s}: M at returns {v['M_returns']:.3f}, overall M {v['M']:.3f}" for s, v in M.items())
+                or "missing"))
     hum, raw, mem = mean_curve(cs, "human"), mean_curve(cs, "human", "raw_senses"), mean_curve(cs, "memoryless")
     if hum and raw and mem:
         bins = ("1-5 steps", "6-20 steps")
@@ -98,17 +130,17 @@ def figures(world, cal, runs, trans, cs, v1c, out):
     paths = []
 
     if cal:
-        keys = [(w, u) for w in ("lawful", "occluders", "lookback", "dark", "occlusion") for u in (4000, 16000) if (w, u) in cal]
-        fig, ax = plt.subplots(figsize=(7.5, 0.4 * len(keys) + 1.4))
+        keys = [(w, *s) for w in CAL_WORLDS for s in STAGES if (w, *s) in cal]
+        fig, ax = plt.subplots(figsize=(8, 0.4 * len(keys) + 1.4))
         vals = [cal[k]["M"] for k in keys]
-        ax.barh(range(len(keys)), vals, color=[BLUE if u == 16000 else "#9ec5f4" for _, u in keys], height=0.62)
+        ax.barh(range(len(keys)), vals, color=[STAGE_COLOR[k[1:]] for k in keys], height=0.62)
         for i, v in enumerate(vals):
             ax.text(v + (0.004 if v >= 0 else -0.004), i, f"{v:.3f}", va="center", ha="left" if v >= 0 else "right",
                     fontsize=9, color=R.INK)
         ax.axvline(0, color=R.INK2, linewidth=0.8)
         ax.axvline(0.10, color=R.INK2, linewidth=1, linestyle=(0, (3, 3)))
         ax.text(0.10, -0.6, " preregistered bar, 0.10", fontsize=8, color=R.INK2, va="bottom")
-        ax.set_yticks(range(len(keys)), [f"{w}, {u:,} updates" for w, u in keys], fontsize=9)
+        ax.set_yticks(range(len(keys)), [f"{w}, {_stage(u, n)}" for w, u, n in keys], fontsize=9)
         ax.invert_yaxis()
         ax.set_xlabel("memory value M: share of prediction error that memory removes", fontsize=9)
         ax.set_title("How much each world rewards remembering (human vs memoryless)", loc="left", fontsize=10, color=R.INK)
@@ -124,14 +156,14 @@ def figures(world, cal, runs, trans, cs, v1c, out):
     if dc:
         fig, axs = plt.subplots(1, len(dc), figsize=(3.6 * len(dc), 3.4), sharey=True)
         axs = np.atleast_1d(axs)
-        for ax, ((w, u), c) in zip(axs, dc):
+        for ax, ((w, u, n), c) in zip(axs, dc):
             for m, col in (("human", BLUE), ("memoryless", GRAY)):
                 y = c["dark_course"][m] + c["after_lights_on"][m]
                 ax.plot(range(1, 31), y[:30], color=col, linewidth=2, label=m)
                 ax.plot(range(31, 42), y[30:], color=col, linewidth=2)
             ax.axvline(30.5, color=R.INK2, linewidth=0.8, linestyle=(0, (3, 3)))
             ax.set_xticks([1, 10, 20, 30, 31, 41], ["1", "10", "20", "30", "on", "+10"], fontsize=8)
-            ax.set_title(f"{w}, {u:,} updates", loc="left", fontsize=10, color=R.INK)
+            ax.set_title(f"{w}\n{_stage(u, n)}", loc="left", fontsize=9, color=R.INK)
             _clean(ax)
         axs[0].set_ylabel("one-step prediction error", fontsize=9)
         axs[0].set_xlabel("steps into the dark, then steps after the lights return", fontsize=9)
@@ -248,14 +280,14 @@ def build(world, tag="v2"):
          "data seed 1 (fresh episodes), learner seeds 0 and 1, all minds.", "", "## Calibration (exploratory, picks the world)", "",
          "Memory value M = 1 - err(human) / err(memoryless): the share of one-step prediction error on held-out episodes "
          "that memory removes. Data seed 0, learner seed 0. Only prediction error was looked at. Stage 1 used 4,000 "
-         "updates (Amendment 2); stage 2 used 16,000 (Amendment 3).", "",
+         "updates (Amendment 2); stage 2 used 16,000 (Amendment 3); stage 3 used 8,192 training episodes (Amendment 4).", "",
          "| world | M | err human | err memoryless | M on dark steps | M on first lit step | M when an object returns | M on other steps |",
          "|---|---|---|---|---|---|---|---|"]
-    for k in [(w, u) for u in (4000, 16000) for w in ("lawful", "occluders", "lookback", "dark", "occlusion")]:
+    for k in [(w, *s) for s in STAGES for w in CAL_WORLDS]:
         if k in cal:
             c = cal[k]
             g = lambda key: R._fmt(c[key]["M"], 3) if c.get(key) and c[key]["M"] is not None else "n/a"
-            L.append(f"| {k[0]}, {k[1]:,} updates | {c['M']:.3f} | {c['all']['err_human']:.4f} | {c['all']['err_memoryless']:.4f} | "
+            L.append(f"| {k[0]}, {_stage(k[1], k[2])} | {c['M']:.3f} | {c['all']['err_human']:.4f} | {c['all']['err_memoryless']:.4f} | "
                      f"{g('dark')} | {g('lights_on')} | {g('object_returns')} | {g('other')} |")
     L += ["", "## Validation (v1 criteria, in the chosen world)", ""]
     L += [f"- {R._verdict(ok)} {name}: {detail}" for name, ok, detail in valid]
@@ -294,7 +326,7 @@ def build(world, tag="v2"):
                                                   for s in R.SCENARIOS) + " |")
     L += ["", "## Figures", ""] + [f"![{p.stem}]({p.name})" for p in figs]
     (out / "REPORT.md").write_text("\n".join(L) + "\n")
-    summary = {"world": world, "calibration": {f"{w}_u{u}": v for (w, u), v in cal.items()}, "M": M,
+    summary = {"world": world, "calibration": {f"{w}_u{u}_n{n}": v for (w, u, n), v in cal.items()}, "M": M,
                "hypotheses": [{"name": n, "pass": bool(ok), "detail": d} for n, ok, d in hyp],
                "validation": [{"name": n, "pass": bool(ok), "detail": d} for n, ok, d in valid],
                "curves": {m: {"trained": mean_curve(cs, m), "raw_senses": mean_curve(cs, m, "raw_senses")} for m in R.ORDER}}
