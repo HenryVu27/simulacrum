@@ -1,0 +1,37 @@
+{
+ "world": "lookback",
+ "seconds_human": 387,
+ "seconds_memoryless": 238,
+ "all": {
+  "share_of_steps": 0.9372549019607843,
+  "err_human": 0.3127295970916748,
+  "err_memoryless": 0.31372275948524475,
+  "M": 0.003165721893310547
+ },
+ "dark": {
+  "share_of_steps": 0.0,
+  "err_human": NaN,
+  "err_memoryless": NaN,
+  "M": null
+ },
+ "lights_on": {
+  "share_of_steps": 0.0,
+  "err_human": NaN,
+  "err_memoryless": NaN,
+  "M": null
+ },
+ "object_returns": {
+  "share_of_steps": 0.05704656862745098,
+  "err_human": 0.5131351351737976,
+  "err_memoryless": 0.5037586688995361,
+  "M": -0.018612980842590332
+ },
+ "other": {
+  "share_of_steps": 0.8802083333333334,
+  "err_human": 0.2997412383556366,
+  "err_memoryless": 0.30140647292137146,
+  "M": 0.005524873733520508
+ },
+ "M": 0.003165721893310547,
+ "updates": 4000
+}

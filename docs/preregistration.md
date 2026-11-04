@@ -162,3 +162,41 @@ The learner, the probes, the surprise tests and the minds are unchanged from v1.
   affected by turning (smell_only).
 - The surprise-test movies are unchanged from v1 (lit, still agent, short wall as the screen), so they test
   transfer from the v2 training world to a standard test.
+
+## Amendment 3 (2026-11-04, after calibration stage 1, before any confirmatory run)
+
+Written after the Amendment 2 calibration and before any confirmatory run, probe, surprise test or
+hidden-state analysis in a v2 world.
+
+### What calibration found (4,000 updates)
+
+| world | M | M, dark steps | M, first lit step | M, object returns | M, other steps |
+|---|---|---|---|---|---|
+| lawful (reference) | 0.019 | | | 0.014 | 0.020 |
+| occluders | 0.013 | | | 0.012 | 0.013 |
+| lookback | 0.003 | | | -0.019 | 0.006 |
+| dark | -0.045 | -0.216 | 0.217 | 0.185 | -0.045 |
+| occlusion | -0.068 | -0.374 | 0.305 | 0.230 | -0.042 |
+
+No world reached M of 0.10. In the two worlds with dark spells, memory removes 22 to 30 percent of the error on
+the first lit step and 19 to 23 percent when an object returns to view: the moments these worlds were built to
+reward. But the recurrent mind is worse than the memoryless one during dark spells and on ordinary lit steps,
+where in the lawful world it was 2 percent better. Lookback and occluders alone add nothing.
+
+### Reading
+
+At 4,000 updates, M measures how fast each learner fits as well as what memory is worth. v1's long run showed
+the human mind still improving at 16,000 updates (test error 0.227 at 4,000, 0.190 at 16,000). A memoryless mind
+has less to learn and fits sooner. Amendment 2's fallback would choose occluders (M 0.013), a world that rewards
+memory less than lawful does; a confirmatory run there would repeat v1 and test nothing.
+
+### Change
+
+- Calibration stage 2: human and memoryless at 16,000 updates in dark, occlusion and lawful (reference). Data
+  seed 0, learner seed 0, otherwise the v1 learner. Prediction error only, as before.
+- Selection rule: the world with the larger M among dark and occlusion, if it reaches 0.10.
+- If one passes, the confirmatory run is Amendment 2's design with 16,000 updates for every mind. Hypotheses
+  M1 and P1 to P4 are unchanged; M1 is checked at 16,000 updates.
+- If neither passes, the v2 confirmatory run is not done. The report states that making memory pay at specific
+  moments was not enough for this learner at this budget, and the next amendment changes the learner, not the
+  world.

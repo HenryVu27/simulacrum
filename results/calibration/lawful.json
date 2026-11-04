@@ -1,0 +1,37 @@
+{
+ "world": "lawful",
+ "seconds_human": 397,
+ "seconds_memoryless": 235,
+ "all": {
+  "share_of_steps": 0.9372549019607843,
+  "err_human": 0.22724440693855286,
+  "err_memoryless": 0.23169022798538208,
+  "M": 0.019188642501831055
+ },
+ "dark": {
+  "share_of_steps": 0.0,
+  "err_human": NaN,
+  "err_memoryless": NaN,
+  "M": null
+ },
+ "lights_on": {
+  "share_of_steps": 0.0,
+  "err_human": NaN,
+  "err_memoryless": NaN,
+  "M": null
+ },
+ "object_returns": {
+  "share_of_steps": 0.035386029411764705,
+  "err_human": 0.3375827968120575,
+  "err_memoryless": 0.34230175614356995,
+  "M": 0.013785958290100098
+ },
+ "other": {
+  "share_of_steps": 0.9018688725490196,
+  "err_human": 0.22291512787342072,
+  "err_memoryless": 0.22735023498535156,
+  "M": 0.01950782537460327
+ },
+ "M": 0.019188642501831055,
+ "updates": 4000
+}

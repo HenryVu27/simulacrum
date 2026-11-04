@@ -1,17 +1,20 @@
-"""Amendment 2 calibration: how much does memory cut prediction error in a world?
+"""Calibration (Amendments 2 and 3): how much does memory cut prediction error in a world?
 
 Trains human and memoryless (data seed 0, learner seed 0, the v1 learner) and reports memory value
 M = 1 - err(human) / err(memoryless) on held-out episodes. By the preregistered rule only prediction
 error is looked at here: no probes, no surprise tests, and the trained models are not kept.
 
 The breakdown says where the gap comes from: steps in the dark, the first lit step after a dark spell,
-and steps where an object comes back into view.
+steps where an object comes back into view, and everything else. It also traces error through a dark
+spell, step by step.
 
-    uv run python experiments/calibrate.py occlusion
+    uv run python experiments/calibrate.py occlusion                         # both minds, 4,000 updates
+    uv run python experiments/calibrate.py occlusion --steps 16000 --mind human
+    uv run python experiments/calibrate.py occlusion --steps 16000           # summarize once both exist
 """
 
+import argparse
 import json
-import sys
 import time
 
 import numpy as np
@@ -21,8 +24,15 @@ from umwelt.data import load
 from umwelt.experiment import RESULTS
 from umwelt.probes import steps_since_seen
 
+MINDS = ("human", "memoryless")
+OUT = RESULTS / "calibration"
 
-def errors(world, mind, cfg):
+
+def _name(world, steps):
+    return world if steps == 4000 else f"{world}_u{steps}"  # 4,000-update runs keep their Amendment 2 names
+
+
+def train_and_score(world, mind, steps):
     d = load(world, 1280, 256, seed=0)
     tr, te = slice(0, 1024), slice(1024, 1280)
     p = presets.PRESETS[mind]
@@ -32,19 +42,19 @@ def errors(world, mind, cfg):
     for i in range(0, len(o), 128):
         o[i : i + 128] = (o[i : i + 128].astype(np.float32) - mu) / sd
     t0 = time.time()
-    params, _ = learner.train(o[tr], a[tr], cfg, seed=0, recurrent=p.recurrent, verbose=False)
+    params, log = learner.train(o[tr], a[tr], learner.LearnerConfig(steps=steps), seed=0, recurrent=p.recurrent,
+                                verbose=False, log_every=1000)
     err = learner.batched(learner._errors_jit, params, o[te], a[te])  # (E, T-1): error predicting step t+1
-    return err, time.time() - t0, d
+    secs = time.time() - t0
+    (OUT / "errors").mkdir(parents=True, exist_ok=True)
+    np.save(OUT / "errors" / f"{_name(world, steps)}_{mind}.npy", err.astype(np.float32))
+    (OUT / "errors" / f"{_name(world, steps)}_{mind}_log.json").write_text(json.dumps({"seconds": secs, "log": log}))
+    print(f"[{world} u{steps}] {mind} trained in {secs:.0f}s, test error {err[:, 16:].mean():.4f}", flush=True)
 
 
-def main(world):
-    cfg = learner.LearnerConfig()
-    out = {"world": world}
-    errs = {}
-    for mind in ("human", "memoryless"):
-        errs[mind], secs, d = errors(world, mind, cfg)
-        out[f"seconds_{mind}"] = round(secs)
-        print(f"[{world}] {mind} trained in {secs:.0f}s, test error {errs[mind][:, 16:].mean():.4f}", flush=True)
+def summarize(world, steps):
+    errs = {m: np.load(OUT / "errors" / f"{_name(world, steps)}_{m}.npy") for m in MINDS}
+    d = load(world, 1280, 256, seed=0)
     te = slice(1024, 1280)
     vis = np.asarray(d["gt_vis180"][te]) & np.asarray(d["gt_obj_active"][te])
     lit = np.asarray(d["gt_light"][te]) if "gt_light" in d else np.ones(vis.shape[:2], bool)  # v1 data: always lit
@@ -54,19 +64,41 @@ def main(world):
     masks = {"all": np.ones_like(light, bool), "dark": ~light, "lights_on": light & ~lit_prev,
              "object_returns": returns, "other": light & lit_prev & ~returns}
     burn = np.arange(light.shape[1]) >= 16  # same burn-in as v1 test_error
+    out = {"world": world, "updates": steps}
     for name, m in masks.items():
         m = m & burn[None]
-        h, z = errs["human"][m].mean() if m.any() else np.nan, errs["memoryless"][m].mean() if m.any() else np.nan
+        if not m.any():
+            continue
+        h, z = errs["human"][m].mean(), errs["memoryless"][m].mean()
         out[name] = {"share_of_steps": float(m.mean()), "err_human": float(h), "err_memoryless": float(z),
-                     "M": float(1 - h / z) if m.any() else None}
+                     "M": float(1 - h / z)}
     out["M"] = out["all"]["M"]
-    path = RESULTS / "calibration" / f"{world}.json"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(out, indent=1))
-    print(f"[{world}] M = {out['M']:.3f} | " + " ".join(
+    if (~lit).any():  # error through a dark spell: k steps into the dark, and k steps after the lights return
+        into = np.zeros_like(lit, int)
+        after = np.full_like(lit, 999, int)
+        for t in range(1, lit.shape[1]):
+            into[:, t] = np.where(~lit[:, t], np.where(lit[:, t - 1], 1, into[:, t - 1] + 1), 0)
+            after[:, t] = np.where(lit[:, t], np.where(~lit[:, t - 1], 0, np.minimum(after[:, t - 1] + 1, 999)), 999)
+        into, after = into[:, 1:], after[:, 1:]  # aligned with the step being predicted
+        out["dark_course"] = {m: [float(errs[m][(into == k) & burn[None]].mean()) for k in range(1, 31)] for m in MINDS}
+        out["after_lights_on"] = {m: [float(errs[m][(after == k) & burn[None]].mean()) for k in range(0, 11)] for m in MINDS}
+    for m in MINDS:
+        log = json.loads((OUT / "errors" / f"{_name(world, steps)}_{m}_log.json").read_text())
+        out[f"seconds_{m}"] = round(log["seconds"])
+        out[f"train_log_{m}"] = log["log"]
+    (OUT / f"{_name(world, steps)}.json").write_text(json.dumps(out, indent=1))
+    print(f"[{world} u{steps}] M = {out['M']:.3f} | " + " ".join(
         f"{k}: M={v['M']:.3f} ({v['share_of_steps']:.0%} of steps)" for k, v in out.items()
-        if isinstance(v, dict) and v["M"] is not None), flush=True)
+        if isinstance(v, dict) and "M" in v), flush=True)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    ap = argparse.ArgumentParser()
+    ap.add_argument("world")
+    ap.add_argument("--steps", type=int, default=4000)
+    ap.add_argument("--mind", choices=MINDS)
+    args = ap.parse_args()
+    for m in [args.mind] if args.mind else MINDS:
+        train_and_score(args.world, m, args.steps)
+    if all((OUT / "errors" / f"{_name(args.world, args.steps)}_{m}.npy").exists() for m in MINDS):
+        summarize(args.world, args.steps)
