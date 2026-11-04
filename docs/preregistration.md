@@ -64,3 +64,21 @@ If a criterion fails, the report says so and the affected concepts are reported 
 - The simulator's ontology (discrete objects, collisions) is code we wrote. Findings are about how this kind
   of body in this kind of world shapes concepts, and need the second-engine audit before any broader claim.
 - Probes show that information is decodable, not that the mind uses it. Causal-use tests come later.
+
+## Amendment 1 (2026-11-04, before the main sweep)
+
+Made after the pilot and an A/B test, before any main-sweep result existed.
+
+1. Learner unchanged from the preregistration (one-step and five-step heads). An A/B test on the human mind
+   at 4,000 updates compared far horizons of 5, 5 and 15, and 5, 15 and 30 steps, plus observational dropout
+   of 30 percent (Freeman, Metz and Ha 2019). All four scored the same on object_hidden (0.18 to 0.19) as raw
+   senses (0.17). At this budget the learner is mostly reactive. H1 and H6 are kept as written and may fail
+   for that reason. Logs: results/logs/ab (not committed).
+2. Seeds reduced to fit one night on a laptop: lawful has seeds 0 and 1; impermanent, ghost and nonlocal have
+   seed 0. Seed noise in the ANOVA is estimated from the lawful cells.
+3. Untrained and raw-sense controls run in the lawful world and the lawful MuJoCo world only. V2, V3 and H1
+   only use those cells.
+4. Exploratory probes added: object_allo_seen and object_allo_hidden, where each object is in the room
+   rather than relative to the agent. They separate object memory from self-localization. No prediction.
+5. MuJoCo audit worlds: lawful_mj, impermanent_mj and ghost_mj, seed 0. The surprise-test movies are rendered
+   by the Flatland sense functions for every mind, including those trained on MuJoCo data.

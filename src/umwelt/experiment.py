@@ -64,7 +64,8 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         o = presets.observe(d, p)
         a = presets.actions(d, p)
         mu, sd = learner.standardizer(o[tr])
-        o = (o - mu) / sd
+        o -= mu
+        o /= sd
         print(f"[{world} s{seed}] {name}: obs dim {o.shape[-1]}, training", flush=True)
         timing, last = {}, [time.time()]
 

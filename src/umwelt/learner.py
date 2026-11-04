@@ -12,7 +12,6 @@ import jax.numpy as jnp
 import numpy as np
 import optax
 
-HORIZON = 5
 
 
 @dataclass(frozen=True)
@@ -25,6 +24,8 @@ class LearnerConfig:
     window: int = 96
     burn_in: int = 16
     lr: float = 3e-4
+    horizons: tuple = (5,)  # far heads: predict o_{t+k} given the next k actions
+    obs_dropout: float = 0.0  # training only: chance a step's senses are blanked, so prediction must lean on memory
 
 
 def _dense(key, n_in, n_out):
@@ -39,9 +40,11 @@ def init(key, obs_dim, cfg: LearnerConfig, recurrent=True):
         "enc2": _dense(ks[1], E, E),
         "dec1": _dense(ks[2], H + 2, cfg.dec),
         "dec2": _dense(ks[3], cfg.dec, obs_dim),
-        "far1": _dense(ks[4], H + 2 * HORIZON, cfg.dec),
-        "far2": _dense(ks[5], cfg.dec, obs_dim),
     }
+    for i, k in enumerate(cfg.horizons):
+        kk = jax.random.split(jax.random.fold_in(ks[4], i))
+        p[f"far{k}_1"] = _dense(kk[0], H + 2 * k, cfg.dec)
+        p[f"far{k}_2"] = _dense(kk[1], cfg.dec, obs_dim)
     if recurrent:
         p["gru_x"] = _dense(ks[6], E, 3 * H)
         w = jnp.concatenate([jax.random.orthogonal(k, H) for k in jax.random.split(ks[7], 3)], 1)
@@ -86,18 +89,23 @@ def latents(p, obs, act):
     return jnp.swapaxes(core_scan(p, jnp.swapaxes(e, 0, 1)), 0, 1)
 
 
-def _future_actions(act):
-    """For each t, the next HORIZON actions a_{t+1..t+HORIZON}, zero padded at the end."""
+def _future_actions(act, k):
+    """For each t, the next k actions a_{t+1..t+k}, zero padded at the end."""
     T = act.shape[1]
-    pad = jnp.pad(act, ((0, 0), (0, HORIZON), (0, 0)))
-    return jnp.concatenate([pad[:, k : k + T] for k in range(1, HORIZON + 1)], -1)
+    pad = jnp.pad(act, ((0, 0), (0, k), (0, 0)))
+    return jnp.concatenate([pad[:, j : j + T] for j in range(1, k + 1)], -1)
+
+
+def horizons_of(p):
+    return sorted(int(name[3:].split("_")[0]) for name in p if name.startswith("far") and name.endswith("_1"))
 
 
 def predict(p, h, act):
-    """One-step and HORIZON-step predictions from hidden states."""
+    """One-step prediction and one prediction per far horizon k, from hidden states."""
     a_next = jnp.pad(act[:, 1:], ((0, 0), (0, 1), (0, 0)))
     near = _lin(p["dec2"], jax.nn.gelu(_lin(p["dec1"], jnp.concatenate([h, a_next], -1))))
-    far = _lin(p["far2"], jax.nn.gelu(_lin(p["far1"], jnp.concatenate([h, _future_actions(act)], -1))))
+    far = {k: _lin(p[f"far{k}_2"], jax.nn.gelu(_lin(p[f"far{k}_1"], jnp.concatenate([h, _future_actions(act, k)], -1))))
+           for k in horizons_of(p)}
     return near, far
 
 
@@ -108,12 +116,12 @@ def step_errors(p, obs, act):
     return jnp.mean((near[:, :-1] - obs[:, 1:]) ** 2, -1)
 
 
-def loss_fn(p, obs, act, burn_in):
-    h = latents(p, obs, act)
+def loss_fn(p, obs, act, burn_in, obs_in=None):
+    h = latents(p, obs if obs_in is None else obs_in, act)
     near, far = predict(p, h, act)
     l1 = jnp.mean((near[:, burn_in:-1] - obs[:, burn_in + 1 :]) ** 2)
-    l5 = jnp.mean((far[:, burn_in:-HORIZON] - obs[:, burn_in + HORIZON :]) ** 2)
-    return l1 + 0.5 * l5, (l1, l5)
+    lf = jnp.mean(jnp.stack([jnp.mean((f[:, burn_in:-k] - obs[:, burn_in + k :]) ** 2) for k, f in far.items()]))
+    return l1 + 0.5 * lf, (l1, lf)
 
 
 def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, verbose=True):
@@ -128,13 +136,14 @@ def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, v
 
     @jax.jit
     def update(p, state, key):
-        k1, k2 = jax.random.split(key)
+        k1, k2, k3 = jax.random.split(key, 3)
         ep = jax.random.randint(k1, (cfg.batch,), 0, E)
         start = jax.random.randint(k2, (cfg.batch,), 0, T - cfg.window + 1)
         idx = start[:, None] + jnp.arange(cfg.window)[None]
         o = obs_j[ep[:, None], idx]
         a = act_j[ep[:, None], idx]
-        (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in)
+        keep = jax.random.bernoulli(k3, 1.0 - cfg.obs_dropout, o.shape[:2])[..., None]
+        (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in, o * keep)
         upd, state = opt.update(g, state, p)
         return optax.apply_updates(p, upd), state, loss, aux
 
@@ -145,7 +154,7 @@ def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, v
         if i % log_every == 0 or i == cfg.steps - 1:
             log.append((i, float(loss), float(l1), float(l5)))
             if verbose:
-                print(f"    step {i:5d} loss {float(loss):.4f} (1-step {float(l1):.4f}, {HORIZON}-step {float(l5):.4f})", flush=True)
+                print(f"    step {i:5d} loss {float(loss):.4f} (1-step {float(l1):.4f}, far {float(l5):.4f})", flush=True)
     return p, log
 
 

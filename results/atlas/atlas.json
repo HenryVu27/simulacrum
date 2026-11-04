@@ -1,0 +1,118 @@
+[
+ {
+  "name": "Mind and body (Kim's exclusion problem)",
+  "claims": {
+   "D": "Mental states are not identical to physical states.",
+   "M": "Mental states cause physical events.",
+   "C": "Every physical event has a sufficient physical cause.",
+   "X": "Events are not systematically caused twice over."
+  },
+  "mcs": [
+   [
+    "C"
+   ],
+   [
+    "D"
+   ],
+   [
+    "M"
+   ],
+   [
+    "X"
+   ]
+  ],
+  "occupied": {
+   "D": "identity theory",
+   "M": "epiphenomenalism",
+   "C": "interactionist dualism",
+   "X": "accepted overdetermination",
+   "D, M": "eliminativism"
+  },
+  "never_given_up": []
+ },
+ {
+  "name": "Object permanence and access",
+  "claims": {
+   "A": "We know only what appears to us.",
+   "R": "Knowing that something exists while unperceived requires access to it while unperceived.",
+   "K": "We know that objects persist when unperceived."
+  },
+  "mcs": [
+   [
+    "A"
+   ],
+   [
+    "K"
+   ],
+   [
+    "R"
+   ]
+  ],
+  "occupied": {
+   "K": "Humean fiction",
+   "R": "inference to the best explanation",
+   "A": "direct realism"
+  },
+  "never_given_up": []
+ },
+ {
+  "name": "Hume's problem of causation",
+  "claims": {
+   "E": "All knowledge of matters of fact comes from experience.",
+   "J": "Experience shows only constant conjunction, never necessary connection.",
+   "N": "Causation involves necessary connection.",
+   "Q": "We have knowledge of causal relations."
+  },
+  "mcs": [
+   [
+    "E"
+   ],
+   [
+    "J"
+   ],
+   [
+    "N"
+   ],
+   [
+    "Q"
+   ]
+  ],
+  "occupied": {
+   "N": "regularity theory",
+   "Q": "causal skepticism",
+   "E": "causality a priori",
+   "J": "interventionism and direct perception"
+  },
+  "never_given_up": []
+ },
+ {
+  "name": "Free will",
+  "claims": {
+   "F1": "Every event is either determined or random.",
+   "F2": "A determined act is not free.",
+   "F3": "A random act is not free.",
+   "F4": "Some acts are free."
+  },
+  "mcs": [
+   [
+    "F1"
+   ],
+   [
+    "F2"
+   ],
+   [
+    "F3"
+   ],
+   [
+    "F4"
+   ]
+  ],
+  "occupied": {
+   "F4": "hard incompatibilism",
+   "F2": "compatibilism",
+   "F1": "agent-causal libertarianism",
+   "F3": "event-causal libertarianism"
+  },
+  "never_given_up": []
+ }
+]

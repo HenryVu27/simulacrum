@@ -8,7 +8,10 @@ oracle (ceiling) and raw current observations (what the senses give without memo
 Concepts:
   object_seen      where each kind of object is relative to the agent, while it is in view
   object_hidden    the same readout, scored while the object is out of view: object permanence
+  object_now       the same readout over all moments
   object_past      where each object was 10 steps ago: how far into the past the mind lives
+  object_allo_*    where each object is in the room (not relative to the agent), in view and hidden;
+                   exploratory, added after the pilot to separate memory from self-localization
   number           how many objects exist
   self_motion      own displacement and turn over the last 5 steps
   self_location    own position in the room
@@ -33,7 +36,8 @@ from umwelt.world import ARENA
 
 PAST = 10
 MOTION = 5
-CONCEPTS = ("object_seen", "object_hidden", "object_now", "object_past", "number", "self_motion", "self_location", "cause", "elapsed", "relations")
+CONCEPTS = ("object_seen", "object_hidden", "object_now", "object_past", "object_allo_seen", "object_allo_hidden",
+            "number", "self_motion", "self_location", "cause", "elapsed", "relations")
 K = kinds.N_KINDS
 
 
@@ -89,6 +93,7 @@ def targets(g):
         since=_by_kind(steps_since_seen(g["gt_vis180"]), kind, 1000),
         ego=_by_kind(ego.astype(np.float32), kind),
         ego_past=_by_kind(ego_past.astype(np.float32), kind),
+        allo=_by_kind((g["gt_obj_pos"] / ARENA * 4).astype(np.float32), kind),
         nearest=_by_kind(nearest.astype(np.float32), kind),
         cause=_by_kind(g["gt_cause"].astype(np.int8), kind),
         n=active.sum(-1),
@@ -233,6 +238,11 @@ def run_battery(Htr, Ttr, Hte, Tte, seed=0, hidden=256, stride_tr=8, stride_te=4
     out["object_seen"] = _r2_cols(pred, Y, mask2(pres_te & R["vis"][1]), ref)
     out["object_hidden"] = _r2_cols(pred, Y, mask2(pres_te & ~R["vis"][1]), ref)
     out["object_now"] = _r2_cols(pred, Y, ref, ref)
+
+    probe = Probe(Xtr, xy2(R["allo"][0]), mask2(pres_tr), "reg", hidden, seed + 7, groups)
+    pred, Y = probe(Xte), xy2(R["allo"][1])
+    out["object_allo_seen"] = _r2_cols(pred, Y, mask2(pres_te & R["vis"][1]), ref)
+    out["object_allo_hidden"] = _r2_cols(pred, Y, mask2(pres_te & ~R["vis"][1]), ref)
 
     probe = Probe(Xtr, xy2(R["ego_past"][0]), mask2(pres_tr), "reg", hidden, seed + 1, groups)
     out["object_past"] = _r2_cols(probe(Xte), xy2(R["ego_past"][1]), ref, ref)

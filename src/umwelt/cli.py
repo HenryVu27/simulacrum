@@ -22,11 +22,15 @@ def main():
     r.add_argument("--seed", type=int, default=0)
     r.add_argument("--presets", nargs="+", default=list(PRESETS))
     r.add_argument("--steps", type=int, default=learner.LearnerConfig.steps)
+    r.add_argument("--horizons", type=int, nargs="+", default=list(learner.LearnerConfig.horizons))
+    r.add_argument("--obs-dropout", type=float, default=learner.LearnerConfig.obs_dropout)
     r.add_argument("--no-controls", action="store_true")
     r.add_argument("--tag", default="main")
 
     rp = sub.add_parser("report", help="aggregate results into tables, figures and REPORT.md")
     rp.add_argument("--tag", default="main")
+
+    sub.add_parser("atlas", help="enumerate coherent positions on classic aporias")
 
     args = ap.parse_args()
     if args.cmd == "data":
@@ -37,8 +41,12 @@ def main():
     elif args.cmd == "run":
         from umwelt.experiment import run_world
 
-        cfg = learner.LearnerConfig(steps=args.steps)
+        cfg = learner.LearnerConfig(steps=args.steps, horizons=tuple(args.horizons), obs_dropout=args.obs_dropout)
         run_world(args.world, args.seed, args.presets, cfg, controls=not args.no_controls, tag=args.tag)
+    elif args.cmd == "atlas":
+        from umwelt.atlas import build as build_atlas
+
+        build_atlas()
     elif args.cmd == "report":
         from umwelt.report import build
 
