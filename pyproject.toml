@@ -21,7 +21,11 @@ dependencies = [
 
 [project.optional-dependencies]
 # NVIDIA GPU, Linux only (on Windows, inside WSL2): uv sync --extra gpu. See docs/gpu.md.
-gpu = ["jax[cuda13]>=0.12.0.1 ; sys_platform == 'linux'"]
+gpu = [
+    # JAX keeps the compile cache's size cap (job.sh) only with filelock; without it the cache is never used
+    "filelock>=4.2.9 ; sys_platform == 'linux'",
+    "jax[cuda13]>=0.12.0.1 ; sys_platform == 'linux'",
+]
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]

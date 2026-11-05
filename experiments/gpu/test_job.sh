@@ -19,7 +19,9 @@ cat > "$HOME/.local/bin/uv" <<'EOF'
 case "$1" in
   sync) exit 0 ;;
   run) shift
-       if [[ "$*" == *default_backend* ]]; then echo "${FAKE_BACKEND:-gpu} NVIDIA GeForce RTX 5080"; else exec "$@"; fi ;;
+       if [[ "$*" == *default_backend* ]]; then echo "${FAKE_BACKEND:-gpu} NVIDIA GeForce RTX 5080"
+       elif [[ "$*" == *"import filelock"* ]]; then [ -z "${FAKE_NO_FILELOCK:-}" ]
+       else exec "$@"; fi ;;
 esac
 EOF
 chmod +x "$UMWELT_SMI" "$HOME/.local/bin/uv"
@@ -175,6 +177,15 @@ kill -TERM $pid
 limit_wait $pid
 rm -f "$UMWELT_PAUSE"
 check "SIGTERM stops a paused command too" '! kill -0 $(cat $T/pt.pid) 2>/dev/null && [ "$(cat $R/pt.exit)" = 143 ] && [ ! -e $UMWELT_LOCK ]'
+
+echo 3000 > "$T/mem"
+new cache 'echo "cap=$JAX_COMPILATION_CACHE_MAX_SIZE"; mkdir -p results/jax_cache; touch results/jax_cache/jit_f-ab-cache'
+limit bash "$job" cache
+check "the log counts compile-cache entries" 'grep -q "cap=2000000000" $R/cache.log && grep -q "compile cache: 0 entries before, 1 after; 0 cache errors" $R/cache.log'
+new nolock 'echo "cap=$JAX_COMPILATION_CACHE_MAX_SIZE"; printf "Error reading persistent %s cache entry\n" compilation'  # the log also holds the command
+limit env FAKE_NO_FILELOCK=1 bash "$job" nolock
+check "without filelock the cache's size cap is dropped" 'grep -q "filelock missing, size cap dropped" $R/nolock.log && grep -q "cap=-1" $R/nolock.log'
+check "the log counts compile-cache errors" 'grep -q "compile cache: 1 entries before, 1 after; 1 cache errors" $R/nolock.log && [ "$(cat $R/nolock.exit)" = 0 ]'
 
 echo "N/A" > "$T/mem"
 new nosmi 'echo ran'

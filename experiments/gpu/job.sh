@@ -135,6 +135,14 @@ case "$backend" in
   gpu*) ;;
   *) [ -f "$dir/$name.allow_cpu" ] || end 5 "refused: JAX does not see the GPU (remote.sh run --allow-cpu for a CPU job)" ;;
 esac
+# Without filelock JAX cannot keep the size cap, and then every cache read and write fails with a single
+# warning: every job from ecf3527 on compiled from scratch (docs/gpu.md). The cap goes before the cache does.
+if ! uv run python -c "import filelock" 2> /dev/null; then
+  export JAX_COMPILATION_CACHE_MAX_SIZE=-1
+  say "compile cache: filelock missing, size cap dropped"
+fi
+cached() { find "$JAX_COMPILATION_CACHE_DIR" -type f -name '*-cache' 2> /dev/null | wc -l | tr -d ' '; }
+cached0=$(cached)
 
 say "start: $(cat "$dir/$name.cmd")"
 bash "$dir/$name.cmd" >> "$log" 2>&1 &
@@ -152,4 +160,5 @@ wait "$child"
 code=$?
 reap "$child"
 child=
+say "compile cache: $cached0 entries before, $(cached) after; $(grep -c 'persistent compilation cache' "$log") cache errors"
 end "$code" "exit $code"
