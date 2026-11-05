@@ -30,6 +30,7 @@ work and the honest novelty claim are in `docs/related-work.md`.
 | `src/umwelt/report_v2.py` | v2 (memory world) checks for Amendments 2 to 4, decay curves, calibration figures |
 | `experiments/` | Calibration, overfitting check, world statistics, decay curves, sweep scripts |
 | `cloud/modal_app.py` | The same sweep on cloud GPUs |
+| `experiments/gpu/` | Running on the RTX 5080 PC from this Mac (`remote.sh`), and the hardware checks; see `docs/gpu.md` |
 
 ## Run
 
@@ -41,6 +42,7 @@ uv run umwelt run --world lawful --seed 0 # train all 14 minds and run every tes
 uv run umwelt report                     # results/report_main/REPORT.md
 experiments/sweep_v2.sh dark             # v2 confirmatory run (8,192 training episodes)
 uv run umwelt report-v2 --world dark     # results/report_v2/REPORT.md
+experiments/gpu/remote.sh run NAME CMD   # a job on the RTX 5080 PC (docs/gpu.md)
 ```
 
 `--presets` picks a subset of minds, `--steps` sets training length, `--tag` keeps runs apart.

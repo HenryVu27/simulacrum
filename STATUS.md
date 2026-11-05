@@ -1,7 +1,8 @@
 # STATUS
 
-Last updated: 2026-11-04, afternoon (v2). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-04, night (GPU machine). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
+GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
 ## v2 in one paragraph
 
@@ -75,13 +76,36 @@ none is surprised by a vanishing object. The world lever is spent. The next leve
   held-out error), `experiments/world_stats.py` (how often objects leave and return), `experiments/sweep_v2.sh`,
   `umwelt report-v2`. Tests: 9 passing.
 
+## GPU machine (2026-11-04, night)
+
+umwelt now runs on Henry's Windows PC with an RTX 5080, from this Mac, for the learner work in next step 1.
+JAX publishes GPU builds for Linux only, so it runs inside WSL2 (Ubuntu 26.04, as the distribution's root
+user, no Linux account needed). `experiments/gpu/remote.sh` pushes the code (verified on the PC), queues
+jobs that wait for a shared GPU lock (`C:\gpu-lock`, also used by the other project), and pulls results
+back. Henry can pause umwelt jobs while he uses the PC (`mkdir C:\gpu-pause`). Everything is in
+`docs/gpu.md`: the setup log, a protocol written before any run (E1 to E6), and the results.
+
+What is known so far (all in `docs/gpu.md`):
+- The PC's CPU gives the same project numbers as the Mac (stage 3 memory value within 0.00003).
+- On the GPU at full float32, training matches the Mac to about five digits. At the GPU's default TF32
+  precision it drifts about 1 percent in 300 updates, and default GPU runs are not repeatable (with
+  deterministic operations they are, bit for bit).
+- Bug found and fixed: at TF32 the ray caster flipped object visibility; the world now always simulates at
+  full precision (`src/umwelt/data.py`; Mac output byte-identical).
+- Speed: one update of the current learner 2.6 ms against 31.8 ms on the Mac; the largest learner tested
+  25 ms against 1,542 ms. The training loop as experiments run it gains only 2.2 times, because batches
+  are built on the CPU: building them on the GPU is the obvious next speedup. WSL limits one compiled step to
+  under 4 GiB of GPU memory with the default allocator (32 minds at once; 64 with `cuda_async`).
+- Pending (job `gpu-checks-4`, queued overnight): stage 3 on the GPU at both precisions, which decides
+  whether GPU results can be pooled with the Mac's, and the full speed table.
+
 ## Next steps, in order
 
 1. Change the learner, not the world. The next-frame objective gives memory little gradient, because memory
    moments are a few percent of the loss. Candidates, cheapest first: weight the loss toward moments when
    the senses change in ways the present cannot predict; predict further ahead across dark spells; a larger
-   recurrent core; a learner that attends over past frames. The last two want a GPU (the RTX 5080 machine,
-   through WSL2, would do).
+   recurrent core; a learner that attends over past frames. The last two want a GPU: the RTX 5080 machine is
+   set up for that (see the GPU section above and `docs/gpu.md`).
 2. Test the smell-only mind's unnamed features against scent-field variables (from v1, still open).
 3. Nonlinear translation maps, to separate "different frame" from "different content" for the oracle.
 4. Aporia Atlas: join aporias that share claims and tag umwelt results to premises.
