@@ -18,14 +18,24 @@ def main():
     def key(u):
         return (u["minds"], u["hidden"], u["batch"])
 
+    rows = sorted({key(u) for t in tags for u in runs[t].get("update", [])}, key=lambda k: (k[0] > 1, k))
+
     print("One training update (ms; speedup against the Mac in brackets)")
     print(f"{'minds':>5} {'hidden':>6} {'batch':>5} " + " ".join(f"{t:>22}" for t in tags))
-    for u in ref["update"]:
+    for k in rows:
+        r = {key(v): v for v in ref["update"]}.get(k, {})
         cells = []
         for t in tags:
-            m = {key(v): v for v in runs[t].get("update", [])}.get(key(u))
-            cells.append(f"{m['ms_per_update']:9.1f} ({u['ms_per_update'] / m['ms_per_update']:5.1f}x)" if m else f"{'-':>22}")
-        print(f"{u['minds']:>5} {u['hidden']:>6} {u['batch']:>5} " + " ".join(f"{c:>22}" for c in cells))
+            m = {key(v): v for v in runs[t].get("update", [])}.get(k)
+            if not m:
+                cells.append("-")
+            elif "error" in m:
+                cells.append("failed: " + m["error"].split(":")[-1].strip()[:13])
+            elif "ms_per_update" in r:
+                cells.append(f"{m['ms_per_update']:9.1f} ({r['ms_per_update'] / m['ms_per_update']:5.1f}x)")
+            else:
+                cells.append(f"{m['ms_per_update']:9.1f}")
+        print(f"{k[0]:>5} {k[1]:>6} {k[2]:>5} " + " ".join(f"{c:>22}" for c in cells))
 
     print("\nlearner.train, current learner, host batches (ms per update)")
     for t in tags:

@@ -1,0 +1,326 @@
+{
+ "ref": "pc-gpu-det",
+ "other": "pc-gpu-det-rerun",
+ "env": {
+  "pc-gpu-det": {
+   "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+   "machine": "x86_64",
+   "python": "3.13.18",
+   "jax": "0.12.0.1",
+   "numpy": "2.5.4",
+   "backend": "gpu",
+   "device": "NVIDIA GeForce RTX 5080",
+   "matmul_precision": "None",
+   "xla_flags": "--xla_gpu_deterministic_ops=true"
+  },
+  "pc-gpu-det-rerun": {
+   "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+   "machine": "x86_64",
+   "python": "3.13.18",
+   "jax": "0.12.0.1",
+   "numpy": "2.5.4",
+   "backend": "gpu",
+   "device": "NVIDIA GeForce RTX 5080",
+   "matmul_precision": "None",
+   "xla_flags": "--xla_gpu_deterministic_ops=true"
+  }
+ },
+ "E1_lawful": {
+  "action": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_vision": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_ray_tex": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_hearing": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_smell": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_touch": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_proprio": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_compass": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_oracle": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_pos": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_th": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_vel": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_cause": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_light": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_active": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_kind": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_pos": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_vel": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_vis180": {
+   "identical": true,
+   "frac_differ": 0.0
+  }
+ },
+ "E1_dark": {
+  "action": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_vision": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_ray_tex": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_hearing": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_smell": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_touch": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_proprio": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_compass": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "obs_oracle": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_pos": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_th": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_agent_vel": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_cause": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_light": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_active": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_kind": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_pos": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_obj_vel": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "gt_vis180": {
+   "identical": true,
+   "frac_differ": 0.0
+  }
+ },
+ "E2": {
+  "oracle": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "human": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "dog": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "blind": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "deafblind": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "vision_only": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "smell_only": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "hearing_only": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "touch_only": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "bat": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "chimera": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "passive": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "passive_novest": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "memoryless": {
+   "identical": true,
+   "frac_differ": 0.0
+  }
+ },
+ "E3": {
+  "loss_rel_diff_at": {
+   "0": 0.0,
+   "1": 0.0,
+   "10": 0.0,
+   "100": 0.0,
+   "299": 0.0
+  },
+  "loss_rel_diff_max": 0.0,
+  "params": {
+   "dec1/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "dec1/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "dec2/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "dec2/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "enc1/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "enc1/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "enc2/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "enc2/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "far5_1/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "far5_1/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "far5_2/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "far5_2/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "gru_h/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "gru_h/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "gru_x/b": {
+    "identical": true,
+    "frac_differ": 0.0
+   },
+   "gru_x/w": {
+    "identical": true,
+    "frac_differ": 0.0
+   }
+  },
+  "test_errors": {
+   "identical": true,
+   "frac_differ": 0.0
+  },
+  "test_error": [
+   0.3987445533275604,
+   0.3987445533275604
+  ]
+ }
+}

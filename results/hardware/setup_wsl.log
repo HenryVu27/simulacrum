@@ -1,0 +1,277 @@
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code ca877ac8f6583ae1 git 49c9477 uncommitted 1 files, diff 07586db438b72e31 
+== GPU seen from WSL
+name, driver_version, memory.used [MiB], memory.total [MiB]
+NVIDIA GeForce RTX 5080, 616.56, 1537 MiB, 16303 MiB
+== uv
+downloading uv 0.13.7 x86_64-unknown-linux-gnu
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+uv 0.13.7 (x86_64-unknown-linux-gnu)
+== packages (the locked set, plus JAX's CUDA 13 build)
+Downloading cpython-3.13.18-linux-x86_64-gnu (download) (33.8MiB)
+ Downloaded cpython-3.13.18-linux-x86_64-gnu (download)
+Using CPython 3.13.18
+Creating virtual environment at: .venv
+   Building umwelt @ file:///root/umwelt
+warning: `build_system.requires = ["uv-build>=0.12.23,<0.13.0"]` does not contain the current uv version 0.13.7
+      Built umwelt @ file:///root/umwelt
+Downloading cryptography (4.5MiB)
+Downloading pygments (1.2MiB)
+Downloading matplotlib (9.4MiB)
+Downloading scikit-learn (8.7MiB)
+Downloading scipy (33.7MiB)
+Downloading uvloop (4.3MiB)
+Downloading aiohttp (1.8MiB)
+Downloading pyopengl (3.0MiB)
+Downloading grpcio (7.0MiB)
+Downloading mujoco (25.4MiB)
+Downloading jax (3.3MiB)
+Downloading nvidia-nvvm (69.2MiB)
+Downloading nvidia-cublas (419.0MiB)
+Downloading nvidia-cuda-cccl (3.7MiB)
+Downloading numpy (15.9MiB)
+Downloading jax-cuda13-pjrt (128.7MiB)
+Downloading python-sat (3.9MiB)
+Downloading nvidia-nvjitlink (40.5MiB)
+Downloading tensorstore (20.8MiB)
+Downloading kiwisolver (1.4MiB)
+Downloading nvidia-cudnn-cu13 (492.8MiB)
+Downloading pillow (6.8MiB)
+Downloading fonttools (5.2MiB)
+Downloading nvidia-nvshmem-cu13 (173.7MiB)
+Downloading nvidia-cusolver (235.0MiB)
+Downloading nvidia-cuda-nvcc (45.5MiB)
+Downloading nvidia-cuda-runtime (2.4MiB)
+Downloading jaxlib (82.8MiB)
+Downloading orbax-checkpoint (1.4MiB)
+Downloading nvidia-cuda-cupti (12.5MiB)
+Downloading nvidia-nccl-cu13 (291.0MiB)
+Downloading nvidia-cuda-nvrtc (50.8MiB)
+Downloading nvidia-cusparse (162.6MiB)
+Downloading nvidia-cufft (154.3MiB)
+Downloading jax-cuda13-plugin (7.9MiB)
+ Downloaded pygments
+ Downloaded orbax-checkpoint
+ Downloaded kiwisolver
+ Downloaded aiohttp
+ Downloaded nvidia-cuda-runtime
+ Downloaded pyopengl
+ Downloaded jax
+ Downloaded nvidia-cuda-cccl
+ Downloaded python-sat
+ Downloaded uvloop
+ Downloaded cryptography
+ Downloaded fonttools
+ Downloaded pillow
+ Downloaded grpcio
+ Downloaded jax-cuda13-plugin
+ Downloaded scikit-learn
+ Downloaded matplotlib
+ Downloaded nvidia-cuda-cupti
+ Downloaded numpy
+ Downloaded tensorstore
+ Downloaded mujoco
+ Downloaded scipy
+ Downloaded nvidia-nvjitlink
+ Downloaded nvidia-cuda-nvcc
+ Downloaded nvidia-cuda-nvrtc
+ Downloaded nvidia-nvvm
+ Downloaded jaxlib
+ Downloaded jax-cuda13-pjrt
+ Downloaded nvidia-cufft
+ Downloaded nvidia-cusparse
+ Downloaded nvidia-nvshmem-cu13
+ Downloaded nvidia-cusolver
+ Downloaded nvidia-nccl-cu13
+ Downloaded nvidia-cublas
+ Downloaded nvidia-cudnn-cu13
+Prepared 107 packages in 57.62s
+Installed 107 packages in 58ms
+ + absl-py==2.5.1
+ + aiofiles==25.1.0
+ + aiohappyeyeballs==2.7.1
+ + aiohttp==3.14.5
+ + aiosignal==1.4.0
+ + attrs==26.1.0
+ + certifi==2026.10.23
+ + cffi==2.1.1
+ + charset-normalizer==3.5.2
+ + cloudpickle==3.1.2
+ + contourpy==1.4.0
+ + cryptography==50.0.2
+ + cycler==0.12.1
+ + decorator==5.3.1
+ + etils==1.15.0
+ + flax==0.12.12
+ + fonttools==4.68.0
+ + frozenlist==1.8.0
+ + fsspec==2026.9.0
+ + gcsfs==2026.10.1
+ + glfw==2.11.0
+ + google-api-core==2.43.2
+ + google-auth==2.62.1
+ + google-auth-oauthlib==1.5.0
+ + google-cloud-core==2.8.0
+ + google-cloud-storage==3.17.1
+ + google-cloud-storage-control==1.17.0
+ + google-crc32c==1.9.0
+ + google-resumable-media==2.11.0
+ + googleapis-common-protos==1.76.0
+ + grpc-google-iam-v1==0.14.6
+ + grpcio==1.85.1
+ + grpcio-status==1.85.1
+ + humanize==4.16.0
+ + idna==3.20
+ + iniconfig==2.3.1
+ + jax==0.12.0.1
+ + jax-cuda13-pjrt==0.12.0.1
+ + jax-cuda13-plugin==0.12.0.1
+ + jaxlib==0.12.0.1
+ + joblib==1.6.0
+ + kiwisolver==1.5.1
+ + markdown-it-py==4.2.0
+ + matplotlib==3.11.2
+ + mdurl==0.1.2
+ + ml-dtypes==0.6.0
+ + msgpack==1.2.4
+ + mujoco==3.17.0
+ + multidict==7.2.1
+ + narwhals==2.28.0
+ + numpy==2.5.4
+ + nvidia-cublas==13.8.2.12
+ + nvidia-cuda-cccl==13.3.4.3.1
+ + nvidia-cuda-crt==13.4.92
+ + nvidia-cuda-cupti==13.4.92
+ + nvidia-cuda-nvcc==13.4.92
+ + nvidia-cuda-nvrtc==13.4.92
+ + nvidia-cuda-runtime==13.4.92
+ + nvidia-cudnn-cu13==9.28.0.42
+ + nvidia-cufft==12.4.0.43
+ + nvidia-cusolver==12.3.5.3
+ + nvidia-cusparse==12.8.6.72
+ + nvidia-nccl-cu13==2.32.3
+ + nvidia-nvjitlink==13.4.92
+ + nvidia-nvshmem-cu13==3.8.0
+ + nvidia-nvvm==13.4.92
+ + oauthlib==4.0.1
+ + opentelemetry-api==1.45.2
+ + opt-einsum==3.4.0
+ + optax==0.2.8
+ + orbax-checkpoint==0.12.9
+ + packaging==26.3
+ + pillow==13.0.0
+ + pluggy==1.7.0
+ + prometheus-client==0== JAX on the GPU
+.26.0
+ + propcache==0.5.4
+ + proto-plus==1.29.0
+ + protobuf==7.36.2
+ + psutil==7.2.2
+ + pyasn1==0.6.5
+ + pyasn1-modules==0.4.2
+ + pycparser==3.12
+ + pygments==2.21.0
+ + pyopengl==3.1.10
+ + pyparsing==3.3.3
+ + pytest==9.2.0
+ + python-dateutil==4.0.0
+ + python-sat==1.9.dev19
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + requests-oauthlib==2.0.0
+ + rich==15.0.0
+ + scikit-learn==1.9.1
+ + scipy==1.18.1
+ + simplejson==4.2.0
+ + six==1.17.0
+ + tensorstore==0.1.86
+ + threadpoolctl==3.7.0
+ + treescope==0.1.10
+ + typing-extensions==4.16.0
+ + tzdata==2026.6
+ + umwelt==0.1.0 (from file:///root/umwelt)
+ + urllib3==2.8.0
+ + uvloop==0.23.0
+ + websockets==17.4
+ + yarl==1.25.1
+ + zipp==4.1.2
+E1104 22:47:49.294418     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 11.92GiB (12801015808 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.295758     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 10.73GiB (11520914432 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.296504     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 9.66GiB (10368822272 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.297138     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 8.69GiB (9331939328 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.297795     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.82GiB (8398745088 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.298449     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.04GiB (7558870528 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.299134     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 6.33GiB (6802983424 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.299782     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.70GiB (6122684928 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.300450     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.13GiB (5510416384 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.301092     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.62GiB (4959374848 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 22:47:49.301771     647 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.16GiB (4463437312 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+jax 0.12.0.1 backend gpu devices [CudaDevice(id=0)]
+4096 x 4096 matmul ok, mean -0.0010750973597168922
+== tests
+.........                                                                [100%]
+9 passed in 41.74s
+experiments/gpu/remote.sh setup  0.19s user 0.22s system 0% cpu 1:50.92 total
+exit 0

@@ -1,0 +1,6 @@
+[2026-11-04T22:52:11-0600] lock taken: project=umwelt job=pause-a host=HenrysPC pid=450 started=2026-11-04T22:52:11-0600
+[2026-11-04T22:52:11-0600] code: code c981a4f6e5f560e1 git 49c9477 uncommitted 5 files, diff 31d61cca6ca25c3f pushed 2026-11-04T22:52:03-0600 
+[2026-11-04T22:52:11-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-04T22:52:11-0600] start: env XLA_FLAGS=--xla_gpu_deterministic_ops=true uv run python experiments/gpu/pause_check.py results/remote/pause_a.json --steps 3000 
+{"steps": 3000, "seconds": 36.63546633720398, "params_sha": "69122ab38190b194", "backend": "gpu", "xla_flags": "--xla_gpu_deterministic_ops=true"}
+[2026-11-04T22:52:52-0600] exit 0

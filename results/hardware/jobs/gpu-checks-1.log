@@ -1,0 +1,51 @@
+[2026-11-04T22:58:09-0600] lock taken: project=umwelt job=gpu-checks host=HenrysPC pid=491 started=2026-11-04T22:58:09-0600
+[2026-11-04T22:58:09-0600] code: code 52a49cb2aae26923 git 2a972b5 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-04T22:58:07-0600 
+[2026-11-04T22:58:11-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-04T22:58:11-0600] start: bash experiments/gpu/checks.sh 
+backend gpu [CudaDevice(id=0)]
+== E1 to E3, and E5: default precision, rerun, full float32, deterministic ops
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'machine': 'x86_64', 'python': '3.13.18', 'jax': '0.12.0.1', 'numpy': '2.5.4', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'None', 'xla_flags': ''}
+wrote results/hardware/pc-gpu: {'generate_lawful': 2.89, 'generate_dark': 2.63, 'train': 16.56}, test error 0.397407
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'machine': 'x86_64', 'python': '3.13.18', 'jax': '0.12.0.1', 'numpy': '2.5.4', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'None', 'xla_flags': ''}
+wrote results/hardware/pc-gpu-rerun: {'generate_lawful': 2.88, 'generate_dark': 2.52, 'train': 16.8}, test error 0.398281
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'machine': 'x86_64', 'python': '3.13.18', 'jax': '0.12.0.1', 'numpy': '2.5.4', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'highest', 'xla_flags': ''}
+wrote results/hardware/pc-gpu-highest: {'generate_lawful': 2.74, 'generate_dark': 2.53, 'train': 25.73}, test error 0.394354
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'machine': 'x86_64', 'python': '3.13.18', 'jax': '0.12.0.1', 'numpy': '2.5.4', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'None', 'xla_flags': '--xla_gpu_deterministic_ops=true'}
+wrote results/hardware/pc-gpu-det: {'generate_lawful': 2.94, 'generate_dark': 2.85, 'train': 7.32}, test error 0.398745
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'machine': 'x86_64', 'python': '3.13.18', 'jax': '0.12.0.1', 'numpy': '2.5.4', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'None', 'xla_flags': '--xla_gpu_deterministic_ops=true'}
+wrote results/hardware/pc-gpu-det-rerun: {'generate_lawful': 2.84, 'generate_dark': 2.78, 'train': 7.13}, test error 0.398745
+== E6: speed
+1 %, 1512 MiB
+1 %, 1512 MiB
+9 %, 1513 MiB
+8 %, 1513 MiB
+30 %, 1513 MiB
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': ''}
+{'minds': 1, 'hidden': 128, 'batch': 32, 'ms_per_update': 2.706934513281234, 'mind_updates_per_s': 369.42157081880845, 'minutes_per_4000_updates_all_minds': 0.1804623008854156}
+{'minds': 1, 'hidden': 128, 'batch': 256, 'ms_per_update': 5.483263712500008, 'mind_updates_per_s': 182.3731362254809, 'minutes_per_4000_updates_all_minds': 0.36555091416666724}
+{'minds': 1, 'hidden': 512, 'batch': 32, 'ms_per_update': 4.313716856250016, 'mind_updates_per_s': 231.8186458045177, 'minutes_per_4000_updates_all_minds': 0.28758112375000106}
+{'minds': 1, 'hidden': 512, 'batch': 256, 'ms_per_update': 12.83792648437494, 'mind_updates_per_s': 77.89419897497478, 'minutes_per_4000_updates_all_minds': 0.8558617656249959}
+{'minds': 1, 'hidden': 1024, 'batch': 256, 'ms_per_update': 25.04292296874997, 'mind_updates_per_s': 39.93144096030079, 'minutes_per_4000_updates_all_minds': 1.6695281979166647}
+{'minds': 8, 'hidden': 128, 'batch': 32, 'ms_per_update': 31.128067699999917, 'mind_updates_per_s': 257.0027820904547, 'minutes_per_4000_updates_all_minds': 2.0752045133333277}
+{'minds': 32, 'hidden': 128, 'batch': 32, 'ms_per_update': 22.64827381250001, 'mind_updates_per_s': 1412.9112119060746, 'minutes_per_4000_updates_all_minds': 1.5098849208333338}
+W1104 23:03:00.681963    2660 bfc_allocator.cc:743] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.12GiB (rounded to 8716657408) from the lower end requested by op 
+If this is caused by memory fragmentation, the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' may improve the situation.
+Current allocation summary follows.
+W1104 23:03:00.682345    2660 bfc_allocator.cc:754] ******************************************__________________________________________________________
+Traceback (most recent call last):
+  File "/root/umwelt/experiments/gpu/bench.py", line 146, in <module>
+    main()
+    ~~~~^^
+  File "/root/umwelt/experiments/gpu/bench.py", line 132, in main
+    res["update"].append(bench_update(K, 128, 32))
+                         ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/root/umwelt/experiments/gpu/bench.py", line 80, in bench_update
+    s = _clock(step, (p, st, None))
+  File "/root/umwelt/experiments/gpu/bench.py", line 53, in _clock
+    jax.block_until_ready(carry)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/root/umwelt/.venv/lib/python3.13/site-packages/jax/_src/api.py", line 2811, in block_until_ready
+    xc.batched_block_until_ready(arrays)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+jax.errors.JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.12GiB with allocator GPU_0_bfc on device 0. [executable_name='jit_update'] [tf-allocator-allocation-error='']
+[2026-11-04T23:03:01-0600] exit 1

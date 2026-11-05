@@ -1,0 +1,211 @@
+[2026-11-04T23:05:39-0600] lock taken: project=umwelt job=alloc-check host=HenrysPC pid=462 started=2026-11-04T23:05:39-0600
+[2026-11-04T23:05:39-0600] code: code 38d071632499ab3b git 2a972b5 uncommitted 6 files, diff e34208289be36897 pushed 2026-11-04T23:05:36-0600 
+[2026-11-04T23:05:41-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-04T23:05:41-0600] start: bash experiments/gpu/alloc_check.sh 
+== same weights under cuda_async (deterministic operations)
+{"steps": 3000, "seconds": 41.27508282661438, "params_sha": "69122ab38190b194", "backend": "gpu", "xla_flags": "--xla_gpu_deterministic_ops=true"}
+== speed, default allocator, then cuda_async
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+{'minds': 1, 'hidden': 128, 'batch': 32, 'ms_per_update': 2.8690962531250364, 'ms_runs': [2.8744801374999795, 2.8690962531250364, 2.866959942968794], 'mind_updates_per_s': 348.541809606699, 'minutes_per_4000_updates_all_minds': 0.19127308354166908}
+{'minds': 1, 'hidden': 128, 'batch': 256, 'ms_per_update': 5.55003433437502, 'ms_runs': [5.5618379374999805, 5.55003433437502, 5.545875523437616], 'mind_updates_per_s': 180.17906552511593, 'minutes_per_4000_updates_all_minds': 0.3700022889583347}
+{'minds': 1, 'hidden': 512, 'batch': 32, 'ms_per_update': 4.183772828906296, 'ms_runs': [4.174483921093763, 4.183772828906296, 4.1843409671875165], 'mind_updates_per_s': 239.0187137052123, 'minutes_per_4000_updates_all_minds': 0.27891818859375306}
+{'minds': 1, 'hidden': 512, 'batch': 256, 'ms_per_update': 13.048443396874987, 'ms_runs': [13.04713852500008, 13.048443396874987, 13.050772649999942], 'mind_updates_per_s': 76.63749380554412, 'minutes_per_4000_updates_all_minds': 0.8698962264583324}
+{'minds': 1, 'hidden': 1024, 'batch': 256, 'ms_per_update': 25.01985589374982, 'ms_runs': [25.009264100000195, 25.16733118125032, 25.01985589374982], 'mind_updates_per_s': 39.96825578239277, 'minutes_per_4000_updates_all_minds': 1.6679903929166546}
+{'minds': 8, 'hidden': 128, 'batch': 32, 'ms_per_update': 30.764841024999612, 'ms_runs': [30.60363745000032, 30.764841024999612, 31.019629756249856], 'mind_updates_per_s': 260.03709863149214, 'minutes_per_4000_updates_all_minds': 2.050989401666641}
+{'minds': 16, 'hidden': 128, 'batch': 32, 'ms_per_update': 16.336986256250086, 'ms_runs': [16.3774447093747, 16.336986256250086, 16.193603009375224], 'mind_updates_per_s': 979.3728016315639, 'minutes_per_4000_updates_all_minds': 1.089132417083339}
+{'minds': 32, 'hidden': 128, 'batch': 32, 'ms_per_update': 22.660727681250137, 'ms_runs': [22.692985831250212, 22.55512700624962, 22.660727681250137], 'mind_updates_per_s': 1412.1347050332074, 'minutes_per_4000_updates_all_minds': 1.510715178750009}
+E1104 23:11:21.963972     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.91GiB (8491368448 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.966549     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.12GiB (7642231296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.967809     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 6.41GiB (6878007808 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.969076     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.76GiB (6190206976 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.970310     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.19GiB (5571186176 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.971657     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.67GiB (5014067200 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.972862     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.20GiB (4512660480 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.973765     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.91GiB (8491368448 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.974648     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.12GiB (7642231296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.975562     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 6.41GiB (6878007808 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.976453     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.76GiB (6190206976 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.977273     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.19GiB (5571186176 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.978117     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.67GiB (5014067200 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:21.978966     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.20GiB (4512660480 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.981508     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.91GiB (8491368448 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.982449     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.12GiB (7642231296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.983267     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 6.41GiB (6878007808 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.984013     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.76GiB (6190206976 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.984834     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.19GiB (5571186176 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.985706     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.67GiB (5014067200 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.986584     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.20GiB (4512660480 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.987496     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.91GiB (8491368448 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.988277     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 7.12GiB (7642231296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.989061     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 6.41GiB (6878007808 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.989738     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.76GiB (6190206976 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.990399     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.19GiB (5571186176 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.991158     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.67GiB (5014067200 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1104 23:11:31.991827     970 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.20GiB (4512660480 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+W1104 23:11:31.991830     970 bfc_allocator.cc:743] Allocator (GPU_0_bfc) ran out of memory trying to allocate 4.06GiB (rounded to 4358333440) from the lower end requested by op 
+If this is caused by memory fragmentation, the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' may improve the situation.
+Current allocation summary follows.
+W1104 23:11:31.991988     970 bfc_allocator.cc:754] ********************________________________________________________________________________________
+{'minds': 64, 'hidden': 128, 'batch': 32, 'error': "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 4.06GiB with allocator GPU_0_bfc on device 0. [tf-allocator-allocation-error=''] [executable_name='jit_update']"}
+W1104 23:11:56.537102     970 bfc_allocator.cc:743] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.12GiB (rounded to 8716657408) from the lower end requested by op 
+If this is caused by memory fragmentation, the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' may improve the situation.
+Current allocation summary follows.
+W1104 23:11:56.537545     970 bfc_allocator.cc:754] *************************************************___________________________________________________
+{'minds': 128, 'hidden': 128, 'batch': 32, 'error': "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.12GiB with allocator GPU_0_bfc on device 0. [executable_name='jit_update'] [tf-allocator-allocation-error='']"}
+train: {'ms_per_update': 15.27842654799997, 'minutes_per_4000_updates': 1.0185617698666647}
+wrote results/hardware/pc-gpu-bfc/bench.json
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'cuda_async'}
+{'minds': 1, 'hidden': 128, 'batch': 32, 'ms_per_update': 2.57170647265621, 'ms_runs': [2.5759952218749937, 2.57170647265621, 2.552541241406203], 'mind_updates_per_s': 388.8468651584257, 'minutes_per_4000_updates_all_minds': 0.17144709817708068}
+{'minds': 1, 'hidden': 128, 'batch': 256, 'ms_per_update': 5.618671798437624, 'ms_runs': [5.618671798437624, 5.616458068750063, 5.622672664062556], 'mind_updates_per_s': 177.9780054563907, 'minutes_per_4000_updates_all_minds': 0.3745781198958416}
+{'minds': 1, 'hidden': 512, 'batch': 32, 'ms_per_update': 4.052618617968751, 'ms_runs': [4.052366836718768, 4.052618617968751, 4.058546710937527], 'mind_updates_per_s': 246.75403591301145, 'minutes_per_4000_updates_all_minds': 0.27017457453125004}
+{'minds': 1, 'hidden': 512, 'batch': 256, 'ms_per_update': 12.785479475000017, 'ms_runs': [12.785479475000017, 12.79451725625016, 12.76306862812504], 'mind_updates_per_s': 78.21372690444201, 'minutes_per_4000_updates_all_minds': 0.8523652983333344}
+{'minds': 1, 'hidden': 1024, 'batch': 256, 'ms_per_update': 25.346782937499768, 'ms_runs': [25.249990018750168, 25.346782937499768, 25.41067416875009], 'mind_updates_per_s': 39.45273853750219, 'minutes_per_4000_updates_all_minds': 1.6897855291666513}
+{'minds': 8, 'hidden': 128, 'batch': 32, 'ms_per_update': 29.65716274375012, 'ms_runs': [29.97664776249991, 28.762091300001202, 29.65716274375012], 'mind_updates_per_s': 269.7493374239213, 'minutes_per_4000_updates_all_minds': 1.9771441829166747}
+{'minds': 16, 'hidden': 128, 'batch': 32, 'ms_per_update': 16.30537178437521, 'ms_runs': [16.462430165625364, 16.30537178437521, 16.156255503125294], 'mind_updates_per_s': 981.271706747108, 'minutes_per_4000_updates_all_minds': 1.0870247856250141}
+{'minds': 32, 'hidden': 128, 'batch': 32, 'ms_per_update': 22.642755625000177, 'ms_runs': [22.642755625000177, 22.600021631249945, 22.651052081249645], 'mind_updates_per_s': 1413.2555476007683, 'minutes_per_4000_updates_all_minds': 1.5095170416666785}
+{'minds': 64, 'hidden': 128, 'batch': 32, 'ms_per_update': 37.09782056249935, 'ms_runs': [37.249488218749605, 36.9739413749997, 37.09782056249935], 'mind_updates_per_s': 1725.1687303888398, 'minutes_per_4000_updates_all_minds': 2.473188037499957}
+{'minds': 128, 'hidden': 128, 'batch': 32, 'ms_per_update': 457.1357318999844, 'ms_runs': [457.1357318999844, 465.83801300000687, 422.7260670000078], 'mind_updates_per_s': 280.00436427928327, 'minutes_per_4000_updates_all_minds': 30.475715459998963}
+train: {'ms_per_update': 19.14984546400001, 'minutes_per_4000_updates': 1.2766563642666673}
+wrote results/hardware/pc-gpu-async/bench.json
+== alloc check done
+[2026-11-04T23:18:58-0600] exit 0

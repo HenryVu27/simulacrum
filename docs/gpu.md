@@ -74,21 +74,48 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   do not depend on it, since the driver comes from Windows and uv brings its own Python. `remote.sh`
   now defaults to `Ubuntu-26.04`.
 - 2026-11-04. `C:\Users\Vuduc\.wslconfig` written with `memory=12GB` (the default is half of the 32 GB):
-  Henry uses this PC daily, so a job must leave room for him. The Linux VM runs only while a job or a
-  shell needs it and shuts down about a minute after.
+  Henry uses this PC daily, so a job must leave room for him. Inside WSL `free` then shows 11 GB.
 - 2026-11-04. Pause switch, for the same reason: while `C:\gpu-pause` exists, no umwelt job starts and a
   running job is frozen (SIGSTOP to its process group) until the file is deleted (SIGCONT). A frozen
   job keeps the lock and the GPU memory it holds but uses no GPU time. Tests: `job.sh` 22 of 22 (the
   previous version fails 3 of the 5 new pause cases), `remote.sh` 27 of 27. The other project's
   jobs do not look at this switch.
+- 2026-11-04 22:45. No Linux account was created. umwelt runs as the distribution's root user, in
+  `/root/umwelt`; every WSL command names the user (`wsl -d Ubuntu-26.04 -u root`), so it keeps working
+  if Henry later creates his own with Ubuntu's first-launch prompt. A non-interactive command does not
+  start that prompt. Root inside WSL has no extra rights on Windows. Ubuntu 26.04.1, 24 cores, the GPU
+  visible through `/usr/lib/wsl/lib/nvidia-smi`.
+- 2026-11-04 22:47. `remote.sh setup`, 1 minute 51 seconds: uv 0.13.7, CPython 3.13.18, the locked
+  packages plus `jax-cuda13-plugin 0.12.0.1`. JAX reports backend `gpu` (`CudaDevice(id=0)`), a 4096 by
+  4096 matrix multiply runs, and the test suite passes 9 of 9 (42 s). Log: `results/hardware/setup_wsl.log`.
+- 2026-11-04. Finding: inside WSL one GPU allocation of 4 GiB or more fails (`CUDA_ERROR_OUT_OF_MEMORY`)
+  with 14.7 GB free. 3.99 GiB works, 4.00 GiB fails, with JAX's default allocator and with the plain
+  one (`XLA_PYTHON_CLIENT_ALLOCATOR=platform`). Total memory is not capped there: ten 1 GiB arrays held
+  together worked (10.8 GB), stopping only at JAX's own ceiling of 75 percent of the card (11.9 GiB).
+  This is why JAX's default up-front reservation (11.9 GiB) failed and retried smaller; jobs do not
+  reserve up front anyway. Consequence: no single array on the GPU may reach 4 GiB (the largest umwelt
+  array today, one mind's float16 observations for 8,448 episodes, is about 1.4 GB). `experiments/gpu/memprobe.py`.
+- 2026-11-04. Every push is now checked on the PC: it rehashes the files that arrived and must match
+  the Mac's code hash (a test alters a file in transit and the push fails; `remote.sh` 29 of 29). The
+  first real push matched. The Mac's reference episodes (`data_dark.npz`) also arrived byte-identical.
+- 2026-11-04 22:52. First real job (`pause-a`): started through `Win32_Process.Create`, took the lock,
+  passed the code and GPU checks, ran 3,000 training updates of the current learner in 37 s with
+  deterministic GPU operations, released the lock. A second run (`pause-b`) was paused 40 s partway:
+  its processes showed state T (stopped) for the whole pause, it took 40 s longer, and its trained
+  weights were byte-identical to the first run's (hash `69122ab38190b194`). `experiments/gpu/pause_check.py`.
+- 2026-11-04 22:55. The Linux VM had stopped by itself within 20 s of that job ending (`wsl -l -v`:
+  Stopped, no VM process), so between jobs WSL holds no memory.
+- 2026-11-04. Other GPU load: the PC's GPU showed 18 to 31 percent busy with no umwelt job. Per-process
+  counters put it on Henry's desktop: an animated wallpaper (`wallpaper64`, 12 percent), the window
+  compositor (`dwm`, 9 percent) and Chrome. Speed numbers below are measured with that load present;
+  `checks.sh` records it just before E6.
 
 ## How to run on the GPU
 
-Status: not yet run against WSL, because WSL is not installed. What is tested: the detach mechanism on
-the real PC (a process started through `Win32_Process.Create` over SSH kept running after the
-connection closed), and both scripts on the Mac against stand-ins (`experiments/gpu/test_job.sh`, 17
-cases; `experiments/gpu/test_remote.sh`, 22 cases, with a fake ssh that plays the PC). The stand-ins
-cannot test Windows OpenSSH, cmd quoting, `wsl.exe` or whether binary tar data passes through them.
+Status: working against the real PC since 2026-11-04 (setup, push with verification, jobs, pause,
+pull; see the setup log). Both scripts also have tests on the Mac against stand-ins
+(`experiments/gpu/test_job.sh`, 22 cases; `experiments/gpu/test_remote.sh`, 29 cases, with a fake ssh
+that plays the PC).
 
     experiments/gpu/remote.sh setup                       # once: copy code, install uv and CUDA JAX, run tests
     experiments/gpu/remote.sh run NAME CMD...             # background job; waits for a free GPU
@@ -120,7 +147,8 @@ What a job guarantees (`experiments/gpu/job.sh`):
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
 
 Code goes to the PC with `push`: every tracked or new file outside `results/` (deleted files skipped,
-no macOS metadata), plus `.umwelt_push`, the manifest a job checks against. A push that would change
+no macOS metadata), plus `.umwelt_push`, the manifest a job checks against. The PC rehashes what
+arrived; a mismatch fails the push. A push that would change
 the code while an umwelt job is queued or running is refused. Results stay on the PC until pulled;
 `pull` never overwrites a local file that differs unless given `--overwrite` (it reports the file and
 leaves the PC's version in a temporary folder). Recorded data is not pushed: a run regenerates it

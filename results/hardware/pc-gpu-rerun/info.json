@@ -1,0 +1,82 @@
+{
+ "tag": "pc-gpu-rerun",
+ "env": {
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "machine": "x86_64",
+  "python": "3.13.18",
+  "jax": "0.12.0.1",
+  "numpy": "2.5.4",
+  "backend": "gpu",
+  "device": "NVIDIA GeForce RTX 5080",
+  "matmul_precision": "None",
+  "xla_flags": ""
+ },
+ "ref": "results/hardware/mac-cpu/data_dark.npz",
+ "seconds": {
+  "generate_lawful": 2.88,
+  "generate_dark": 2.52,
+  "train": 16.8
+ },
+ "data_lawful": {
+  "action": "647a05fe98f1714b",
+  "obs_vision": "d61860ea5ab3cb06",
+  "obs_ray_tex": "8110608cb19b78c9",
+  "obs_hearing": "c57a28014b76dad7",
+  "obs_smell": "398ba16028810884",
+  "obs_touch": "08afcbcef1d1d7e1",
+  "obs_proprio": "9d956aea8c6a90f0",
+  "obs_compass": "ec60491e215ac34d",
+  "obs_oracle": "be7114b36a1ac55b",
+  "gt_agent_pos": "ad9ad26ee6d20b91",
+  "gt_agent_th": "7983d3217d8bf0ff",
+  "gt_agent_vel": "a996209d6975bcf3",
+  "gt_cause": "7b9218f78327c788",
+  "gt_light": "111ce3c2a38d83a2",
+  "gt_obj_active": "b41b8cfc132694e8",
+  "gt_obj_kind": "4e0cca3f0a187c7c",
+  "gt_obj_pos": "7be94c38d3d67d39",
+  "gt_obj_vel": "e12029d7eeb7de1b",
+  "gt_vis180": "e46fc035356d1ed2"
+ },
+ "data_dark": {
+  "action": "647a05fe98f1714b",
+  "obs_vision": "d61860ea5ab3cb06",
+  "obs_ray_tex": "8110608cb19b78c9",
+  "obs_hearing": "c57a28014b76dad7",
+  "obs_smell": "398ba16028810884",
+  "obs_touch": "08afcbcef1d1d7e1",
+  "obs_proprio": "9d956aea8c6a90f0",
+  "obs_compass": "ec60491e215ac34d",
+  "obs_oracle": "be7114b36a1ac55b",
+  "gt_agent_pos": "ad9ad26ee6d20b91",
+  "gt_agent_th": "7983d3217d8bf0ff",
+  "gt_agent_vel": "a996209d6975bcf3",
+  "gt_cause": "7b9218f78327c788",
+  "gt_light": "029297e9aa156089",
+  "gt_obj_active": "b41b8cfc132694e8",
+  "gt_obj_kind": "4e0cca3f0a187c7c",
+  "gt_obj_pos": "7be94c38d3d67d39",
+  "gt_obj_vel": "e12029d7eeb7de1b",
+  "gt_vis180": "57d78529a6d188e1"
+ },
+ "senses": {
+  "oracle": "dec706261dcfaac1",
+  "human": "fef1e17ada8a656e",
+  "dog": "8ee30f34849f8dad",
+  "blind": "7b9c940d4267321a",
+  "deafblind": "f7b329686c99d743",
+  "vision_only": "6f72cd875ec9bdc9",
+  "smell_only": "d87db08f7a5273e0",
+  "hearing_only": "442b3e6599959db3",
+  "touch_only": "24c3325cda4c6de4",
+  "bat": "f66b09e23c581f10",
+  "chimera": "84bc125b799e9995",
+  "passive": "861d762aca73cdf7",
+  "passive_novest": "09bb204932578d06",
+  "memoryless": "63e30e4f60f112df"
+ },
+ "train": {
+  "final_loss": 0.5442889928817749,
+  "test_error": 0.3982807993888855
+ }
+}

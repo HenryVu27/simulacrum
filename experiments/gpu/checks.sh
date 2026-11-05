@@ -3,7 +3,7 @@
 # JAX upgrade, with new tags if the old results should be kept. From the Mac:
 #
 #   experiments/gpu/remote.sh push results/hardware/mac-cpu/data_dark.npz
-#   experiments/gpu/remote.sh run gpu-checks bash experiments/gpu/checks.sh
+#   experiments/gpu/remote.sh run gpu-checks bash experiments/gpu/checks.sh     # or name sections: repro bench stage3
 #   experiments/gpu/remote.sh status gpu-checks
 #   experiments/gpu/remote.sh pull results/hardware
 #
@@ -18,6 +18,8 @@
 #   uv run python experiments/gpu/bench_table.py                         # E6
 set -euo pipefail
 cd "$(dirname "$0")/../.."
+parts=${*:-repro bench stage3}
+want() { [[ " $parts " == *" $1 "* ]]; }
 py() { uv run --no-sync python "$@"; }  # never let uv change the environment (a plain sync drops the CUDA plugin)
 ref=results/hardware/mac-cpu/data_dark.npz
 det=--xla_gpu_deterministic_ops=true
@@ -26,20 +28,25 @@ repro() { py experiments/gpu/repro.py make "$@" --ref "$ref"; }
 py -c "import jax; b = jax.default_backend(); print('backend', b, jax.devices()); assert b == 'gpu', 'JAX does not see the GPU'"
 [ -f "$ref" ] || { echo "missing $ref: push it with the code (see the header)"; exit 1; }
 
+if want repro; then
 echo "== E1 to E3, and E5: default precision, rerun, full float32, deterministic ops"
 repro pc-gpu
 repro pc-gpu-rerun
 repro pc-gpu-highest --precision highest
 XLA_FLAGS=$det repro pc-gpu-det
 XLA_FLAGS=$det repro pc-gpu-det-rerun
+fi
 
+if want bench; then
 echo "== E6: speed"
 # Other GPU load at the start (Henry's desktop: an animated wallpaper and the compositor used about 20%)
 for _ in 1 2 3 4 5; do /usr/lib/wsl/lib/nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader; sleep 1; done
 py experiments/gpu/bench.py pc-gpu
 py experiments/gpu/bench.py pc-gpu-highest --precision highest --parts update train
 JAX_PLATFORMS=cpu py experiments/gpu/bench.py pc-wsl-cpu --parts update train  # the PC's CPU under Linux
+fi
 
+want stage3 || { echo "== done: $parts"; exit 0; }
 echo "== E4: calibration stage 3 end to end, default precision, then full float32"
 # Each pass gets its own results folder, so each records its own episodes under its own precision.
 stage3() {  # tag, precision

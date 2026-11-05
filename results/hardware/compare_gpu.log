@@ -1,0 +1,218 @@
+######## mac-cpu pc-gpu
+== mac-cpu vs pc-gpu
+E1 lawful: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.029646873474121094, 'max_abs': 1.0, 'rel_l2': 0.028539291506749716, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0017104148864746094, 'max_abs': 0.93115234375, 'rel_l2': 0.026486971149439036, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0018310546875, 'first_step': 0, 'episodes_differing': 50}
+E1 dark: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.029646873474121094, 'max_abs': 1.0, 'rel_l2': 0.028539291506749716, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0017104148864746094, 'max_abs': 0.93115234375, 'rel_l2': 0.026486971149439036, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0013224283854166667, 'first_step': 0, 'episodes_differing': 47}
+E2 senses: 5 of 14 presets identical
+   human: {'identical': False, 'frac_differ': 3.061570538585209e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.5015453380194857e-11, 'first_step': 20, 'episodes_differing': 15}
+   dog: {'identical': False, 'frac_differ': 1.659208131067961e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.722469049994765e-11, 'first_step': 7, 'episodes_differing': 5}
+   blind: {'identical': False, 'frac_differ': 0.00017311789772727273, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.368068641539751e-10, 'first_step': 20, 'episodes_differing': 16}
+   deafblind: {'identical': False, 'frac_differ': 0.00021816821808510637, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.1275848562723012e-10, 'first_step': 24, 'episodes_differing': 15}
+   smell_only: {'identical': False, 'frac_differ': 0.0003662109375, 'max_abs': 7.450580596923828e-09, 'rel_l2': 5.336337941863223e-11, 'first_step': 6, 'episodes_differing': 7}
+   chimera: {'identical': False, 'frac_differ': 3.629117398648649e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3094908247246476e-11, 'first_step': 6, 'episodes_differing': 8}
+   passive: {'identical': False, 'frac_differ': 3.689585008038585e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 3.1771885852863427e-11, 'first_step': 24, 'episodes_differing': 15}
+   passive_novest: {'identical': False, 'frac_differ': 3.0913910308441555e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3454066772944692e-11, 'first_step': 21, 'episodes_differing': 13}
+   memoryless: {'identical': False, 'frac_differ': 2.983068729903537e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.8921432187114983e-11, 'first_step': 15, 'episodes_differing': 14}
+E3 loss relative difference at update {0: 3.1373311249440663e-06, 1: 3.5215913636793107e-06, 10: 1.086471644402901e-06, 100: 1.553125195987096e-05, 299: 0.0069224530905618665}, max 1.17e-02
+   weights identical: False; largest relative L2 difference enc1/b 1.37e-02
+   test error 0.394354 vs 0.397407
+wrote results/hardware/compare_mac-cpu_vs_pc-gpu.json
+######## mac-cpu pc-gpu-highest
+== mac-cpu vs pc-gpu-highest
+E1 lawful: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.0057533979415893555, 'max_abs': 0.9501953125, 'rel_l2': 0.008183709729021686, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.00013399124145507812, 'max_abs': 0.7998046875, 'rel_l2': 0.00785921380686245, 'first_step': 80, 'episodes_differing': 10}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 6.103515625e-05, 'first_step': 105, 'episodes_differing': 3}
+E1 dark: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.0057533979415893555, 'max_abs': 0.9501953125, 'rel_l2': 0.008183709729021686, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.00013399124145507812, 'max_abs': 0.7998046875, 'rel_l2': 0.00785921380686245, 'first_step': 80, 'episodes_differing': 10}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 4.0690104166666664e-05, 'first_step': 105, 'episodes_differing': 3}
+E2 senses: 5 of 14 presets identical
+   human: {'identical': False, 'frac_differ': 3.061570538585209e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.5015453380194857e-11, 'first_step': 20, 'episodes_differing': 15}
+   dog: {'identical': False, 'frac_differ': 1.659208131067961e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.722469049994765e-11, 'first_step': 7, 'episodes_differing': 5}
+   blind: {'identical': False, 'frac_differ': 0.00017311789772727273, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.368068641539751e-10, 'first_step': 20, 'episodes_differing': 16}
+   deafblind: {'identical': False, 'frac_differ': 0.00021816821808510637, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.1275848562723012e-10, 'first_step': 24, 'episodes_differing': 15}
+   smell_only: {'identical': False, 'frac_differ': 0.0003662109375, 'max_abs': 7.450580596923828e-09, 'rel_l2': 5.336337941863223e-11, 'first_step': 6, 'episodes_differing': 7}
+   chimera: {'identical': False, 'frac_differ': 3.629117398648649e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3094908247246476e-11, 'first_step': 6, 'episodes_differing': 8}
+   passive: {'identical': False, 'frac_differ': 3.689585008038585e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 3.1771885852863427e-11, 'first_step': 24, 'episodes_differing': 15}
+   passive_novest: {'identical': False, 'frac_differ': 3.0913910308441555e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3454066772944692e-11, 'first_step': 21, 'episodes_differing': 13}
+   memoryless: {'identical': False, 'frac_differ': 2.983068729903537e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.8921432187114983e-11, 'first_step': 15, 'episodes_differing': 14}
+E3 loss relative difference at update {0: 0.0, 1: 7.492747582296405e-08, 10: 9.053930370024176e-08, 100: 8.440897804277695e-08, 299: 5.8861616339984694e-06}, max 8.08e-06
+   weights identical: False; largest relative L2 difference enc2/b 5.76e-06
+   test error 0.394354 vs 0.394354
+wrote results/hardware/compare_mac-cpu_vs_pc-gpu-highest.json
+######## mac-cpu pc-gpu-det
+== mac-cpu vs pc-gpu-det
+E1 lawful: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.029647231101989746, 'max_abs': 1.0, 'rel_l2': 0.028539290758454173, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0017104148864746094, 'max_abs': 0.93115234375, 'rel_l2': 0.026486971149439036, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0018310546875, 'first_step': 0, 'episodes_differing': 50}
+E1 dark: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.375579833984375, 'max_abs': 0.031203627586364746, 'rel_l2': 0.0005463335397464343, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.029647231101989746, 'max_abs': 1.0, 'rel_l2': 0.028539290758454173, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0017104148864746094, 'max_abs': 0.93115234375, 'rel_l2': 0.026486971149439036, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.0251922607421875, 'max_abs': 2.68792724609375, 'rel_l2': 0.05353922472476801, 'first_step': 4, 'episodes_differing': 60}
+   obs_smell: {'identical': False, 'frac_differ': 0.0316925048828125, 'max_abs': 0.008392333984375, 'rel_l2': 0.0012892078177198394, 'first_step': 16, 'episodes_differing': 62}
+   obs_touch: {'identical': False, 'frac_differ': 0.005652533637152778, 'max_abs': 1.6435546875, 'rel_l2': 0.02496957262662903, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.030192057291666668, 'max_abs': 0.3853759765625, 'rel_l2': 0.0036225320868572878, 'first_step': 3, 'episodes_differing': 64}
+   obs_compass: {'identical': False, 'frac_differ': 0.01995849609375, 'max_abs': 0.01318359375, 'rel_l2': 0.0005742842788546565, 'first_step': 8, 'episodes_differing': 39}
+   obs_oracle: {'identical': False, 'frac_differ': 0.006591796875, 'max_abs': 2.75390625, 'rel_l2': 0.012764377396149334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.67095947265625, 'max_abs': 0.0345456600189209, 'rel_l2': 0.00025705448878775587, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.56756591796875, 'max_abs': 6.2800421714782715, 'rel_l2': 0.027060458507162426, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.856109619140625, 'max_abs': 0.4448612481355667, 'rel_l2': 0.003996769253514563, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 0.00013224283854166666, 'first_step': 182, 'episodes_differing': 2}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22791035970052084, 'max_abs': 0.5717339515686035, 'rel_l2': 0.00012826620436881653, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.270538330078125, 'max_abs': 2.753627896308899, 'rel_l2': 0.04114213646968919, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0013224283854166667, 'first_step': 0, 'episodes_differing': 47}
+E2 senses: 5 of 14 presets identical
+   human: {'identical': False, 'frac_differ': 3.061570538585209e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.5015453380194857e-11, 'first_step': 20, 'episodes_differing': 15}
+   dog: {'identical': False, 'frac_differ': 1.659208131067961e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.722469049994765e-11, 'first_step': 7, 'episodes_differing': 5}
+   blind: {'identical': False, 'frac_differ': 0.00017311789772727273, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.368068641539751e-10, 'first_step': 20, 'episodes_differing': 16}
+   deafblind: {'identical': False, 'frac_differ': 0.00021816821808510637, 'max_abs': 7.450580596923828e-09, 'rel_l2': 1.1275848562723012e-10, 'first_step': 24, 'episodes_differing': 15}
+   smell_only: {'identical': False, 'frac_differ': 0.0003662109375, 'max_abs': 7.450580596923828e-09, 'rel_l2': 5.336337941863223e-11, 'first_step': 6, 'episodes_differing': 7}
+   chimera: {'identical': False, 'frac_differ': 3.629117398648649e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3094908247246476e-11, 'first_step': 6, 'episodes_differing': 8}
+   passive: {'identical': False, 'frac_differ': 3.689585008038585e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 3.1771885852863427e-11, 'first_step': 24, 'episodes_differing': 15}
+   passive_novest: {'identical': False, 'frac_differ': 3.0913910308441555e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.3454066772944692e-11, 'first_step': 21, 'episodes_differing': 13}
+   memoryless: {'identical': False, 'frac_differ': 2.983068729903537e-05, 'max_abs': 7.450580596923828e-09, 'rel_l2': 2.8921432187114983e-11, 'first_step': 15, 'episodes_differing': 14}
+E3 loss relative difference at update {0: 2.8454863691353157e-06, 1: 3.971156218617095e-06, 10: 7.24314429601934e-07, 100: 1.409629933314375e-05, 299: 0.003080424588459199}, max 1.30e-02
+   weights identical: False; largest relative L2 difference enc1/b 1.53e-02
+   test error 0.394354 vs 0.398745
+wrote results/hardware/compare_mac-cpu_vs_pc-gpu-det.json
+######## pc-gpu pc-gpu-rerun
+== pc-gpu vs pc-gpu-rerun
+E1 lawful: 19 of 19 arrays identical
+E1 dark: 19 of 19 arrays identical
+E2 senses: 14 of 14 presets identical
+E3 loss relative difference at update {0: 0.0, 1: 0.0, 10: 2.716182062062044e-07, 100: 8.441028904024405e-08, 299: 0.0023161052902057645}, max 3.24e-03
+   weights identical: False; largest relative L2 difference enc1/b 2.86e-03
+   test error 0.397407 vs 0.398281
+wrote results/hardware/compare_pc-gpu_vs_pc-gpu-rerun.json
+######## pc-gpu-det pc-gpu-det-rerun
+== pc-gpu-det vs pc-gpu-det-rerun
+E1 lawful: 19 of 19 arrays identical
+E1 dark: 19 of 19 arrays identical
+E2 senses: 14 of 14 presets identical
+E3 loss relative difference at update {0: 0.0, 1: 0.0, 10: 0.0, 100: 0.0, 299: 0.0}, max 0.00e+00
+   weights identical: True; largest relative L2 difference dec1/b 0.00e+00
+   test error 0.398745 vs 0.398745
+wrote results/hardware/compare_pc-gpu-det_vs_pc-gpu-det-rerun.json
+######## pc-cpu pc-gpu
+== pc-cpu vs pc-gpu
+E1 lawful: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.371307373046875, 'max_abs': 0.031221508979797363, 'rel_l2': 0.0005385935801906352, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.028285741806030273, 'max_abs': 1.0, 'rel_l2': 0.02834802578337634, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0016946792602539062, 'max_abs': 0.93115234375, 'rel_l2': 0.026364111351666216, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.01708221435546875, 'max_abs': 2.68792724609375, 'rel_l2': 0.053468344247501534, 'first_step': 4, 'episodes_differing': 59}
+   obs_smell: {'identical': False, 'frac_differ': 0.02190399169921875, 'max_abs': 0.008331298828125, 'rel_l2': 0.0012503151797948662, 'first_step': 16, 'episodes_differing': 61}
+   obs_touch: {'identical': False, 'frac_differ': 0.004770914713541667, 'max_abs': 1.6435546875, 'rel_l2': 0.02496412381922816, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.026814778645833332, 'max_abs': 0.38525390625, 'rel_l2': 0.0036201016318279213, 'first_step': 3, 'episodes_differing': 63}
+   obs_compass: {'identical': False, 'frac_differ': 0.014923095703125, 'max_abs': 0.01318359375, 'rel_l2': 0.0005508652790051744, 'first_step': 8, 'episodes_differing': 38}
+   obs_oracle: {'identical': False, 'frac_differ': 0.004763899178340517, 'max_abs': 2.75390625, 'rel_l2': 0.009435645727502334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.671966552734375, 'max_abs': 0.03463864326477051, 'rel_l2': 0.00025498425593636535, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.5521240234375, 'max_abs': 0.013764381408691406, 'rel_l2': 0.0003025966134581689, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.854217529296875, 'max_abs': 0.4447915852069855, 'rel_l2': 0.003992095970575054, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 7.120768229166667e-05, 'first_step': 182, 'episodes_differing': 1}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22827657063802084, 'max_abs': 0.10719931125640869, 'rel_l2': 4.056534525550381e-05, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.2701670328776042, 'max_abs': 2.753603935241699, 'rel_l2': 0.03036259400232517, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0018107096354166667, 'first_step': 0, 'episodes_differing': 50}
+E1 dark: 3 of 19 arrays identical
+   action: {'identical': False, 'frac_differ': 0.371307373046875, 'max_abs': 0.031221508979797363, 'rel_l2': 0.0005385935801906352, 'first_step': 0, 'episodes_differing': 64}
+   obs_vision: {'identical': False, 'frac_differ': 0.028285741806030273, 'max_abs': 1.0, 'rel_l2': 0.02834802578337634, 'first_step': 0, 'episodes_differing': 64}
+   obs_ray_tex: {'identical': False, 'frac_differ': 0.0016946792602539062, 'max_abs': 0.93115234375, 'rel_l2': 0.026364111351666216, 'first_step': 0, 'episodes_differing': 64}
+   obs_hearing: {'identical': False, 'frac_differ': 0.01708221435546875, 'max_abs': 2.68792724609375, 'rel_l2': 0.053468344247501534, 'first_step': 4, 'episodes_differing': 59}
+   obs_smell: {'identical': False, 'frac_differ': 0.02190399169921875, 'max_abs': 0.008331298828125, 'rel_l2': 0.0012503151797948662, 'first_step': 16, 'episodes_differing': 61}
+   obs_touch: {'identical': False, 'frac_differ': 0.004770914713541667, 'max_abs': 1.6435546875, 'rel_l2': 0.02496412381922816, 'first_step': 10, 'episodes_differing': 63}
+   obs_proprio: {'identical': False, 'frac_differ': 0.026814778645833332, 'max_abs': 0.38525390625, 'rel_l2': 0.0036201016318279213, 'first_step': 3, 'episodes_differing': 63}
+   obs_compass: {'identical': False, 'frac_differ': 0.014923095703125, 'max_abs': 0.01318359375, 'rel_l2': 0.0005508652790051744, 'first_step': 8, 'episodes_differing': 38}
+   obs_oracle: {'identical': False, 'frac_differ': 0.004763899178340517, 'max_abs': 2.75390625, 'rel_l2': 0.009435645727502334, 'first_step': 2, 'episodes_differing': 64}
+   gt_agent_pos: {'identical': False, 'frac_differ': 0.671966552734375, 'max_abs': 0.03463864326477051, 'rel_l2': 0.00025498425593636535, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_th: {'identical': False, 'frac_differ': 0.5521240234375, 'max_abs': 0.013764381408691406, 'rel_l2': 0.0003025966134581689, 'first_step': 0, 'episodes_differing': 64}
+   gt_agent_vel: {'identical': False, 'frac_differ': 0.854217529296875, 'max_abs': 0.4447915852069855, 'rel_l2': 0.003992095970575054, 'first_step': 0, 'episodes_differing': 64}
+   gt_cause: {'identical': False, 'frac_differ': 7.120768229166667e-05, 'first_step': 182, 'episodes_differing': 1}
+   gt_obj_pos: {'identical': False, 'frac_differ': 0.22827657063802084, 'max_abs': 0.10719931125640869, 'rel_l2': 4.056534525550381e-05, 'first_step': 0, 'episodes_differing': 63}
+   gt_obj_vel: {'identical': False, 'frac_differ': 0.2701670328776042, 'max_abs': 2.753603935241699, 'rel_l2': 0.03036259400232517, 'first_step': 0, 'episodes_differing': 63}
+   gt_vis180: {'identical': False, 'frac_differ': 0.0013020833333333333, 'first_step': 0, 'episodes_differing': 47}
+E2 senses: 5 of 14 presets identical
+   human: {'identical': False, 'frac_differ': 0.00011304260450160771, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 1.9961121626949296e-10, 'first_step': 28, 'episodes_differing': 16}
+   dog: {'identical': False, 'frac_differ': 0.0002062158677184466, 'max_abs': 1.1920928955078125e-07, 'rel_l2': 1.3992096202461461e-09, 'first_step': 21, 'episodes_differing': 16}
+   blind: {'identical': False, 'frac_differ': 0.0006702769886363637, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 9.796960526287906e-10, 'first_step': 23, 'episodes_differing': 16}
+   deafblind: {'identical': False, 'frac_differ': 0.0006908660239361703, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 1.133915205493218e-09, 'first_step': 30, 'episodes_differing': 16}
+   smell_only: {'identical': False, 'frac_differ': 0.00244140625, 'max_abs': 1.1920928955078125e-07, 'rel_l2': 2.829147432506474e-09, 'first_step': 21, 'episodes_differing': 16}
+   chimera: {'identical': False, 'frac_differ': 0.0002639358108108108, 'max_abs': 1.1920928955078125e-07, 'rel_l2': 1.2499755816766722e-09, 'first_step': 21, 'episodes_differing': 16}
+   passive: {'identical': False, 'frac_differ': 0.00011304260450160771, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 2.062480057642463e-10, 'first_step': 30, 'episodes_differing': 16}
+   passive_novest: {'identical': False, 'frac_differ': 0.00010383903206168831, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 2.0179578707505381e-10, 'first_step': 30, 'episodes_differing': 16}
+   memoryless: {'identical': False, 'frac_differ': 0.00010362238745980707, 'max_abs': 2.9802322387695312e-08, 'rel_l2': 1.9083111128402082e-10, 'first_step': 30, 'episodes_differing': 15}
+E3 loss relative difference at update {0: 3.1373311249440663e-06, 1: 3.5215913636793107e-06, 10: 1.1770108415374006e-06, 100: 1.553125195987096e-05, 299: 0.006923860318094264}, max 1.17e-02
+   weights identical: False; largest relative L2 difference enc1/b 1.37e-02
+   test error 0.394354 vs 0.397407
+wrote results/hardware/compare_pc-cpu_vs_pc-gpu.json

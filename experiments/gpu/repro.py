@@ -19,6 +19,7 @@ import os
 import platform
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
@@ -116,7 +117,7 @@ def _diff(a, b):
 
 def compare(ref_tag, other_tag, out_root):
     A, B = os.path.join(out_root, ref_tag), os.path.join(out_root, other_tag)
-    rep = {"ref": ref_tag, "other": other_tag, "env": {t: json.load(open(os.path.join(p, "info.json")))["env"]
+    rep = {"ref": ref_tag, "other": other_tag, "env": {t: json.loads(Path(p, "info.json").read_text())["env"]
                                                         for t, p in ((ref_tag, A), (other_tag, B))}}
     for w in WORLDS:
         da, db = np.load(os.path.join(A, f"data_{w}.npz")), np.load(os.path.join(B, f"data_{w}.npz"))

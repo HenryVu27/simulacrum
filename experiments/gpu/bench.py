@@ -4,7 +4,9 @@ Three parts, each written to results/hardware/<tag>/bench.json:
 
 - update: one compiled training update (the learner's loss and optimizer, unchanged) for a sweep of
   core sizes and batch sizes, and for K minds trained at once with jax.vmap. Data sits on the device,
-  so this is the ceiling. The clock stops only after the device finishes.
+  so this is the ceiling. The clock stops only after the device finishes. Each setting is timed three
+  times after one compile (the median is reported); a setting that fails (for example out of GPU
+  memory) is recorded with its error instead of stopping the run.
 - train: learner.train itself, 500 updates of the current learner on host data, as experiments run it
   (batches gathered on the host and copied in every update).
 - e2e: one full mind (human, lawful world, data seed 0, the v1 sizes) through experiment.run_world,
@@ -22,9 +24,9 @@ import os
 import platform
 import shutil
 import time
+from pathlib import Path
 
 import jax
-import jax.numpy as jnp
 import numpy as np
 import optax
 
@@ -32,7 +34,7 @@ from umwelt import learner
 
 D = 311  # the human mind's observation size
 SINGLE = [(128, 32), (128, 256), (512, 32), (512, 256), (1024, 256)]  # (hidden, batch), one mind
-MANY = [1, 8, 32, 128]  # minds at once, current learner (hidden 128, batch 32)
+MANY = [1, 8, 16, 32, 64, 128]  # minds at once, current learner (hidden 128, batch 32)
 
 
 def make_update(cfg):
@@ -77,9 +79,14 @@ def bench_update(K, hidden, batch):
         p, st, _ = f(c[0], c[1], o, a)
         return p, st, None
 
-    s = _clock(step, (p, st, None))
-    return {"minds": K, "hidden": hidden, "batch": batch, "ms_per_update": s * 1e3,
-            "mind_updates_per_s": K / s, "minutes_per_4000_updates_all_minds": 4000 * s / 60}
+    rec = {"minds": K, "hidden": hidden, "batch": batch}
+    try:
+        runs = [_clock(step, (p, st, None)) for _ in range(3)]
+    except Exception as e:  # noqa: BLE001  (out of memory is a result here, not a crash)
+        return rec | {"error": f"{type(e).__name__}: {str(e).splitlines()[0][:200]}"}
+    s = float(np.median(runs))
+    return rec | {"ms_per_update": s * 1e3, "ms_runs": [r * 1e3 for r in runs], "mind_updates_per_s": K / s,
+                  "minutes_per_4000_updates_all_minds": 4000 * s / 60}
 
 
 def bench_train(steps=500):
@@ -118,10 +125,11 @@ def main():
     out = os.path.join(args.out, args.tag)
     os.makedirs(out, exist_ok=True)
     path = os.path.join(out, "bench.json")
-    res = json.load(open(path)) if os.path.exists(path) else {}
+    res = json.loads(Path(path).read_text()) if os.path.exists(path) else {}
     res["env"] = {"platform": platform.platform(), "backend": jax.default_backend(),
                   "device": jax.devices()[0].device_kind, "jax": jax.__version__,
-                  "matmul_precision": args.precision, "xla_flags": os.environ.get("XLA_FLAGS", "")}
+                  "matmul_precision": args.precision, "xla_flags": os.environ.get("XLA_FLAGS", ""),
+                  "allocator": os.environ.get("XLA_PYTHON_CLIENT_ALLOCATOR", "default")}
     print(res["env"], flush=True)
     if "update" in args.parts:
         res["update"] = []
