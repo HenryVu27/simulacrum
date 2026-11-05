@@ -108,8 +108,13 @@ What is known (all in `docs/gpu.md`; every result recomputed by three independen
 Open, from the GPU work:
 - Done 2026-11-05 at Henry's go-ahead: the surprise-test "no wall" marker moved off the boundary wall; the
   dog's and oracle's surprise scores recomputed in all stored runs, no verdict changed
-  (`docs/preregistration.md`, last section). It exposed that the oracle's surprise scores partly measure
-  how an absent wall is encoded (its permanence surprise moved by up to a quarter).
+  (`docs/preregistration.md`, last section).
+- Decision needed: the surprise battery has two more defects (found 2026-11-05, recorded in
+  `docs/preregistration.md`). The oracle's surprise scores are set mostly by how an absent wall is encoded,
+  and v2's V3 verdict flips with that choice; and the solidity movies never show the wall to any sense but
+  the oracle's. Options: redesign the solidity movies (agent off the wall's line) and recompute every mind's
+  solidity surprise from the stored networks; give the oracle an explicit wall-present input or report its
+  surprise as uninterpretable.
 - The `cause` probe is hypersensitive: 6 changed labels among 7,873 moved a score by 0.038, more than a
   learner seed. Every cause result so far should be read with that in mind; a more robust cause target or
   more probe data would help.
@@ -209,9 +214,13 @@ Open, from the GPU work:
   world, so cause is "not applicable" there).
 - 2026-11-05, after all runs: the surprise-test stimuli were corrected (a "no wall" marker lay on the
   boundary wall, making some of the dog's rays device-dependent). The dog's and the oracle's surprise
-  scores were recomputed from the stored networks in all 8 runs; old values kept in each file. Dog
-  permanence moved by at most 0.0005, oracle permanence down by 0.03 to 0.11; no verdict changed. Details
-  and a caveat on the oracle's surprise scores: `docs/preregistration.md`, last section.
+  scores were recomputed from the stored networks in all 8 runs (and the pilot's oracle); old values kept
+  in each file. Dog permanence moved by at most 0.0005, oracle permanence down by 0.03 to 0.11 (18 to 30
+  percent); no verdict changed. Details: `docs/preregistration.md`, last section.
+- Found by the check of that correction, not corrected: the oracle's surprise scores depend mostly on how an
+  absent wall is encoded (permanence 0 to 0.57 across ten encodings), so they are uninterpretable, and v2's V3
+  FAIL rests only on one of them; and the solidity movies show the wall edge-on, so no sense but the oracle's
+  ever sees it and solidity surprise is noise for 13 of 14 minds in every run.
 
 ## Machine notes
 

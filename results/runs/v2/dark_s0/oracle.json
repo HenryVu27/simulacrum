@@ -248,6 +248,12 @@
   }
  },
  "corrections": [
-  "2026-11-05 surprise-test stimuli: hidden wall moved off the boundary (docs/preregistration.md)"
+  {
+   "date": "2026-11-05",
+   "what": "surprise-test stimuli: hidden wall moved off the boundary (docs/preregistration.md, 2026-11-05)",
+   "script": "experiments/recompute_voe.py",
+   "code": "ad270b0",
+   "machine": "Mac-2199.lan"
+  }
  ]
 }

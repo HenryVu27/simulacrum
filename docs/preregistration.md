@@ -267,7 +267,9 @@ at the same distance, to the last bit or within one unit in the last place, and 
 depended on rounding. That differs between devices, so a mind's surprise scores could differ between the Mac
 and the GPU for a reason that has nothing to do with the mind. Only the dog's eyes (240 degrees) reach those
 rays; echolocation sees the same depth and texture for both walls. Recorded worlds are not affected: their
-internal walls lie well inside the arena.
+internal walls never coincide with the boundary (wall centres lie 2.5 to 7.5 units from the edges; endpoints come
+within about 1 unit of an edge in the worlds with surprise runs, and within 0.03 in the occlusion calibration
+recording, where no ray can meet two walls at the same distance either).
 
 **The fix.** The marker now lies one unit outside the arena, where no ray, sound path or touch reaches it.
 `tests/test_core.py::test_the_absent_wall_is_really_absent` checks that moving it further away changes no
@@ -278,7 +280,10 @@ three of the oracle's (6.9 to 10.3 percent, because the oracle reads wall coordi
 
 **What was redone.** No mind was retrained. `experiments/recompute_voe.py` recomputed the dog's and the oracle's
 surprise scores (trained and untrained networks) from their stored trained networks in all 8 stored runs (v1:
-lawful seeds 0 and 1, ghost, impermanent, nonlocal, lawful in MuJoCo; v2: dark seeds 0 and 1). It first
+lawful seeds 0 and 1, ghost, impermanent, nonlocal, lawful in MuJoCo; v2: dark seeds 0 and 1), and the oracle in
+the v1 pilot run (whose files are not in git; its committed report, `results/report_pilot`, was made by an older
+version of the report code and is left as it was, so it still shows the oracle's pre-correction surprise: 0.202
+for permanence, now 0.157, listed in `results/wall_fix_recompute.json`). It first
 required the old movies to reproduce every stored value exactly (they did, all 16 files) and an unaffected mind
 (human) to be unchanged by the new movies (it was). The old values are kept in each file under
 `voe_before_wall_fix` and `voe_untrained_before_wall_fix`; every change is listed in
@@ -287,15 +292,38 @@ the unchanged files, so the differences are the fix's alone).
 
 **What changed.**
 - Dog: permanence surprise moved by at most 0.0005 (11 scores); no other dog score changed.
-- Oracle, trained network, permanence: down in every run, by 0.03 to 0.11 (lawful seed 0: 0.484 to 0.386; dark
-  seed 0: 0.499 to 0.411). Its other surprise scores moved by at most 0.005. In the ghost world its solidity
-  interval now excludes zero (0.040, [0.005, 0.080]; before [-0.004, 0.084]).
-- Verdicts: none changed. The V3, H6 and P4 lines of both reports are identical before and after. H6 and P4 use
-  permanence surprise of minds other than the oracle; the dog's shift is three orders of magnitude below the
-  scale they test.
+- Oracle, trained network, permanence: down in every run, by 0.03 to 0.11, or 18 to 30 percent (lawful seed 0:
+  0.484 to 0.386; dark seed 0: 0.499 to 0.411). Its other surprise scores moved by at most 0.0054. In the ghost
+  world its solidity interval now excludes zero (0.040, [0.005, 0.080]; before [-0.004, 0.084]); see the caveat,
+  this is an artefact of the encoding. (The message of commit cf27e28 says "down 0.07 to 0.11"; the ghost world
+  fell 0.028, so the range is 0.03 to 0.11.)
+- Verdicts: none changed. Every check line of both reports (V1 to V3, H1 to H7, the MuJoCo audit, M1, P1 to P4)
+  is identical before and after, confirmed by the independent check, which also regenerated both reports. H6 and
+  P4 use the permanence surprise of minds other than the oracle. The dog's shift (at most 0.0005) is about a tenth
+  of the permanence surprise those checks look at (around 0.004) and as large as the dog's own H6 difference
+  (impermanent minus lawful, +0.0002 before and +0.0003 after), so the dog alone does not decide them: H6's share
+  of minds less surprised after impermanent training stays 8 of 13. (The first version of this section said "three
+  orders of magnitude below"; that was wrong.)
 
-**A caveat this exposes.** The oracle reads wall coordinates, so for it an absent wall has to be encoded as some
-coordinates, and no encoding is inside what it saw in training (its training walls lie between 2.5 and 7.5 units
-from the edges). Moving the marker by one unit moved its permanence surprise by up to a quarter. The oracle's
-surprise scores therefore partly measure how an absent wall is encoded, before and after this correction, and
-should be read as a control with that limit, not as a clean measurement.
+**What this exposes about the oracle.** The oracle reads wall coordinates, so for it an absent wall has to be
+encoded as some coordinates, and no encoding is like anything it saw in training. The independent check put ten
+off-arena encodings into the oracle's input, every one invisible to the other senses
+(`results/checks/2026-11-05_stimulus_fix/encoding_out.txt`). The trained oracle's permanence surprise ranges
+from about 0 (marker far away, at (-50, -50)) to 0.48 (lawful seed 0; dark seed 0: 0 to 0.57); at y = -2 it is
+0.18 to 0.33 across runs and at y = -5 0.02 to 0.15. Its solidity surprise in the ghost world changes sign
+(+0.040 [0.005, 0.080] with the marker below the arena, -0.035 [-0.044, -0.024] above it). So the oracle's surprise
+scores are set largely by an arbitrary encoding choice, before and after this correction, and should be treated
+as uninterpretable, not as a control. One preregistered verdict depends on them: V3 ("untrained minds show no
+surprise") fails in v2 only because of the untrained oracle's permanence surprise (-0.0149, against a threshold of
+0.01); with the marker at y = -5 that score is -0.0090 and v2's V3 passes. In v1, V3 fails with or without the
+oracle (the untrained dog's causality surprise also fails it). The preregistered rule is not changed here; the
+verdict is reported with this dependence stated.
+
+**A second defect, found by the same check and not corrected here.** In the solidity movies the agent stands at
+x = 6.0 and the wall lies on the line x = 6.0, so it sees the wall edge-on and no ray ever hits it. For every mind
+except the oracle, the "wall and bounce" movie is byte-identical to "no wall and bounce", and "no wall and pass" to
+"wall and pass", in all 18 instances. The solidity surprise of the 13 non-oracle minds has therefore measured noise
+from the stimuli's other differences (none, for the senses), in every run; for the oracle it contrasts only wall
+coordinates. No preregistered verdict rests on solidity surprise alone, but every solidity number in the reports
+is uninformative. Fixing it means redesigning those movies (moving the agent off the wall's line) and recomputing
+every mind's solidity surprise from the stored networks; that is left for a decision.
