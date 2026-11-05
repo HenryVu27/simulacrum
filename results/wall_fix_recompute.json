@@ -1,0 +1,662 @@
+[
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.004726230166852474,
+  "S_after": 0.00509326858446002,
+  "change": 0.00036703841760754585,
+  "S_copy_before": 0.011699612252414227,
+  "S_copy_after": 0.011699612252414227
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": 0.0003093681007158011,
+  "S_after": 0.0003093681007158011,
+  "change": 0.0,
+  "S_copy_before": 0.006189669948071241,
+  "S_copy_after": 0.006189669948071241
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.02810831554234028,
+  "S_after": 0.02810831554234028,
+  "change": 0.0,
+  "S_copy_before": -0.0005287211970426142,
+  "S_copy_after": -0.0005287211970426142
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe_untrained/permanence",
+  "S_before": -0.00023756339214742184,
+  "S_after": -0.0001687300973571837,
+  "change": 6.883329479023814e-05,
+  "S_copy_before": 0.011699612252414227,
+  "S_copy_after": 0.011699612252414227
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe_untrained/solidity",
+  "S_before": -0.0012353226775303483,
+  "S_after": -0.0012353226775303483,
+  "change": 0.0,
+  "S_copy_before": 0.006189669948071241,
+  "S_copy_after": 0.006189669948071241
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "dog",
+  "score": "voe_untrained/causality",
+  "S_before": 0.011812257580459118,
+  "S_after": 0.011812257580459118,
+  "change": 0.0,
+  "S_copy_before": -0.0005287211970426142,
+  "S_copy_after": -0.0005287211970426142
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.48393985629081726,
+  "S_after": 0.38558006286621094,
+  "change": -0.09835979342460632,
+  "S_copy_before": 5027.84326171875,
+  "S_copy_after": 5027.84326171875
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.06263544410467148,
+  "S_after": -0.061456579715013504,
+  "change": 0.0011788643896579742,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.017156245186924934,
+  "S_after": -0.013259857892990112,
+  "change": 0.003896387293934822,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/permanence",
+  "S_before": -0.016613129526376724,
+  "S_after": -0.014819957315921783,
+  "change": 0.0017931722104549408,
+  "S_copy_before": 5027.84326171875,
+  "S_copy_after": 5027.84326171875
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/solidity",
+  "S_before": 0.0027919020503759384,
+  "S_after": 0.002863303991034627,
+  "change": 7.140194065868855e-05,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/causality",
+  "S_before": -0.0007937691989354789,
+  "S_after": -0.0006262809620238841,
+  "change": 0.00016748823691159487,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.0007860285113565624,
+  "S_after": 0.0010788741055876017,
+  "change": 0.0002928455942310393,
+  "S_copy_before": 0.011699612252414227,
+  "S_copy_after": 0.011699612252414227
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.0019281284185126424,
+  "S_after": -0.0019281284185126424,
+  "change": 0.0,
+  "S_copy_before": 0.006189669948071241,
+  "S_copy_after": 0.006189669948071241
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.016858911141753197,
+  "S_after": 0.016858911141753197,
+  "change": 0.0,
+  "S_copy_before": -0.0005287211970426142,
+  "S_copy_after": -0.0005287211970426142
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.43800532817840576,
+  "S_after": 0.33729851245880127,
+  "change": -0.10070681571960449,
+  "S_copy_before": 5027.84326171875,
+  "S_copy_after": 5027.84326171875
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.0671100839972496,
+  "S_after": -0.06771408021450043,
+  "change": -0.000603996217250824,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_s1",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.026290321722626686,
+  "S_after": -0.02093919739127159,
+  "change": 0.005351124331355095,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.0004332614771556109,
+  "S_after": 0.0006237920024432242,
+  "change": 0.00019053052528761327,
+  "S_copy_before": 0.005119582638144493,
+  "S_copy_after": 0.005119582638144493
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.004513380117714405,
+  "S_after": -0.004513380117714405,
+  "change": 0.0,
+  "S_copy_before": -0.0024736954364925623,
+  "S_copy_after": -0.0024736954364925623
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.008627379313111305,
+  "S_after": 0.008627379313111305,
+  "change": 0.0,
+  "S_copy_before": -0.001616728026419878,
+  "S_copy_after": -0.001616728026419878
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.13026727735996246,
+  "S_after": 0.10219834744930267,
+  "change": -0.02806892991065979,
+  "S_copy_before": 432.57000732421875,
+  "S_copy_after": 432.57000732421875
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": 0.037091996520757675,
+  "S_after": 0.03959810733795166,
+  "change": 0.002506110817193985,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/ghost_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.0027761473320424557,
+  "S_after": -0.00225416524335742,
+  "change": 0.0005219820886850357,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.002954676281660795,
+  "S_after": 0.0034158355556428432,
+  "change": 0.00046115927398204803,
+  "S_copy_before": 0.010362230241298676,
+  "S_copy_after": 0.010362230241298676
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.004847271367907524,
+  "S_after": -0.004847271367907524,
+  "change": 0.0,
+  "S_copy_before": 0.0055191428400576115,
+  "S_copy_after": 0.0055191428400576115
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.0307918731123209,
+  "S_after": 0.0307918731123209,
+  "change": 0.0,
+  "S_copy_before": 0.00023990536283235997,
+  "S_copy_after": 0.00023990536283235997
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.38677990436553955,
+  "S_after": 0.3162742555141449,
+  "change": -0.07050564885139465,
+  "S_copy_before": 5976.87255859375,
+  "S_copy_after": 5976.87255859375
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.009864462539553642,
+  "S_after": -0.012499397620558739,
+  "change": -0.0026349350810050964,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/impermanent_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.008244501426815987,
+  "S_after": -0.0067299529910087585,
+  "change": 0.001514548435807228,
+  "S_copy_before": -1.4418110083624924e-07,
+  "S_copy_after": -1.4418110083624924e-07
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.004532487131655216,
+  "S_after": 0.005044111516326666,
+  "change": 0.0005116243846714497,
+  "S_copy_before": 0.007919500581920147,
+  "S_copy_after": 0.007919500581920147
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.00240468792617321,
+  "S_after": -0.00240468792617321,
+  "change": 0.0,
+  "S_copy_before": 0.008214847184717655,
+  "S_copy_after": 0.008214847184717655
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.029086792841553688,
+  "S_after": 0.029086792841553688,
+  "change": 0.0,
+  "S_copy_before": 0.005681658163666725,
+  "S_copy_after": 0.005681658163666725
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.3672509491443634,
+  "S_after": 0.25781044363975525,
+  "change": -0.10944050550460815,
+  "S_copy_before": 1606.913818359375,
+  "S_copy_after": 1606.913818359375
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": 0.020182866603136063,
+  "S_after": 0.017641780897974968,
+  "change": -0.0025410857051610947,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/nonlocal_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.006040788721293211,
+  "S_after": -0.004266280215233564,
+  "change": 0.0017745085060596466,
+  "S_copy_before": 1.9060118461311504e-07,
+  "S_copy_after": 1.9060118461311504e-07
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.0021040281280875206,
+  "S_after": 0.002485881093889475,
+  "change": 0.00038185296580195427,
+  "S_copy_before": 0.010370430536568165,
+  "S_copy_after": 0.010370430536568165
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": 0.006721109617501497,
+  "S_after": 0.006721109617501497,
+  "change": 0.0,
+  "S_copy_before": 0.03802518919110298,
+  "S_copy_after": 0.03802518919110298
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.028819894418120384,
+  "S_after": 0.028819894418120384,
+  "change": 0.0,
+  "S_copy_before": 0.019999777898192406,
+  "S_copy_after": 0.019999777898192406
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe_untrained/permanence",
+  "S_before": -2.1211191779002547e-05,
+  "S_after": 3.057386493310332e-05,
+  "change": 5.178505671210587e-05,
+  "S_copy_before": 0.010370430536568165,
+  "S_copy_after": 0.010370430536568165
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe_untrained/solidity",
+  "S_before": -0.00048631246318109334,
+  "S_after": -0.00048631246318109334,
+  "change": 0.0,
+  "S_copy_before": 0.03802518919110298,
+  "S_copy_after": 0.03802518919110298
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "dog",
+  "score": "voe_untrained/causality",
+  "S_before": 0.012037492357194424,
+  "S_after": 0.012037492357194424,
+  "change": 0.0,
+  "S_copy_before": 0.019999777898192406,
+  "S_copy_after": 0.019999777898192406
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.4608798027038574,
+  "S_after": 0.3549814522266388,
+  "change": -0.10589835047721863,
+  "S_copy_before": 4027.44140625,
+  "S_copy_after": 4027.44140625
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.040063951164484024,
+  "S_after": -0.0413871593773365,
+  "change": -0.001323208212852478,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": 0.0006683467654511333,
+  "S_after": -4.2413852497702464e-05,
+  "change": -0.0007107606179488357,
+  "S_copy_before": 1.363422796885061e-07,
+  "S_copy_after": 1.363422796885061e-07
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/permanence",
+  "S_before": -0.014184719882905483,
+  "S_after": -0.012600286863744259,
+  "change": 0.0015844330191612244,
+  "S_copy_before": 4027.44140625,
+  "S_copy_after": 4027.44140625
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/solidity",
+  "S_before": 0.0023035285994410515,
+  "S_after": 0.0020809995476156473,
+  "change": -0.00022252905182540417,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "main/lawful_mj_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/causality",
+  "S_before": -0.0006912695826031268,
+  "S_after": -0.0005256455624476075,
+  "change": 0.00016562402015551925,
+  "S_copy_before": 1.363422796885061e-07,
+  "S_copy_after": 1.363422796885061e-07
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": 0.005445413291454315,
+  "S_after": 0.0055770352482795715,
+  "change": 0.00013162195682525635,
+  "S_copy_before": 0.013906994834542274,
+  "S_copy_after": 0.013906994834542274
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.010367851704359055,
+  "S_after": -0.010367851704359055,
+  "change": 0.0,
+  "S_copy_before": 0.00792082492262125,
+  "S_copy_after": 0.00792082492262125
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.014508643187582493,
+  "S_after": 0.014508643187582493,
+  "change": 0.0,
+  "S_copy_before": -0.006332173012197018,
+  "S_copy_after": -0.006332173012197018
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe_untrained/permanence",
+  "S_before": -0.0009400019189342856,
+  "S_after": -0.0009142093476839364,
+  "change": 2.5792571250349283e-05,
+  "S_copy_before": 0.013906994834542274,
+  "S_copy_after": 0.013906994834542274
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe_untrained/solidity",
+  "S_before": -0.0007548633730039,
+  "S_after": -0.0007548633730039,
+  "change": 0.0,
+  "S_copy_before": 0.00792082492262125,
+  "S_copy_after": 0.00792082492262125
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "dog",
+  "score": "voe_untrained/causality",
+  "S_before": 0.0022575189359486103,
+  "S_after": 0.0022575189359486103,
+  "change": 0.0,
+  "S_copy_before": -0.006332173012197018,
+  "S_copy_after": -0.006332173012197018
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.49899253249168396,
+  "S_after": 0.4113505482673645,
+  "change": -0.08764198422431946,
+  "S_copy_before": 5082.447265625,
+  "S_copy_after": 5082.447265625
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.04009480029344559,
+  "S_after": -0.04261115565896034,
+  "change": -0.0025163553655147552,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.012458167038857937,
+  "S_after": -0.009613250382244587,
+  "change": 0.00284491665661335,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/permanence",
+  "S_before": -0.016590464860200882,
+  "S_after": -0.014882597140967846,
+  "change": 0.001707867719233036,
+  "S_copy_before": 5082.447265625,
+  "S_copy_after": 5082.447265625
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/solidity",
+  "S_before": 0.0021399862598627806,
+  "S_after": 0.002324325032532215,
+  "change": 0.00018433877266943455,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "v2/dark_s0",
+  "mind": "oracle",
+  "score": "voe_untrained/causality",
+  "S_before": -0.0007361254538409412,
+  "S_after": -0.0005690212128683925,
+  "change": 0.00016710424097254872,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "dog",
+  "score": "voe/permanence",
+  "S_before": -0.003634267719462514,
+  "S_after": -0.003425930393859744,
+  "change": 0.00020833732560276985,
+  "S_copy_before": 0.013906994834542274,
+  "S_copy_after": 0.013906994834542274
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "dog",
+  "score": "voe/solidity",
+  "S_before": -0.004753990098834038,
+  "S_after": -0.004753990098834038,
+  "change": 0.0,
+  "S_copy_before": 0.00792082492262125,
+  "S_copy_after": 0.00792082492262125
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "dog",
+  "score": "voe/causality",
+  "S_before": 0.012821157462894917,
+  "S_after": 0.012821157462894917,
+  "change": 0.0,
+  "S_copy_before": -0.006332173012197018,
+  "S_copy_after": -0.006332173012197018
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "oracle",
+  "score": "voe/permanence",
+  "S_before": 0.4813314378261566,
+  "S_after": 0.3920349180698395,
+  "change": -0.08929651975631714,
+  "S_copy_before": 5082.447265625,
+  "S_copy_after": 5082.447265625
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "oracle",
+  "score": "voe/solidity",
+  "S_before": -0.043553948402404785,
+  "S_after": -0.045023273676633835,
+  "change": -0.0014693252742290497,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ },
+ {
+  "run": "v2/dark_s1",
+  "mind": "oracle",
+  "score": "voe/causality",
+  "S_before": -0.02234366349875927,
+  "S_after": -0.018165087327361107,
+  "change": 0.004178576171398163,
+  "S_copy_before": 0.0,
+  "S_copy_after": 0.0
+ }
+]

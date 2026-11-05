@@ -94,7 +94,7 @@ Skill at locating each object relative to the agent, by steps since it was last 
 
 | mind | permanence | solidity | causality |
 |---|---|---|---|
-| oracle | 0.490 | -0.042 | -0.017 |
+| oracle | 0.402 | -0.044 | -0.014 |
 | human | 0.004 | 0.001 | -0.036 |
 | dog | 0.001 | -0.008 | 0.014 |
 | vision_only | 0.001 | 0.003 | -0.035 |

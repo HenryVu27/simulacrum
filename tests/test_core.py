@@ -135,3 +135,18 @@ def test_look_back_turns_away_and_returns():
             seg = th[i + LOOK_FACE - 1 : j] - th[i + LOOK_FACE - 1]  # heading at the end of the face phase
             swings.append((np.abs(seg).max(), abs(seg[-1])))
     assert any(big > np.deg2rad(110) and end < np.deg2rad(30) for big, end in swings), swings
+
+
+def test_the_absent_wall_is_really_absent(monkeypatch):
+    """voe.HIDDEN_WALL stands for "no wall here" in the surprise-test movies. Moving it further away must change
+    no observation except the oracle's, which reads wall coordinates directly."""
+    makers = [lambda: voe.permanence(voe.INERT[0], -0.5), lambda: voe.solidity(voe.INERT[0], 0.5),
+              lambda: voe.causality(voe.INERT[0], voe.INERT[1], -0.5)]
+    base = [m()[0] for m in makers]
+    monkeypatch.setattr(voe, "HIDDEN_WALL", voe.HIDDEN_WALL + np.array([0.0, -5.0, 0.0, -5.0], np.float32))
+    moved = [m()[0] for m in makers]
+    for movies_a, movies_b in zip(base, moved):
+        for va, vb in zip(movies_a, movies_b):
+            for k in va:
+                if k != "oracle":
+                    assert np.array_equal(va[k], vb[k]), k

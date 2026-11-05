@@ -25,7 +25,12 @@ from umwelt.world import DT, FAR, GRID, N_SLOTS, N_INTERNAL_WALLS, Contacts, Sta
 
 PRE = 16
 INERT = [k for k in range(kinds.N_KINDS) if not kinds.ANIMATE[k]]
-HIDDEN_WALL = np.array([0.5, 0.0, 1.5, 0.0], np.float32)  # lies on the boundary, so it is effectively absent
+# "No wall here": one unit outside the arena, below the boundary wall at y = 0, so no ray, sound path or touch
+# reaches it. It used to lie on the boundary itself, where rays meeting both walls at the same distance took
+# their colour from last-bit rounding, which differs between devices (docs/gpu.md, E7b; the 2026-11-05
+# correction in docs/preregistration.md). tests/test_core.py checks that moving it further away changes
+# nothing but the oracle's input.
+HIDDEN_WALL = np.array([0.5, -1.0, 1.5, -1.0], np.float32)
 VARIANTS = ("P1", "P2", "I1", "I2")
 
 

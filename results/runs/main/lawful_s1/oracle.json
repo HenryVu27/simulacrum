@@ -104,6 +104,40 @@
  },
  "voe": {
   "permanence": {
+   "S": 0.33729851245880127,
+   "ci": [
+    0.3078198812901974,
+    0.36367610692977903
+   ],
+   "S_copy": 5027.84326171875
+  },
+  "solidity": {
+   "S": -0.06771408021450043,
+   "ci": [
+    -0.08301473893225193,
+    -0.05501874834299088
+   ],
+   "S_copy": 0.0
+  },
+  "causality": {
+   "S": -0.02093919739127159,
+   "ci": [
+    -0.029541332088410855,
+    -0.01302118222229183
+   ],
+   "S_copy": 0.0
+  }
+ },
+ "timing": {
+  "train": 519.7,
+  "latents": 21.4,
+  "probes_mlp": 158.2,
+  "probes_linear": 28.2,
+  "voe": 2.8
+ },
+ "seconds": 731.1528961658478,
+ "voe_before_wall_fix": {
+  "permanence": {
    "S": 0.43800532817840576,
    "ci": [
     0.40715460777282714,
@@ -128,12 +162,7 @@
    "S_copy": 0.0
   }
  },
- "timing": {
-  "train": 519.7,
-  "latents": 21.4,
-  "probes_mlp": 158.2,
-  "probes_linear": 28.2,
-  "voe": 2.8
- },
- "seconds": 731.1528961658478
+ "corrections": [
+  "2026-11-05 surprise-test stimuli: hidden wall moved off the boundary (docs/preregistration.md)"
+ ]
 }
