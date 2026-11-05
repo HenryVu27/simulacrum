@@ -17,6 +17,9 @@ voe_untrained_before_battery_fix; the scores from before the first correction st
 
     uv run python experiments/recompute_battery.py            # check only
     uv run python experiments/recompute_battery.py --write    # check, then write
+
+Kept as the record: its scores used one sensor-noise draw, as every score did then, and were rescored over 20
+draws the same day (recompute_noise.py). It still scores with one draw; do not run it with --write again.
 """
 
 import argparse
@@ -59,10 +62,10 @@ def scores(rec, saved, suite):
     cfg = learner.LearnerConfig(**{k: tuple(v) if isinstance(v, list) else v for k, v in rec["config"].items()})
     L = learner_jepa if cfg.objective == "jepa" else learner
     p = presets.PRESETS[rec["preset"]]
-    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L)}
+    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L, draws=1)}
     if "voe_untrained" in rec:  # the run's untrained-network control, rebuilt from its seed
         p0 = L.init(jax.random.PRNGKey(10_000 + rec["seed"]), rec["obs_dim"], cfg, p.recurrent)
-        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L)
+        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L, draws=1)
     return json.loads(json.dumps(_jsonable(out)))  # the same rounding to JSON as the stored files
 
 

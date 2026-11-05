@@ -13,9 +13,10 @@ The test is the world contrast on S itself. In the ghost world objects pass thro
 that learned in the lawful world that walls stop objects should score higher than its ghost-trained twin.
 A difference in the stimuli that only a learned predictor picks up would show in both worlds alike.
 
-Errors are scored with the stored networks on the movies the battery uses, with each preset's usual sensor noise
-(the stored scores; asserted) and again without it. Intervals: bootstrap over the 18 quadruplets, as in
-voe.surprise.
+Errors are scored with the stored networks on the movies the battery uses, over voe.NOISE_DRAWS draws of each
+preset's sensor noise (the stored scores; asserted) and again without noise. Intervals: bootstrap over the 18
+quadruplets and the draws, as in voe.surprise. (The first version of this check used one noise draw, as every
+score did then; its conclusion is unchanged.)
 
     uv run python experiments/solidity_split.py > results/checks/2026-11-05_battery/solidity_split.txt
 """
@@ -40,18 +41,18 @@ RUNS = ["main/lawful_s0", "main/lawful_s1", "main/ghost_s0", "main/impermanent_s
 
 
 def contrasts(err, crit, rng, n_boot=1000):
-    """err (n*4, T-1). Returns {name: (value, (lo, hi))} for S, pass and bounce."""
-    n = len(crit)
-    e = err.reshape(n, 4, -1)
-    tot = np.array([e[i, :, crit[i] - 1:].sum(-1) for i in range(n)])  # (n, 4): P1 P2 I1 I2
+    """err (draws, n*4, T-1). Returns {name: (value, (lo, hi))} for S, pass and bounce, over the draws' mean
+    errors, resampling draws and quadruplets as voe.surprise does."""
+    tot = voe.totals(err, crit)  # (draws, n, 4): P1 P2 I1 I2
+    k, n = tot.shape[:2]
 
     def stats(t):
         base = t[:, 0].sum() + t[:, 1].sum()
         return {"S": (t[:, 2].sum() + t[:, 3].sum() - base) / base, "pass": (t[:, 2].sum() - t[:, 1].sum()) / base,
                 "bounce": (t[:, 3].sum() - t[:, 0].sum()) / base}
 
-    point = stats(tot)
-    boots = [stats(tot[rng.integers(0, n, n)]) for _ in range(n_boot)]
+    point = stats(tot.mean(0))
+    boots = [stats(tot[rng.integers(0, k, k)].mean(0)[rng.integers(0, n, n)]) for _ in range(n_boot)]
     return {k: (v, tuple(np.percentile([b[k] for b in boots], [2.5, 97.5]))) for k, v in point.items()}
 
 
@@ -69,9 +70,10 @@ def main():
             p = presets.PRESETS[name]
             for noise in ("usual", "none"):
                 q = p if noise == "usual" else replace(p, senses=tuple(replace(s, noise=0.0) for s in p.senses))
-                o = (presets.observe(d, q) - saved["mu"]) / saved["sd"]
-                err = learner.batched(L._errors_jit, saved["params"], o, presets.actions(d, q))
-                c = contrasts(np.asarray(err), crit, np.random.default_rng(0))
+                draws = voe.NOISE_DRAWS if noise == "usual" and any(s.noise > 0 for s in p.senses) else 1
+                err = np.stack([learner.batched(L._errors_jit, saved["params"], (presets.observe(d, q, draw=k) - saved["mu"]) / saved["sd"],
+                                                presets.actions(d, q)) for k in range(draws)])
+                c = contrasts(err, crit, np.random.default_rng(0))
                 rows.append({"run": run, "mind": name, "noise": noise, **{k: [float(v), [float(x) for x in ci]] for k, (v, ci) in c.items()}})
                 if noise == "usual":
                     assert abs(c["S"][0] - rec["voe"]["solidity"]["S"]) < 1e-6, (run, name)  # the stored score

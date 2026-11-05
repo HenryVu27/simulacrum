@@ -1526,7 +1526,7 @@
   {
    "name": "P4 surprise at impossible permanence",
    "pass": false,
-   "detail": "human S 0.0018 [-0.0026, 0.0060], S 0.0012 [-0.0036, 0.0056]; memoryless S 0.0045 [0.0012, 0.0076], S 0.0025 [-0.0013, 0.0061]; human mean S 0.0015 here vs 0.0023 in v1 lawful (all three parts must hold)"
+   "detail": "human S 0.0008 [-0.0011, 0.0030], S 0.0008 [-0.0013, 0.0029]; memoryless S 0.0003 [-0.0013, 0.0018], S 0.0003 [-0.0011, 0.0018]; human mean S 0.0008 here vs 0.0007 in v1 lawful (all three parts must hold)"
   }
  ],
  "validation": [

@@ -1,0 +1,38 @@
+main/lawful_s0 bat: done
+main/lawful_s0 blind: done
+main/lawful_s0 chimera: done
+main/lawful_s0 deafblind: done
+main/lawful_s0 dog: done
+main/lawful_s0 hearing_only: done
+main/lawful_s0 human: done
+main/lawful_s0 memoryless: done
+main/lawful_s0 passive: done
+main/lawful_s0 passive_novest: done
+main/lawful_s0 smell_only: done
+main/lawful_s0 touch_only: done
+main/lawful_s0 vision_only: done
+v2/dark_s0 bat: done
+v2/dark_s0 blind: done
+v2/dark_s0 chimera: done
+v2/dark_s0 deafblind: done
+v2/dark_s0 dog: done
+v2/dark_s0 hearing_only: done
+v2/dark_s0 human: done
+v2/dark_s0 memoryless: done
+v2/dark_s0 passive: done
+v2/dark_s0 passive_novest: done
+v2/dark_s0 smell_only: done
+v2/dark_s0 touch_only: done
+v2/dark_s0 vision_only: done
+
+156 scores (minds with sensor noise, trained and untrained, three tests, two runs)
+one draw: S moves between draws by sd 0.0024 (median), 0.0310 (largest); that is 0.48 of the interval's half-width (median), 0.72 (largest)
+one draw: 'interval excludes 0' differs from draw 0's in 18.4% of (score, draw) pairs
+one draw: an interval contains the noise-averaged S of 20 other draws 93.6% of the time
+20 draws: S of set A and set B differ by 0.0006 (median), 0.0141 (largest); 0.21 of the half-width (median), 1.53 (largest)
+20 draws: 'interval excludes 0' agrees between set A and set B in 97.4% of scores (4 disagree)
+20 draws: set A's interval contains set B's S in 96.2% of scores
+  disagree: main/lawful_s0 bat untrained solidity: A +0.0019 [0.0007, 0.0032], B +0.0011 [-0.0003, 0.0026]
+  disagree: main/lawful_s0 memoryless trained solidity: A +0.0056 [0.0001, 0.0108], B +0.0050 [-0.001, 0.0101]
+  disagree: v2/dark_s0 bat untrained solidity: A +0.0018 [0.0007, 0.0032], B +0.0011 [-0.0003, 0.0026]
+  disagree: v2/dark_s0 dog untrained solidity: A +0.0013 [0.0002, 0.0024], B +0.0011 [-0.0001, 0.0023]

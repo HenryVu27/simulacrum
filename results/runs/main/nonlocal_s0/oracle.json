@@ -179,6 +179,13 @@
    "machine": "Henrys-MacBook-Pro-2.local",
    "stimuli": "016fc3d72807e39d",
    "stimuli_before": "not recorded"
+  },
+  {
+   "date": "2026-11-05",
+   "what": "surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05)",
+   "script": "experiments/recompute_noise.py",
+   "code": "a1cda64 with uncommitted changes in src",
+   "machine": "Mac-2206.lan"
   }
  ],
  "voe_before_battery_fix": {
@@ -208,6 +215,33 @@
   }
  },
  "provenance": {
-  "stimuli": "016fc3d72807e39d"
+  "stimuli": "016fc3d72807e39d",
+  "voe_draws": 20
+ },
+ "voe_before_noise_draws": {
+  "permanence": {
+   "S": 1.179654598236084,
+   "ci": [
+    1.0199100524187088,
+    1.3165173649787902
+   ],
+   "S_copy": 1606.913818359375
+  },
+  "solidity": {
+   "S": 0.0003246184205636382,
+   "ci": [
+    -0.013516372628509998,
+    0.013952138973399995
+   ],
+   "S_copy": 0.0
+  },
+  "causality": {
+   "S": -0.0035618592519313097,
+   "ci": [
+    -0.014392076735384762,
+    0.005946005787700414
+   ],
+   "S_copy": 1.9060118461311504e-07
+  }
  }
 }

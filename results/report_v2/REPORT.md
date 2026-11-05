@@ -34,7 +34,7 @@ The manipulation check M1 failed, so by Amendments 2 and 4 every hypothesis P1 t
 - FAIL P1 permanence needs memory (weak manipulation): 1-5 steps: human 0.02, human raw senses 0.00, memoryless -0.03; 6-20 steps: human -0.02, human raw senses -0.02, memoryless -0.04
 - FAIL P2 updating a hidden object needs knowledge of own motion (weak manipulation): 6-20 steps: human -0.02, passive_novest -0.01
 - FAIL P3 counting needs memory when objects hide (weak manipulation): number: human -0.06, memoryless -0.07
-- FAIL P4 surprise at impossible permanence (weak manipulation): human S 0.0018 [-0.0026, 0.0060], S 0.0012 [-0.0036, 0.0056]; memoryless S 0.0045 [0.0012, 0.0076], S 0.0025 [-0.0013, 0.0061]; human mean S 0.0015 here vs 0.0023 in v1 lawful (all three parts must hold)
+- FAIL P4 surprise at impossible permanence (weak manipulation): human S 0.0008 [-0.0011, 0.0030], S 0.0008 [-0.0013, 0.0029]; memoryless S 0.0003 [-0.0013, 0.0018], S 0.0003 [-0.0011, 0.0018]; human mean S 0.0008 here vs 0.0007 in v1 lawful (all three parts must hold)
 
 ## v1 hypotheses re-run in the chosen world (exploratory)
 
@@ -43,7 +43,7 @@ The manipulation check M1 failed, so by Amendments 2 and 4 every hypothesis P1 t
 - FAIL H3 Held and Hein: efference shapes self, not objects: self_location human 0.29 vs passive_novest 0.32; self_motion 0.84 vs 0.30; object_seen human 0.56 vs passive 0.54
 - FAIL H4 counting needs a sense that separates objects: vision_only -0.05, bat -0.01, smell_only -0.03, hearing_only -0.01
 - PASS H5 translation runs from richer to poorer minds: human->blind 0.74 vs blind->human 0.15; human->vision_only 0.96 vs vision_only->human 0.85; dog->smell_only 0.84 vs smell_only->dog 0.18
-- FAIL H6 surprise at impossible permanence: interval above 0 for none; memoryless null False; share of minds less surprised after impermanent training n/a
+- FAIL H6 surprise at impossible permanence: interval above 0 for none; memoryless null True; share of minds less surprised after impermanent training n/a
 
 ## Permanence decay curves, every mind (mean of learner seeds)
 
@@ -95,19 +95,19 @@ Skill at locating each object relative to the agent, by steps since it was last 
 | mind | permanence | solidity | causality |
 |---|---|---|---|
 | oracle | 0.973 | 0.002 | -0.028 |
-| human | 0.001 | -0.003 | 0.002 |
-| dog | -0.001 | -0.004 | 0.002 |
-| vision_only | 0.001 | -0.001 | 0.004 |
-| bat | -0.005 | 0.010 | -0.072 |
-| chimera | 0.007 | 0.006 | -0.049 |
-| blind | -0.009 | -0.004 | 0.006 |
-| hearing_only | -0.008 | 0.004 | -0.009 |
-| smell_only | 0.026 | -0.002 | 0.005 |
-| deafblind | 0.002 | -0.004 | 0.007 |
-| touch_only | -0.003 | -0.018 | -0.015 |
-| passive | -0.002 | -0.002 | -0.004 |
-| passive_novest | -0.004 | 0.000 | -0.008 |
-| memoryless | 0.003 | 0.002 | -0.004 |
+| human | 0.001 | -0.003 | -0.001 |
+| dog | -0.001 | -0.001 | 0.002 |
+| vision_only | -0.001 | -0.002 | 0.002 |
+| bat | -0.000 | 0.007 | -0.067 |
+| chimera | 0.001 | 0.011 | -0.049 |
+| blind | -0.005 | -0.004 | 0.001 |
+| hearing_only | 0.003 | -0.000 | 0.002 |
+| smell_only | -0.005 | 0.007 | 0.000 |
+| deafblind | -0.001 | 0.005 | -0.006 |
+| touch_only | 0.005 | -0.002 | 0.004 |
+| passive | -0.000 | -0.003 | -0.004 |
+| passive_novest | 0.000 | 0.000 | -0.006 |
+| memoryless | 0.000 | -0.002 | -0.003 |
 
 ## Figures
 

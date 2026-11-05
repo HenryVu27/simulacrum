@@ -32,7 +32,7 @@ def test_recording_hash_matches_the_shell(tmp_path, monkeypatch):
 
 def test_a_tag_refuses_minds_made_with_other_settings(tmp_path):
     prov = {"backend": "gpu", "matmul_precision": "highest", "xla_flags": "--xla_gpu_deterministic_ops=true",
-            "recording_hash": "e9b74db4218d7e27", "stimuli": "0123456789abcdef"}
+            "recording_hash": "e9b74db4218d7e27", "stimuli": "0123456789abcdef", "voe_draws": 20}
     done = tmp_path / "human.json"
     done.write_text(json.dumps({"provenance": prov}))
     experiment.check_same_settings(done, dict(prov))  # same settings: reused
@@ -42,6 +42,8 @@ def test_a_tag_refuses_minds_made_with_other_settings(tmp_path):
         experiment.check_same_settings(done, prov | {"recording_hash": "306a35611bc61e58"})
     with pytest.raises(RuntimeError, match="stimuli"):  # scored on other surprise-test movies
         experiment.check_same_settings(done, prov | {"stimuli": "fedcba9876543210"})
+    with pytest.raises(RuntimeError, match="voe_draws"):  # surprise scored over another number of noise draws
+        experiment.check_same_settings(done, prov | {"voe_draws": 1})
     before = tmp_path / "before_stimulus_hashes.json"
     before.write_text(json.dumps({"provenance": {k: v for k, v in prov.items() if k != "stimuli"}}))
     with pytest.raises(RuntimeError, match="stimuli"):  # movies unknown: not reused

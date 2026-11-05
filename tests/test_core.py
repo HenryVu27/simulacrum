@@ -102,6 +102,31 @@ def test_permanence_quadruplet_is_balanced_for_a_memoryless_predictor():
             assert abs(s) < 0.01, (kind, j, name, s)
 
 
+def test_noise_draws_keep_draw_0_and_vary_the_rest():
+    """Draw 0 is the sensor noise every result before 2026-11-05 used (and training still uses); other draws differ."""
+    d = generate("lawful", 2, T=16, seed=0, chunk=2)
+    p = PRESETS["human"]
+    assert np.array_equal(observe(d, p), observe(d, p, draw=0))
+    assert not np.array_equal(observe(d, p), observe(d, p, draw=1))
+    assert np.array_equal(observe(d, p, draw=3), observe(d, p, draw=3))
+
+
+def test_surprise_over_draws():
+    """One draw gives exactly the old statistic; the interval over draws widens when the draws disagree."""
+    rng = np.random.default_rng(0)
+    crit = np.full(12, 5)
+    err = rng.uniform(1.0, 2.0, size=(12 * 4, 20)).astype(np.float32)
+    assert voe.surprise(err, crit) == voe.surprise(err[None], crit)
+    # the same movies under 10 draws that shift every impossible movie's error together, by a draw-specific amount
+    shift = np.linspace(-0.2, 0.2, 10)[:, None, None]
+    variant = np.tile(np.array([0, 0, 1, 1]), 12)[None, :, None]
+    draws = np.broadcast_to(err, (10,) + err.shape) + shift * variant
+    s, (lo, hi) = voe.surprise(draws, crit)
+    per_draw = [voe.surprise(x, crit)[0] for x in draws]
+    assert abs(s - np.mean(per_draw)) < 1e-3
+    assert hi - lo > voe.surprise(err, crit)[1][1] - voe.surprise(err, crit)[1][0]  # the draws' spread is in it
+
+
 def test_dark_blinds_eyes_but_not_echolocation():
     d = generate("dark", 8, T=128, seed=1, chunk=8)
     dark = ~d["gt_light"]

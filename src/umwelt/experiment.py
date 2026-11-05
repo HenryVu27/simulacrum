@@ -28,19 +28,27 @@ def _jsonable(x):
     return x
 
 
-def _voe_scores(params, suite, preset, mu, sd, L=learner):
+def _voe_scores(params, suite, preset, mu, sd, L=learner, draws=voe.NOISE_DRAWS):
+    """Surprise scores on the suite, each over `draws` sensor-noise draws (one if the mind's senses have no noise:
+    every draw would be the same). draws=1 is how every score was made until 2026-11-05."""
+    if all(s.noise == 0 for s in preset.senses):
+        draws = 1
     out = {}
     for name, (d, crit) in suite.items():
-        o = (presets.observe(d, preset) - mu) / sd
         a = presets.actions(d, preset)
-        s, ci = voe.surprise(learner.batched(L._errors_jit, params, o, a), crit)
-        s_copy, _ = voe.surprise(voe.copy_errors(o), crit, n_boot=1)
+        err, copy = [], []
+        for k in range(draws):
+            o = (presets.observe(d, preset, draw=k) - mu) / sd
+            err.append(learner.batched(L._errors_jit, params, o, a))
+            copy.append(voe.copy_errors(o))
+        s, ci = voe.surprise(np.stack(err) if draws > 1 else err[0], crit)
+        s_copy, _ = voe.surprise(np.stack(copy) if draws > 1 else copy[0], crit, n_boot=1)
         out[name] = {"S": s, "ci": ci, "S_copy": s_copy}
     return out
 
 
 # Settings that change the numbers: every mind under one tag must share them (docs/gpu.md, E7 and E7b).
-SETTINGS = ("backend", "matmul_precision", "xla_flags", "recording_hash", "stimuli")
+SETTINGS = ("backend", "matmul_precision", "xla_flags", "recording_hash", "stimuli", "voe_draws")
 
 
 def _code_version():
@@ -57,12 +65,14 @@ def _code_version():
 
 def provenance(world, n_episodes, data_seed, T=256, stimuli=""):
     """Where and how a result was computed, so a result file says whether it can be pooled with another.
-    stimuli: voe.suite_hash of the surprise-test movies it was scored on (docs/gpu.md, E7b after the fix)."""
+    stimuli: voe.suite_hash of the surprise-test movies it was scored on (docs/gpu.md, E7b after the fix);
+    voe_draws: how many sensor-noise draws each surprise score averages over."""
     return {"machine": platform.node(), "platform": platform.platform(), "backend": jax.default_backend(),
             "device": jax.devices()[0].device_kind, "jax": jax.__version__,
             "matmul_precision": str(jax.config.jax_default_matmul_precision), "xla_flags": os.environ.get("XLA_FLAGS", ""),
             "code": _code_version(), "recording": f"{world}_s{data_seed}_e{n_episodes}_t{T}",
-            "recording_hash": recording_hash(world, n_episodes, T, data_seed), "stimuli": stimuli}
+            "recording_hash": recording_hash(world, n_episodes, T, data_seed), "stimuli": stimuli,
+            "voe_draws": voe.NOISE_DRAWS}
 
 
 def check_same_settings(path, prov):

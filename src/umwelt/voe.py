@@ -37,6 +37,7 @@ INERT = [k for k in range(kinds.N_KINDS) if not kinds.ANIMATE[k]]
 VARIANTS = ("P1", "P2", "I1", "I2")
 TESTS = ("permanence", "solidity", "causality")
 LAYOUT_SEED = 0  # which bystander walls; experiments/battery_layouts.py scores other seeds
+NOISE_DRAWS = 20  # sensor-noise draws each surprise score averages over (experiment._voe_scores)
 WALL_CENTRE, WALL_HALF = (2.5, 7.5), (0.75, 1.5)  # world.reset's ranges for internal walls (v1 and dark worlds)
 GRID_STEP = 1 / 256  # wall ends on an exact binary grid, so every machine's NumPy gives the same walls
 
@@ -311,22 +312,36 @@ def suite_hash(suite):
     return h.hexdigest()[:16]
 
 
-def surprise(err, crit, rng=None, n_boot=500):
-    """err (instances*4, T-1) one-step errors. Returns S and its 95% bootstrap interval over instances (the
-    sensor noise is one fixed draw per preset, so the interval does not cover it)."""
+def totals(err, crit):
+    """Summed one-step errors from each instance's critical moment on: (draws, instances, 4), variants P1 P2 I1 I2.
+    err is (instances*4, T-1), or (draws, instances*4, T-1) for several sensor-noise draws."""
     n = len(crit)
-    err = err.reshape(n, 4, -1)
-    tot = np.array([err[i, :, crit[i] - 1 :].sum(-1) for i in range(n)])  # (n, 4): P1 P2 I1 I2
-    possible = tot[:, 0] + tot[:, 1]
-    impossible = tot[:, 2] + tot[:, 3]
+    err = np.asarray(err)
+    err = err.reshape(-1, n, 4, err.shape[-1])
+    return np.array([[e[i, :, crit[i] - 1 :].sum(-1) for i in range(n)] for e in err])
+
+
+def surprise(err, crit, rng=None, n_boot=500):
+    """S and its 95% bootstrap interval. err (instances*4, T-1) one-step errors, or (draws, instances*4, T-1)
+    for several sensor-noise draws: S is then taken over the draws' mean errors, and each bootstrap sample
+    resamples draws as well as instances, so the interval also covers which noise the mind happened to sense
+    (docs/preregistration.md, 2026-11-05: one draw moved permanence scores by as much as the effects tested)."""
+    tot = totals(err, crit)
+    n, k = len(crit), len(tot)
     rng = rng or np.random.default_rng(0)
-    s = (impossible.sum() - possible.sum()) / possible.sum()
+
+    def s_of(t):
+        possible, impossible = t[:, 0] + t[:, 1], t[:, 2] + t[:, 3]
+        return (impossible.sum() - possible.sum()) / possible.sum()
+
+    mean = tot[0] if k == 1 else tot.mean(0)
     boots = []
     for _ in range(n_boot):
         i = rng.integers(0, n, n)
-        boots.append((impossible[i].sum() - possible[i].sum()) / possible[i].sum())
+        t = mean if k == 1 else tot[rng.integers(0, k, k)].mean(0)
+        boots.append(s_of(t[i]))
     lo, hi = np.percentile(boots, [2.5, 97.5])
-    return float(s), (float(lo), float(hi))
+    return float(s_of(mean)), (float(lo), float(hi))
 
 
 def copy_errors(obs):

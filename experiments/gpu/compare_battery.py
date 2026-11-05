@@ -8,10 +8,13 @@ Four checks on the GPU's rerun on the Mac's recording (results/hardware/e7/f32de
    since the redesign changed the movies and nothing else, and whole GPU runs at these settings repeat bit for bit;
 3. every number against the Mac's stored run, mind by mind.
 Timings are left out. Nothing is written; the output goes to results/hardware/compare_e7b_battery.log.
+Later reruns name their own folders (the scores over noise draws: --new f32det-macdata-noise --old
+f32det-macdata-battery, output compare_e7b_noise.log).
 
-    uv run python experiments/gpu/compare_battery.py
+    uv run python experiments/gpu/compare_battery.py [--new NAME] [--old NAME]
 """
 
+import argparse
 import json
 from pathlib import Path
 
@@ -19,7 +22,7 @@ MAC = Path("results/runs/main/lawful_s0")
 NEW = Path("results/hardware/e7/f32det-macdata-battery/lawful_s0")
 OLD = Path("results/hardware/e7/f32det-macdata-wallfix/lawful_s0")
 SKIP = {"timing", "seconds", "provenance", "corrections", "voe_before_wall_fix", "voe_untrained_before_wall_fix",
-        "voe_before_battery_fix", "voe_untrained_before_battery_fix"}
+        "voe_before_battery_fix", "voe_untrained_before_battery_fix", "voe_before_noise_draws", "voe_untrained_before_noise_draws"}
 CHANGED = ("voe/", "voe_untrained/")
 FIELDS = (("S", lambda s: s["S"]), ("ci/0", lambda s: s["ci"][0]), ("ci/1", lambda s: s["ci"][1]), ("S_copy", lambda s: s["S_copy"]))
 
@@ -91,4 +94,10 @@ def main():
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--new", default="f32det-macdata-battery")
+    ap.add_argument("--old", default="f32det-macdata-wallfix")
+    args = ap.parse_args()
+    NEW = Path(f"results/hardware/e7/{args.new}/lawful_s0")
+    OLD = Path(f"results/hardware/e7/{args.old}/lawful_s0")
     main()

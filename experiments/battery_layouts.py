@@ -8,6 +8,8 @@ ranged from 0 to 0.48 across ten off-arena markers (lawful seed 0); if the redes
 layouts is far smaller than that.
 
     uv run python experiments/battery_layouts.py [--seeds 0 1 2 3 4] [--runs main/lawful_s0 v2/dark_s0]
+
+Scores with one sensor-noise draw (recompute_battery.scores), as layouts.txt was made.
 """
 
 import argparse

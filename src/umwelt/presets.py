@@ -91,13 +91,15 @@ def _channel(d, s: Sense):
     return d[f"obs_{s.kind}"].astype(np.float32)
 
 
-def observe(d, preset: Preset, dtype=np.float32, chunk=128, path=None):
+def observe(d, preset: Preset, dtype=np.float32, chunk=128, path=None, draw=0):
     """The observation stream (episodes, time, dim) this mind receives from recorded data d.
 
     Built in chunks of episodes so a large recording never has to sit in memory as float32. With path,
-    the stream is written to a memory-mapped .npy file there instead of held in memory.
+    the stream is written to a memory-mapped .npy file there instead of held in memory. draw picks the sensor
+    noise: draw 0 is the one every result so far used, seeded by the preset's name; others are fresh draws.
     """
-    rng = np.random.default_rng(zlib.crc32(preset.name.encode()))
+    seed = zlib.crc32(preset.name.encode())
+    rng = np.random.default_rng(seed if draw == 0 else [seed, draw])
     E = len(d["action"])
     out = None
     for i in range(0, E, chunk):

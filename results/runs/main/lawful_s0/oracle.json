@@ -260,6 +260,13 @@
    "machine": "Henrys-MacBook-Pro-2.local",
    "stimuli": "016fc3d72807e39d",
    "stimuli_before": "not recorded"
+  },
+  {
+   "date": "2026-11-05",
+   "what": "surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05)",
+   "script": "experiments/recompute_noise.py",
+   "code": "a1cda64 with uncommitted changes in src",
+   "machine": "Mac-2206.lan"
   }
  ],
  "voe_before_battery_fix": {
@@ -315,6 +322,59 @@
   }
  },
  "provenance": {
-  "stimuli": "016fc3d72807e39d"
+  "stimuli": "016fc3d72807e39d",
+  "voe_draws": 20
+ },
+ "voe_before_noise_draws": {
+  "permanence": {
+   "S": 0.9528985619544983,
+   "ci": [
+    0.8339910969138146,
+    1.0830019176006318
+   ],
+   "S_copy": 5027.84326171875
+  },
+  "solidity": {
+   "S": 0.0068620047532022,
+   "ci": [
+    -0.0069261294091120355,
+    0.01620606849901378
+   ],
+   "S_copy": 0.0
+  },
+  "causality": {
+   "S": -0.021477362141013145,
+   "ci": [
+    -0.035547598451375964,
+    -0.0058343435754068225
+   ],
+   "S_copy": 0.0
+  }
+ },
+ "voe_untrained_before_noise_draws": {
+  "permanence": {
+   "S": -0.024761918932199478,
+   "ci": [
+    -0.02606065315194428,
+    -0.023292166506871582
+   ],
+   "S_copy": 5027.84326171875
+  },
+  "solidity": {
+   "S": 0.0010831812396645546,
+   "ci": [
+    -0.0011909702268894761,
+    0.003653866169042885
+   ],
+   "S_copy": 0.0
+  },
+  "causality": {
+   "S": -0.00249701295979321,
+   "ci": [
+    -0.0040912986849434676,
+    -0.0008820512084639636
+   ],
+   "S_copy": 0.0
+  }
  }
 }
