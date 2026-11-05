@@ -11,14 +11,20 @@
 # 4. Runs results/remote/<name>.cmd in its own process group. SIGTERM, SIGINT or SIGHUP to this script
 #    stops that whole group first; only then is the lock released. A SIGKILL leaves the lock in place
 #    (held too long, never released early); remote.sh unlock clears it.
+# 5. Pause switch, for when Henry wants the PC: while C:\gpu-pause exists (a file or a folder), a job
+#    does not start, and a running job's processes are stopped (SIGSTOP) until it is deleted, then
+#    continued (SIGCONT). A paused job keeps the lock and the GPU memory it holds, but uses no GPU time.
+#    remote.sh pause and remote.sh resume do the same from the Mac.
 #
-# UMWELT_ROOT, UMWELT_LOCK and UMWELT_SMI exist so test_job.sh can run this on the Mac with fakes.
+# UMWELT_ROOT, UMWELT_LOCK, UMWELT_SMI and UMWELT_PAUSE exist so test_job.sh can run this on the Mac
+# with fakes.
 set -u
 set -m  # background commands get their own process group, so a stop signal reaches all of the job
 name=$1
 root=${UMWELT_ROOT:-$HOME/umwelt}
 lock=${UMWELT_LOCK:-/mnt/c/gpu-lock}
 smi=${UMWELT_SMI:-/usr/lib/wsl/lib/nvidia-smi}
+pause=${UMWELT_PAUSE:-/mnt/c/gpu-pause}
 cd "$root" || exit 1
 dir=results/remote
 log=$dir/$name.log
@@ -45,6 +51,7 @@ stop() {
   say "stop signal: stopping the command"
   if [ -n "$child" ]; then
     kill -TERM -- "-$child" 2>/dev/null || kill -TERM "$child" 2>/dev/null
+    kill -CONT -- "-$child" 2>/dev/null  # a paused command only acts on the TERM once continued
     wait "$child" 2>/dev/null
   fi
   echo 143 > "$dir/$name.exit"
@@ -58,7 +65,9 @@ echo $$ > "$dir/$name.pid"
 tries=0
 while true; do
   used=$("$smi" --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | head -n 1 | tr -d ' \r')
-  if ! [[ "$used" =~ ^[0-9]+$ ]]; then
+  if [ -e "$pause" ]; then
+    say "waiting: paused ($pause exists)"
+  elif ! [[ "$used" =~ ^[0-9]+$ ]]; then
     tries=$((tries + 1))
     say "nvidia-smi gave no memory reading ('$used'), attempt $tries of 10"
     [ "$tries" -ge 10 ] && end 1 "gave up: cannot read GPU memory"
@@ -89,6 +98,15 @@ esac
 say "start: $(cat "$dir/$name.cmd")"
 bash "$dir/$name.cmd" >> "$log" 2>&1 &
 child=$!
+paused=0
+while kill -0 "$child" 2>/dev/null; do
+  if [ -e "$pause" ] && [ "$paused" = 0 ]; then
+    kill -STOP -- "-$child" 2>/dev/null && paused=1 && say "paused ($pause exists): command stopped, lock kept"
+  elif [ ! -e "$pause" ] && [ "$paused" = 1 ]; then
+    kill -CONT -- "-$child" 2>/dev/null; paused=0; say "resumed"
+  fi
+  sleep "${PAUSE_POLL_S:-5}"
+done
 wait "$child"
 code=$?
 child=

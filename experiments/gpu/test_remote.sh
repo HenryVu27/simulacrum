@@ -17,7 +17,7 @@ cleanup() {
   rmdir "$repo/results/remote" 2>/dev/null
 }
 trap cleanup EXIT
-export FAKE_PC=$T/pc UMWELT_LOCK=$T/gpu-lock UMWELT_SMI=$T/smi POLL_S=0.2 PATH=$T/bin:$PATH
+export FAKE_PC=$T/pc UMWELT_LOCK=$T/gpu-lock UMWELT_SMI=$T/smi UMWELT_PAUSE=$T/gpu-pause POLL_S=0.2 PAUSE_POLL_S=0.2 PATH=$T/bin:$PATH
 mkdir -p "$T/bin" "$FAKE_PC/.local/bin"
 echo 3000 > "$T/mem"
 cat > "$T/bin/ssh" <<'EOF'
@@ -107,6 +107,19 @@ kill $live
 echo "project=umwelt job=x host=h pid=999999 started=now" > "$UMWELT_LOCK/owner"
 out=$(bash "$remote" unlock 2>&1)
 check "unlock removes a dead umwelt job's lock" 'echo "$out" | grep -q "removed lock" && [ ! -d $UMWELT_LOCK ]'
+
+out=$(bash "$remote" pause 2>&1)
+check "pause creates the switch" '[ -e $UMWELT_PAUSE ] && echo "$out" | grep -q "^paused"'
+out=$(bash "$remote" status 2>&1)
+check "status shows the pause" 'echo "$out" | grep -q "^pause: on"'
+bash "$remote" run "${tag}c" echo held >/dev/null 2>&1
+sleep 1
+check "a job started while paused waits" '[ ! -e $P/results/remote/${tag}c.exit ] && grep -q "waiting: paused" $P/results/remote/${tag}c.log'
+out=$(bash "$remote" resume 2>&1)
+wait_for '[ -f $P/results/remote/${tag}c.exit ]'
+check "resume removes the switch and the job runs" '[ ! -e $UMWELT_PAUSE ] && [ "$(cat $P/results/remote/${tag}c.exit)" = 0 ]'
+out=$(bash "$remote" status 2>&1)
+check "status shows no pause after resume" '! echo "$out" | grep -q "^pause:"'
 
 git clone -q "$repo" "$T/clone"
 cp "$remote" "$T/clone/experiments/gpu/remote.sh"  # the version under test, which may be uncommitted

@@ -21,7 +21,7 @@ echo "== packages (the locked set, plus JAX's CUDA 13 build)"
 uv sync --frozen --extra gpu
 
 echo "== JAX on the GPU"
-uv run --frozen python - <<'EOF'
+uv run --no-sync python - <<'EOF'  # --no-sync: nothing may change the environment after the sync above
 import jax, jax.numpy as jnp
 print("jax", jax.__version__, "backend", jax.default_backend(), "devices", jax.devices())
 assert jax.default_backend() == "gpu", "JAX did not find the GPU"
@@ -31,4 +31,4 @@ print("4096 x 4096 matmul ok, mean", float(y.mean()))
 EOF
 
 echo "== tests"
-uv run --frozen pytest -q
+uv run --no-sync pytest -q

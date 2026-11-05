@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Tests job.sh on the Mac with stand-ins for nvidia-smi, uv and the C:\gpu-lock folder.
+# shellcheck disable=SC2034  # n1 and n2 are read inside the strings check evaluates
+# Tests job.sh on the Mac with stand-ins for nvidia-smi, uv and the C:\gpu-lock and C:\gpu-pause paths.
 #
 #   bash experiments/gpu/test_job.sh
 set -u
@@ -7,6 +8,7 @@ job=${1:-$(cd "$(dirname "$0")" && pwd)/job.sh}  # or a path to another version,
 T=$(mktemp -d)
 trap 'pkill -f "$T" 2>/dev/null; rm -rf "$T"' EXIT
 export HOME=$T/home UMWELT_ROOT=$T/root UMWELT_LOCK=$T/gpu-lock UMWELT_SMI=$T/smi POLL_S=0.2
+export UMWELT_PAUSE=$T/gpu-pause PAUSE_POLL_S=0.2
 mkdir -p "$HOME/.local/bin" "$UMWELT_ROOT/results/remote"
 cat > "$UMWELT_SMI" <<EOF
 #!/usr/bin/env bash
@@ -96,6 +98,36 @@ new cpu2 'echo ran'
 touch "$R/cpu2.allow_cpu"
 limit env FAKE_BACKEND=cpu bash "$job" cpu2
 check "runs a CPU job when allowed" '[ "$(cat $R/cpu2.exit)" = 0 ]'
+
+touch "$UMWELT_PAUSE"
+new held 'echo ran'
+bash "$job" held & pid=$!
+sleep 1
+check "a paused queue does not start a job" 'grep -q "waiting: paused" $R/held.log && ! grep -q "^ran" $R/held.log && [ ! -e $UMWELT_LOCK ]'
+rm "$UMWELT_PAUSE"
+limit_wait $pid
+check "the job starts once the pause is lifted" '[ "$(cat $R/held.exit)" = 0 ] && grep -q "^ran" $R/held.log'
+
+new pz "echo \$\$ > $T/pz.pid; for i in \$(seq 40); do echo t >> $T/ticks; sleep 0.1; done"
+bash "$job" pz & pid=$!
+wait_for '[ -s $T/ticks ]'
+mkdir "$UMWELT_PAUSE"  # a folder works as well as a file
+wait_for 'grep -q "^.*paused (" $R/pz.log'
+sleep 0.5; n1=$(wc -l < "$T/ticks"); sleep 1; n2=$(wc -l < "$T/ticks")
+check "pause stops a running command and keeps the lock" '[ "$n1" = "$n2" ] && ps -o stat= -p "$(cat $T/pz.pid)" | grep -q T && [ -d $UMWELT_LOCK ]'
+rm -r "$UMWELT_PAUSE"
+limit_wait $pid
+check "resume continues it to the end" '[ "$(cat $R/pz.exit)" = 0 ] && [ "$(wc -l < $T/ticks)" -eq 40 ] && grep -q "resumed" $R/pz.log && [ ! -e $UMWELT_LOCK ]'
+
+new pt "echo \$\$ > $T/pt.pid; sleep 33"
+bash "$job" pt & pid=$!
+wait_for '[ -s $T/pt.pid ]'
+touch "$UMWELT_PAUSE"
+wait_for 'grep -q "paused (" $R/pt.log'
+kill -TERM $pid
+limit_wait $pid
+rm -f "$UMWELT_PAUSE"
+check "SIGTERM stops a paused command too" '! kill -0 $(cat $T/pt.pid) 2>/dev/null && [ "$(cat $R/pt.exit)" = 143 ] && [ ! -e $UMWELT_LOCK ]'
 
 echo "N/A" > "$T/mem"
 new nosmi 'echo ran'

@@ -29,6 +29,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 
     wsl --install -d Ubuntu-24.04      (admin PowerShell on the PC, then reboot, then open Ubuntu once)
 
+(Ubuntu 26.04 was installed in the end; see the setup log.)
+
 ## Setup log
 
 - 2026-11-04. Found the PC on Tailscale (`<pc-name>`, <pc-ip>). GPU idle: 3 GB of 16 GB used by
@@ -59,6 +61,26 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   overwrite Mac files; `nvidia-smi` without a number made a job wait forever; the full-float32 E4 pass
   reused the default-precision recording. The old `job.sh` fails 7 of the 17 new tests; the new one
   passes all 17, and `remote.sh` passes 22 of 22.
+- 2026-11-04 19:22 to 21:13. A second other-project generation job held the GPU (15.7 GB, 97 percent busy).
+  The restart waited until it released the lock.
+- 2026-11-04 20:02. Henry ran `wsl --install`. It turned on Virtual Machine Platform and then waited for
+  a restart. Before it, `wsl --status` said virtualization was not enabled, and Windows reported
+  `VirtualizationFirmwareEnabled: False`. That reading is misleading on this PC: Windows' own hypervisor
+  was already running (virtualization-based security, status 2 = running), which needs firmware
+  virtualization, and it hides the CPU's virtualization flags from Windows. No firmware change was needed.
+- 2026-11-04 22:35. The PC restarted. WSL 3.0.3.0, kernel 6.18.54.1. The restart did not install a
+  distribution on its own, so it was installed over SSH with `wsl --install -d Ubuntu-26.04 --no-launch`.
+  Ubuntu 26.04 LTS is the current long-term release (it was offered alongside 24.04); JAX's CUDA wheels
+  do not depend on it, since the driver comes from Windows and uv brings its own Python. `remote.sh`
+  now defaults to `Ubuntu-26.04`.
+- 2026-11-04. `C:\Users\Vuduc\.wslconfig` written with `memory=12GB` (the default is half of the 32 GB):
+  Henry uses this PC daily, so a job must leave room for him. The Linux VM runs only while a job or a
+  shell needs it and shuts down about a minute after.
+- 2026-11-04. Pause switch, for the same reason: while `C:\gpu-pause` exists, no umwelt job starts and a
+  running job is frozen (SIGSTOP to its process group) until the file is deleted (SIGCONT). A frozen
+  job keeps the lock and the GPU memory it holds but uses no GPU time. Tests: `job.sh` 22 of 22 (the
+  previous version fails 3 of the 5 new pause cases), `remote.sh` 27 of 27. The other project's
+  jobs do not look at this switch.
 
 ## How to run on the GPU
 
@@ -72,6 +94,9 @@ cannot test Windows OpenSSH, cmd quoting, `wsl.exe` or whether binary tar data p
     experiments/gpu/remote.sh run NAME CMD...             # background job; waits for a free GPU
     experiments/gpu/remote.sh status NAME                 # GPU use, lock, last log lines, exit code
     experiments/gpu/remote.sh pull results/runs/v3        # copy results back to the Mac
+    experiments/gpu/remote.sh pause                       # freeze umwelt GPU work; resume undoes it
+
+On the PC itself, `mkdir C:\gpu-pause` pauses and `rmdir C:\gpu-pause` resumes (a file works too).
 
 For example, one learner seed of the dark-world sweep:
 

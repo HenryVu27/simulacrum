@@ -5,7 +5,9 @@
 #   remote.sh setup                          one-time install (runs setup_wsl.sh)
 #   remote.sh sh 'CMD'                       run a command in ~/umwelt now and wait for it
 #   remote.sh run [--allow-cpu] NAME CMD...  start CMD as a background job; it waits for a free GPU
-#   remote.sh status [NAME]                  GPU use, lock holder, last lines of NAME's log
+#   remote.sh status [NAME]                  GPU use, lock holder, pause switch, last lines of NAME's log
+#   remote.sh pause | resume                 create or delete C:\gpu-pause: while it exists no job starts
+#                                            and running jobs are frozen (on the PC: mkdir C:\gpu-pause)
 #   remote.sh pull [--overwrite] PATH...     copy files under ~/umwelt back here (a local file that
 #                                            differs is kept, unless --overwrite)
 #   remote.sh unlock [--force]               remove C:\gpu-lock left by a killed umwelt job
@@ -17,13 +19,13 @@
 set -euo pipefail
 self=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")
 PC=${UMWELT_PC:-<pc-user>@<pc-ip>}  # known_hosts has the PC under its Tailscale IP
-DISTRO=${UMWELT_DISTRO:-Ubuntu-24.04}
+DISTRO=${UMWELT_DISTRO:-Ubuntu-26.04}
 cd "$(dirname "$self")/../.."
 export COPYFILE_DISABLE=1  # with --no-xattrs --no-mac-metadata: no macOS ._ files or extended attributes
 
 ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"; }
 wsl_sh() { ssh_pc "wsl -d $DISTRO --cd ~ -- bash -s"; }  # runs the bash script on stdin inside WSL
-usage() { sed -n '2,16p' "$self"; exit 2; }
+usage() { sed -n '2,18p' "$self"; exit 2; }
 valid_name() { [[ "$1" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "job name: letters, digits, . _ - only" >&2; exit 2; }; }
 code_files() {  # tracked and new files outside results/, skipping deleted ones
   git ls-files -co --exclude-standard | grep -v '^results/' | while IFS= read -r f; do
@@ -100,6 +102,7 @@ EOF
       cat <<'EOF'
 lock=${UMWELT_LOCK:-/mnt/c/gpu-lock}
 if [ -f "$lock/owner" ]; then sed -n '1s/^/lock: /p' "$lock/owner"; else echo "lock: free"; fi
+if [ -e "${UMWELT_PAUSE:-/mnt/c/gpu-pause}" ]; then echo "pause: on (remote.sh resume, or delete C:\\gpu-pause)"; fi
 if [ -n "$name" ]; then
   f=umwelt/results/remote/$name
   tail -n 15 "$f.log" 2>/dev/null
@@ -133,6 +136,12 @@ EOF
     else
       echo "pulled $moved files; kept $kept local files that differ (the PC's versions are in $stage)"
     fi
+    ;;
+  pause)
+    echo 'p=${UMWELT_PAUSE:-/mnt/c/gpu-pause}; [ -e "$p" ] || touch "$p"; echo "paused: no umwelt job starts, running ones freeze within 5 s"' | wsl_sh
+    ;;
+  resume)
+    echo 'rm -rf "${UMWELT_PAUSE:-/mnt/c/gpu-pause}"; echo "resumed"' | wsl_sh
     ;;
   unlock)
     force=0
