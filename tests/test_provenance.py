@@ -59,3 +59,19 @@ def test_the_stimulus_hash_sees_every_movie_array():
     assert len(h) == 16 and h == voe.suite_hash(dict(reversed(list(suite().items()))))  # order of the dict ignored
     assert voe.suite_hash(suite(vision=0.5)) != h
     assert voe.suite_hash(suite(crit=2)) != h
+
+
+def test_the_movies_are_rendered_on_the_cpu(monkeypatch):
+    seen = []
+
+    class Stop(Exception):
+        pass
+
+    def spy(device):  # record the device, then stop before any rendering
+        seen.append(device.platform)
+        raise Stop
+
+    monkeypatch.setattr(voe.jax, "default_device", spy)
+    with pytest.raises(Stop):
+        voe.build_suite()
+    assert seen == ["cpu"]

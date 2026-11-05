@@ -3,7 +3,8 @@
 stimuli_check.sh found different voe.suite_hash values: e8b112a5e2a11879 on the Mac's CPU and the PC's CPU,
 ceb701ed0ddd1c3a on the GPU at full float32 with deterministic operations, 3776a5c3ffed017d at the GPU's
 defaults (docs/gpu.md, setup log 2026-11-05). This renders the movies on both devices in one process and
-compares every array: how many values differ, by how much, and in which frames.
+compares every array: how many values differ, by how much, and in which frames. (The answer, 8 values in
+the solidity movies' vision, is why voe.build_suite now renders on the CPU.)
 
     experiments/gpu/remote.sh run stimuli-diff bash -c 'JAX_DEFAULT_MATMUL_PRECISION=highest \
         XLA_FLAGS=--xla_gpu_deterministic_ops=true uv run python experiments/gpu/stimuli_diff.py; \
@@ -18,9 +19,8 @@ import numpy as np
 from umwelt import voe
 
 print(f"settings: precision {jax.config.jax_default_matmul_precision}, XLA_FLAGS '{os.environ.get('XLA_FLAGS', '')}'")
-gpu = voe.build_suite()
-with jax.default_device(jax.devices("cpu")[0]):
-    cpu = voe.build_suite()
+gpu = voe.build_suite(device=None)  # JAX's default device; experiments render on the CPU since then
+cpu = voe.build_suite(device="cpu")
 print(f"suite_hash: {jax.default_backend()} {voe.suite_hash(gpu)}, cpu {voe.suite_hash(cpu)}")
 for test in sorted(gpu):
     (g, gc), (c, cc) = gpu[test], cpu[test]

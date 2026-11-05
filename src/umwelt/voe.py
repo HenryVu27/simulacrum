@@ -161,8 +161,15 @@ def causality(ka, kb, j):
     return movies, tc
 
 
-def build_suite(jitters=(-0.5, 0.0, 0.5)):
-    """All quadruplets, stacked as recorded-data dicts the presets can read."""
+def build_suite(jitters=(-0.5, 0.0, 0.5), device="cpu"):
+    """All quadruplets, stacked as recorded-data dicts the presets can read.
+
+    Rendered on the CPU by default, so every machine scores on the same movies: rendered on the GPU, 8 of the
+    solidity movies' 2.2 million vision values differ from the CPU's by one float16 step, while the Mac's and
+    the PC's CPUs agree bit for bit (docs/gpu.md, 2026-11-05). device=None renders on JAX's default device."""
+    if device is not None:
+        with jax.default_device(jax.devices(device)[0]):
+            return build_suite(jitters, device=None)
     suite = {}
     makers = {
         "permanence": [lambda k=k, j=j: permanence(k, j) for k in INERT for j in jitters],

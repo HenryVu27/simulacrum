@@ -1,0 +1,64 @@
+[2026-11-05T13:09:16-0600] lock taken: project=umwelt job=stimuli-diff host=HenrysPC pid=495 started=2026-11-05T13:09:16-0600
+[2026-11-05T13:09:16-0600] code: code 4a5962022b46d19f git dd0ad58 uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:09:13-0600 
+[2026-11-05T13:09:18-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T13:09:18-0600] start: bash -c JAX_DEFAULT_MATMUL_PRECISION=highest\ XLA_FLAGS=--xla_gpu_deterministic_ops=true\ uv\ run\ python\ experiments/gpu/stimuli_diff.py\;\ uv\ run\ python\ experiments/gpu/stimuli_diff.py 
+settings: precision highest, XLA_FLAGS '--xla_gpu_deterministic_ops=true'
+suite_hash: gpu ceb701ed0ddd1c3a, cpu e8b112a5e2a11879
+  causality  action       identical (8784 values)
+  causality  obs_compass  identical (8784 values)
+  causality  obs_hearing  identical (35136 values)
+  causality  obs_oracle   identical (254736 values)
+  causality  obs_proprio  identical (13176 values)
+  causality  obs_ray_tex  identical (562176 values)
+  causality  obs_smell    identical (35136 values)
+  causality  obs_touch    identical (158112 values)
+  causality  obs_vision   identical (2248704 values)
+  permanence action       identical (9504 values)
+  permanence obs_compass  identical (9504 values)
+  permanence obs_hearing  identical (38016 values)
+  permanence obs_oracle   identical (275616 values)
+  permanence obs_proprio  identical (14256 values)
+  permanence obs_ray_tex  identical (608256 values)
+  permanence obs_smell    identical (38016 values)
+  permanence obs_touch    identical (171072 values)
+  permanence obs_vision   identical (2433024 values)
+  solidity   action       identical (8640 values)
+  solidity   obs_compass  identical (8640 values)
+  solidity   obs_hearing  identical (34560 values)
+  solidity   obs_oracle   identical (250560 values)
+  solidity   obs_proprio  identical (12960 values)
+  solidity   obs_ray_tex  identical (552960 values)
+  solidity   obs_smell    identical (34560 values)
+  solidity   obs_touch    identical (155520 values)
+  solidity   obs_vision   8 of 2211840 values differ, largest 0.000244; 8 of 72 movies, frames 51 to 59
+settings: precision None, XLA_FLAGS ''
+suite_hash: gpu 3776a5c3ffed017d, cpu e8b112a5e2a11879
+  causality  action       identical (8784 values)
+  causality  obs_compass  identical (8784 values)
+  causality  obs_hearing  identical (35136 values)
+  causality  obs_oracle   identical (254736 values)
+  causality  obs_proprio  identical (13176 values)
+  causality  obs_ray_tex  identical (562176 values)
+  causality  obs_smell    identical (35136 values)
+  causality  obs_touch    identical (158112 values)
+  causality  obs_vision   identical (2248704 values)
+  permanence action       identical (9504 values)
+  permanence obs_compass  identical (9504 values)
+  permanence obs_hearing  identical (38016 values)
+  permanence obs_oracle   identical (275616 values)
+  permanence obs_proprio  identical (14256 values)
+  permanence obs_ray_tex  identical (608256 values)
+  permanence obs_smell    identical (38016 values)
+  permanence obs_touch    identical (171072 values)
+  permanence obs_vision   identical (2433024 values)
+  solidity   action       identical (8640 values)
+  solidity   obs_compass  identical (8640 values)
+  solidity   obs_hearing  identical (34560 values)
+  solidity   obs_oracle   identical (250560 values)
+  solidity   obs_proprio  identical (12960 values)
+  solidity   obs_ray_tex  identical (552960 values)
+  solidity   obs_smell    identical (34560 values)
+  solidity   obs_touch    identical (155520 values)
+  solidity   obs_vision   8 of 2211840 values differ, largest 0.000244; 8 of 72 movies, frames 51 to 59
+[2026-11-05T13:15:38-0600] compile cache: 2796 entries before, 5480 after; 0 cache errors
+[2026-11-05T13:15:38-0600] exit 0
