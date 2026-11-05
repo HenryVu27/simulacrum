@@ -1,0 +1,18 @@
+agent: smallest distance to any internal wall per test
+  permanence 1.187
+  solidity   1.052
+  causality  1.012
+objects touching a boundary wall: []
+object-to-wall clearance (min distance - r), per test, variant and wall slot (min over quads):
+  permanence P1: slot0(event) +1.000, slot1(bys) +0.323, slot2(bys) +0.323
+  permanence P2: slot0 (no object), slot1 (no object), slot2 (no object)
+  permanence I1: slot0(event) +1.000, slot1(bys) +0.470, slot2(bys) +0.429
+  permanence I2: slot0(event) +1.000, slot1(bys) +0.323, slot2(bys) +0.323
+  solidity   P1: slot0(event) -0.000, slot1(screen) +0.306, slot2(bys) +0.353
+  solidity   P2: slot0(event) +0.252, slot1(screen) +0.302, slot2(bys) +0.353
+  solidity   I1: slot0(event) -0.450, slot1(screen) +0.302, slot2(bys) +0.353
+  solidity   I2: slot0(event) +0.401, slot1(screen) +0.306, slot2(bys) +0.353
+  causality  P1: slot0(bys) +0.332, slot1(bys) +0.338, slot2(bys) +0.313
+  causality  P2: slot0(bys) +0.332, slot1(bys) +0.338, slot2(bys) +0.313
+  causality  I1: slot0(bys) +0.332, slot1(bys) +0.338, slot2(bys) +0.313
+  causality  I2: slot0(bys) +0.332, slot1(bys) +0.338, slot2(bys) +0.313

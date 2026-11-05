@@ -1,0 +1,73 @@
+== new movies, as committed: copy S on noise-free float16 observations (presets.observe), and my own reading
+  permanence human +0.0000, vision_only +0.0000, dog +0.0000, bat +0.0000, chimera +0.0000 | mine: human +0.0000, vision_only +0.0000
+  solidity   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024 | mine: human +0.0002, vision_only +0.0003
+    per-quadruplet S (human): +0.0004 +0.0004 +0.0003 -0.0003 +0.0001 +0.0001 +0.0001 +0.0005 +0.0005 -0.0001 -0.0002 -0.0001 +0.0004 +0.0004 +0.0004 +0.0003 +0.0003 +0.0003
+    per-quadruplet S (chimera): +0.0021 +0.0019 +0.0018 +0.0023 +0.0029 +0.0033 +0.0024 +0.0062 +0.0061 +0.0001 +0.0000 +0.0000 +0.0012 +0.0011 +0.0011 +0.0056 +0.0060 +0.0053
+  causality  human +0.0000, vision_only +0.0000, dog -0.0000, bat +0.0000, chimera -0.0000 | mine: human +0.0000, vision_only +0.0000
+
+== solidity without the screen (screen slot moved off the arena; same bystander)
+  human -0.1106, vision_only -0.1370, dog -0.0037, bat -0.0416, chimera -0.2164
+
+== solidity with the screen perturbed
+  shift x +0.002     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x -0.002     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y +0.002     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.002     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x +0.005     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x -0.005     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y +0.005     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.005     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x +0.010     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x -0.010     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y +0.010     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.010     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x +0.020     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x -0.020     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y +0.020     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.020     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x +0.050     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x -0.050     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y +0.050     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.050     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift x +0.100     human -0.0088, vision_only -0.0116, dog +0.0005, bat +0.0003, chimera +0.0024
+  shift x -0.100     human -0.0001, vision_only -0.0002, dog +0.0005, bat +0.0004, chimera +0.0024
+  shift y +0.100     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  shift y -0.100     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate +0.25 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate -0.25 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate +0.50 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate -0.50 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate +1.00 deg   human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate -1.00 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate +2.00 deg   human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  rotate -2.00 deg   human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  near end +0.01     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  near end -0.01     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  far end +0.01      human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  far end -0.01      human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  near end +0.05     human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  near end -0.05     human +0.0006, vision_only +0.0007, dog +0.0004, bat +0.0003, chimera +0.0024
+  far end +0.05      human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  far end -0.05      human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  near end +0.1      human -0.0001, vision_only -0.0002, dog +0.0005, bat +0.0004, chimera +0.0024
+  near end -0.1      human -0.0088, vision_only -0.0116, dog +0.0005, bat +0.0003, chimera +0.0024
+  far end +0.1       human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  far end -0.1       human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+
+== solidity with the agent moved or turned, screen rebuilt by voe._solidity_screen for the new eye (the design rule)
+  heading +0.10 ray spacings  human +0.0007, vision_only +0.0010, dog +0.0004, bat +0.0003, chimera +0.0024
+  heading -0.10 ray spacings  human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  heading +0.25 ray spacings  human +0.0009, vision_only +0.0013, dog -0.0003, bat +0.0004, chimera +0.0032
+  heading -0.25 ray spacings  human +0.0004, vision_only +0.0005, dog +0.0005, bat +0.0005, chimera +0.0038
+  heading +0.50 ray spacings  human +0.0007, vision_only +0.0009, dog -0.0003, bat +0.0000, chimera +0.0000
+  heading -0.50 ray spacings  human +0.0007, vision_only +0.0009, dog -0.0003, bat +0.0005, chimera +0.0038
+  heading +0.75 ray spacings  human +0.0004, vision_only +0.0005, dog +0.0005, bat +0.0000, chimera +0.0000
+  heading -0.75 ray spacings  human +0.0009, vision_only +0.0013, dog -0.0001, bat +0.0004, chimera +0.0031
+  eye shift (+0.02,+0.00)       human +0.0003, vision_only +0.0004, dog +0.0006, bat +0.0004, chimera +0.0030
+  eye shift (-0.02,+0.00)       human +0.0008, vision_only +0.0010, dog +0.0001, bat +0.0004, chimera +0.0029
+  eye shift (+0.05,+0.00)       human +0.0005, vision_only +0.0007, dog +0.0000, bat +0.0005, chimera +0.0040
+  eye shift (-0.05,+0.00)       human +0.0010, vision_only +0.0013, dog -0.0003, bat +0.0004, chimera +0.0030
+  eye shift (+0.00,+0.02)       human +0.0006, vision_only +0.0008, dog +0.0005, bat +0.0003, chimera +0.0023
+  eye shift (+0.00,-0.02)       human +0.0002, vision_only +0.0003, dog +0.0004, bat +0.0003, chimera +0.0024
+  eye shift (+0.00,+0.05)       human +0.0006, vision_only +0.0009, dog +0.0003, bat +0.0004, chimera +0.0028
+  eye shift (+0.00,-0.05)       human +0.0003, vision_only +0.0004, dog +0.0006, bat +0.0005, chimera +0.0031

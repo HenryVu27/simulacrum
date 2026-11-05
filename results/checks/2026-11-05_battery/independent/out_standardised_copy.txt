@@ -1,0 +1,10 @@
+main/lawful_s0  human        permanence raw +0.0000 std +0.0000 std+noise +0.0061 | solidity raw +0.0002 std +0.0003 std+noise -0.0064 | causality raw +0.0000 std +0.0000 std+noise -0.0015
+main/lawful_s0  vision_only  permanence raw +0.0000 std +0.0000 std+noise +0.0058 | solidity raw +0.0003 std +0.0004 std+noise -0.0006 | causality raw +0.0000 std +0.0000 std+noise +0.0062
+main/lawful_s0  dog          permanence raw +0.0000 std +0.0000 std+noise +0.0115 | solidity raw +0.0004 std +0.0018 std+noise +0.0024 | causality raw -0.0000 std +0.0000 std+noise -0.0007
+main/lawful_s0  bat          permanence raw +0.0000 std +0.0000 std+noise -0.0102 | solidity raw +0.0003 std +0.0010 std+noise +0.0004 | causality raw +0.0000 std +0.0000 std+noise -0.0131
+main/lawful_s0  chimera      permanence raw +0.0000 std +0.0000 std+noise +0.0037 | solidity raw +0.0024 std +0.0020 std+noise -0.0069 | causality raw -0.0000 std +0.0000 std+noise -0.0103
+v2/dark_s0      human        permanence raw +0.0000 std +0.0000 std+noise +0.0070 | solidity raw +0.0002 std +0.0002 std+noise -0.0078 | causality raw +0.0000 std +0.0000 std+noise -0.0021
+v2/dark_s0      vision_only  permanence raw +0.0000 std +0.0000 std+noise +0.0074 | solidity raw +0.0003 std +0.0002 std+noise -0.0002 | causality raw +0.0000 std +0.0000 std+noise +0.0069
+v2/dark_s0      dog          permanence raw +0.0000 std +0.0000 std+noise +0.0138 | solidity raw +0.0004 std +0.0008 std+noise +0.0037 | causality raw -0.0000 std +0.0000 std+noise -0.0065
+v2/dark_s0      bat          permanence raw +0.0000 std +0.0000 std+noise -0.0101 | solidity raw +0.0003 std +0.0010 std+noise +0.0004 | causality raw +0.0000 std +0.0000 std+noise -0.0132
+v2/dark_s0      chimera      permanence raw +0.0000 std +0.0000 std+noise +0.0038 | solidity raw +0.0024 std +0.0020 std+noise -0.0070 | causality raw -0.0000 std +0.0000 std+noise -0.0103

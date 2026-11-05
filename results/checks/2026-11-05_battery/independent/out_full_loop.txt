@@ -1,0 +1,24 @@
+runs with networks: ['ab_drop/lawful_s0', 'ab_h15/lawful_s0', 'ab_h30/lawful_s0', 'ab_h5/lawful_s0', 'bench_mac-cpu/lawful_s0', 'jepa/lawful_s0', 'long/lawful_s0', 'main/ghost_s0', 'main/impermanent_s0', 'main/lawful_mj_s0', 'main/lawful_s0', 'main/lawful_s1', 'main/nonlocal_s0', 'pilot/lawful_s0', 'v2/dark_s0', 'v2/dark_s1']
+suites in 156s; hashes: new 016fc3d72807e39d (recorded 016fc3d72807e39d), previous e8b112a5e2a11879 (recorded e8b112a5e2a11879)
+ab_drop/lawful_s0: done (160s)
+ab_h15/lawful_s0: done (161s)
+ab_h30/lawful_s0: done (164s)
+ab_h5/lawful_s0: done (169s)
+  MISMATCH bench_mac-cpu/lawful_s0 human voe previous: got {'permanence': {'S': 0.003713295329362154, 'ci': [-0.0003699514280015134, 0.007523903809487818], 'S_copy': 0.005597167648375034}, 'solidity': {'S': 0.00012726362911053002, 'ci': [-0.0048673518584109845, 0.00463613593019545], 'S_copy': -0.0016277912072837353}, 'causality': {'S': -0.07329186797142029, 'ci': [-0.11828310154378414, -0.029074138728901765], 'S_copy': -0.0012039289576932788}} want None
+  MISMATCH bench_mac-cpu/lawful_s0 human voe new: got {'permanence': {'S': 0.001999282045289874, 'ci': [-0.0013420629693428054, 0.005149211606476456], 'S_copy': 0.006140266545116901}, 'solidity': {'S': -0.0029497614596039057, 'ci': [-0.008745768526569008, 0.003448155615478748], 'S_copy': -0.0063539003022015095}, 'causality': {'S': -0.019722873345017433, 'ci': [-0.05420195227488875, 0.012868183618411412], 'S_copy': -0.0015462103765457869}} want {'permanence': {'S': 0.003713295329362154, 'ci': [-0.0003699514280015134, 0.007523903809487818], 'S_copy': 0.005597167648375034}, 'solidity': {'S': 0.00012726362911053002, 'ci': [-0.0048673518584109845, 0.00463613593019545], 'S_copy': -0.0016277912072837353}, 'causality': {'S': -0.07329186797142029, 'ci': [-0.11828310154378414, -0.029074138728901765], 'S_copy': -0.0012039289576932788}}
+  MISMATCH bench_mac-cpu/lawful_s0 human voe_untrained previous: got {'permanence': {'S': 0.0016095939790830016, 'ci': [0.00014617362030548976, 0.003245726000750436], 'S_copy': 0.005597167648375034}, 'solidity': {'S': 0.00043335839291103184, 'ci': [-0.0008238996990257873, 0.001720924614346586], 'S_copy': -0.0016277912072837353}, 'causality': {'S': 0.0022470352705568075, 'ci': [-0.0002643904495926108, 0.00500548540148884], 'S_copy': -0.0012039289576932788}} want None
+  MISMATCH bench_mac-cpu/lawful_s0 human voe_untrained new: got {'permanence': {'S': 0.0005835402407683432, 'ci': [-0.0006225718389032409, 0.0019791175524005652], 'S_copy': 0.006140266545116901}, 'solidity': {'S': -0.001729074865579605, 'ci': [-0.0036307709582615645, 0.000610654547926969], 'S_copy': -0.0063539003022015095}, 'causality': {'S': 4.021330096293241e-05, 'ci': [-0.00182051996816881, 0.0019845274568069723], 'S_copy': -0.0015462103765457869}} want {'permanence': {'S': 0.0016095939790830016, 'ci': [0.00014617362030548976, 0.003245726000750436], 'S_copy': 0.005597167648375034}, 'solidity': {'S': 0.00043335839291103184, 'ci': [-0.0008238996990257873, 0.001720924614346586], 'S_copy': -0.0016277912072837353}, 'causality': {'S': 0.0022470352705568075, 'ci': [-0.0002643904495926108, 0.00500548540148884], 'S_copy': -0.0012039289576932788}}
+bench_mac-cpu/lawful_s0: done (175s)
+jepa/lawful_s0: done (178s)
+long/lawful_s0: done (179s)
+main/ghost_s0: done (202s)
+main/impermanent_s0: done (209s)
+main/lawful_mj_s0: done (236s)
+main/lawful_s0: done (248s)
+main/lawful_s1: done (253s)
+main/nonlocal_s0: done (259s)
+pilot/lawful_s0: done (265s)
+v2/dark_s0: done (278s)
+v2/dark_s1: done (284s)
+
+122 minds, 1008 test scores compared; mismatches: 4 [('bench_mac-cpu/lawful_s0', 'human', 'voe', 'previous', 'disk (not in git)'), ('bench_mac-cpu/lawful_s0', 'human', 'voe', 'new', 'disk (not in git)'), ('bench_mac-cpu/lawful_s0', 'human', 'voe_untrained', 'previous', 'disk (not in git)'), ('bench_mac-cpu/lawful_s0', 'human', 'voe_untrained', 'new', 'disk (not in git)')]

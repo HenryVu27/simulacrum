@@ -1,3 +1,4 @@
+import functools
 from dataclasses import replace
 
 import jax
@@ -85,13 +86,20 @@ def test_probe_reads_a_planted_signal_and_ignores_noise():
     assert probes._r2_cols(p(X[5000:]), noise[5000:], M[5000:], M[5000:]) < 0.05
 
 
+def _noise_free(name):
+    return replace(PRESETS[name], senses=tuple(replace(x, noise=0.0) for x in PRESETS[name].senses))
+
+
 def test_permanence_quadruplet_is_balanced_for_a_memoryless_predictor():
-    m, tc = voe.permanence(0, 0.0)
-    d = {f"obs_{k}": np.stack([mv[k] for mv in m])[None].reshape(4, *m[0][k].shape) for k in m[0]}
-    d["action"] = np.zeros((4, len(m[0]["oracle"]), 2), np.float32)
-    o = observe(d, PRESETS["vision_only"])
-    s, _ = voe.surprise(voe.copy_errors(o), np.array([tc]), n_boot=1)
-    assert abs(s) < 0.1
+    """On noise-free inputs a predictor that copies the last frame scores S = 0 on a balanced quadruplet. (Smell
+    alone is the exception: scent lingers after its source has gone, so smell_only scores -0.08 here.)"""
+    for kind, j in ((voe.INERT[0], -0.5), (voe.INERT[-1], 0.5)):
+        m, tc = voe.permanence(kind, j)
+        d = {f"obs_{k}": np.stack([mv[k] for mv in m]) for k in m[0]}
+        d["action"] = np.zeros((4, len(m[0]["oracle"]), 2), np.float32)
+        for name in ("vision_only", "human", "dog", "bat"):
+            s, _ = voe.surprise(voe.copy_errors(observe(d, _noise_free(name))), np.array([tc]), n_boot=1)
+            assert abs(s) < 0.01, (kind, j, name, s)
 
 
 def test_dark_blinds_eyes_but_not_echolocation():
@@ -139,10 +147,30 @@ def test_look_back_turns_away_and_returns():
     assert any(big > np.deg2rad(110) and end < np.deg2rad(30) for big, end in swings), swings
 
 
-# One quadruplet per test, at both jitter extremes: enough to cover every geometry without rendering the suite.
-QUADS = [("permanence", lambda j: voe.permanence(voe.INERT[-1], j)), ("solidity", lambda j: voe.solidity(voe.INERT[-1], j)),
-         ("causality", lambda j: voe.causality(voe.INERT[-1], voe.INERT[0], j))]
 OFF_ARENA = np.array([0.5, -1.0, 1.5, -1.0], np.float32)  # the old "no wall here" marker, where nothing reaches
+
+
+def _quadruplets():
+    for k in voe.INERT:
+        for j in (-0.5, 0.0, 0.5):
+            yield ("permanence", k, j), lambda k=k, j=j: voe.permanence(k, j)[0]
+            yield ("solidity", k, j), lambda k=k, j=j: voe.solidity(k, j)[0]
+    for a, b in zip(voe.INERT, voe.INERT[1:] + voe.INERT[:1]):
+        for j in (-0.5, 0.0, 0.5):
+            yield ("causality", a, b, j), lambda a=a, b=b, j=j: voe.causality(a, b, j)[0]
+
+
+@functools.cache
+def _suite_movies(bystanders=True):
+    """All 54 quadruplets, rendered once per test session: with their bystander walls, or with those walls off the
+    arena. (Six of them missed a bystander that hid an object for two frames; all 54 catch it.)"""
+    keep = voe._bystanders
+    if not bystanders:
+        voe._bystanders = lambda n, *a: np.tile(OFF_ARENA, (n, 1))
+    try:
+        return {key: make() for key, make in _quadruplets()}
+    finally:
+        voe._bystanders = keep
 
 
 def _walls(movie):
@@ -153,26 +181,22 @@ def _walls(movie):
 def test_every_movie_has_three_walls_from_the_training_range():
     """The oracle reads wall coordinates, so a wall it has never seen the like of sets its scores
     (docs/preregistration.md, second correction of 2026-11-05)."""
-    for name, make in QUADS:
-        for j in (-0.5, 0.5):
-            movies, _ = make(j)
-            for v, m in zip(voe.VARIANTS, movies):
-                w = _walls(m)
-                assert np.array_equal(w, np.broadcast_to(w[0], w.shape)), (name, v)  # walls stand still
-                mid, half = (w[0, :, :2] + w[0, :, 2:]) / 2, np.linalg.norm(w[0, :, 2:] - w[0, :, :2], axis=-1) / 2
-                assert ((2.5 - 1e-5 <= mid) & (mid <= 7.5 + 1e-5)).all(), (name, j, v, mid)
-                assert ((0.75 - 1e-5 <= half) & (half <= 1.5 + 1e-5)).all(), (name, j, v, half)
-            shared = slice(1, 3) if name == "solidity" else slice(0, 3)  # solidity's first wall is the event's
-            assert all(np.array_equal(_walls(m)[0, shared], _walls(movies[0])[0, shared]) for m in movies), name
+    for key, movies in _suite_movies().items():
+        for v, m in zip(voe.VARIANTS, movies):
+            w = _walls(m)
+            assert np.array_equal(w, np.broadcast_to(w[0], w.shape)), (key, v)  # walls stand still
+            mid, half = (w[0, :, :2] + w[0, :, 2:]) / 2, np.linalg.norm(w[0, :, 2:] - w[0, :, :2], axis=-1) / 2
+            assert ((2.5 - 1e-5 <= mid) & (mid <= 7.5 + 1e-5)).all(), (key, v, mid)
+            assert ((0.75 - 1e-5 <= half) & (half <= 1.5 + 1e-5)).all(), (key, v, half)
+        shared = slice(1, 3) if key[0] == "solidity" else slice(0, 3)  # solidity's first wall: in the path or not
+        assert all(np.array_equal(_walls(m)[0, shared], _walls(movies[0])[0, shared]) for m in movies), key
 
 
-def test_bystander_walls_hide_nothing(monkeypatch):
-    """Render every quadruplet with its bystander walls and again with them off the arena. Apart from the oracle's
-    wall coordinates, only rays that met a boundary wall may change (they now meet a bystander), and no other
-    sense may change at all."""
-    with_them = {(n, j): make(j)[0] for n, make in QUADS for j in (-0.5, 0.5)}
-    monkeypatch.setattr(voe, "_bystanders", lambda n, *a: np.tile(OFF_ARENA, (n, 1)))
-    without = {(n, j): make(j)[0] for n, make in QUADS for j in (-0.5, 0.5)}
+def test_bystander_walls_hide_nothing():
+    """Every quadruplet, with its bystander walls and with them off the arena. Apart from the oracle's wall
+    coordinates, only rays that met a boundary wall may change (they now meet a bystander), and no other sense may
+    change at all."""
+    with_them, without = _suite_movies(), _suite_movies(bystanders=False)
     boundary = np.asarray(kinds.BOUNDARY_COLOR)
     seen = 0
     for key in with_them:
@@ -205,6 +229,5 @@ def test_solidity_shows_the_wall_and_stays_balanced():
             d = {f"obs_{k}": np.stack([m[k] for m in (p1, p2, i1, i2)]) for k in p1}
             d["action"] = np.zeros((4, len(p1["oracle"]), 2), np.float32)
             for name in ("human", "bat", "chimera", "dog"):
-                p = replace(PRESETS[name], senses=tuple(replace(x, noise=0.0) for x in PRESETS[name].senses))
-                s, _ = voe.surprise(voe.copy_errors(observe(d, p)), np.array([tc]), n_boot=1)
+                s, _ = voe.surprise(voe.copy_errors(observe(d, _noise_free(name))), np.array([tc]), n_boot=1)
                 assert abs(s) < 0.01, (kind, j, name, s)

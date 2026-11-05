@@ -1,0 +1,37 @@
+A/B agent (5.00, y-2) h=1 off=slid up                      wall rays on  8.9 off  2.6 | human -0.1065  vision_only -0.1309  dog -0.0040  bat -0.0417  chimera -0.2055
+A/B agent (5.30, y-2) h=1 off=slid up                      wall rays on  6.9 off  1.8 | human -0.0881  vision_only -0.1087  dog -0.0059  bat -0.0350  chimera -0.1718
+A/B agent (5.50, y-2) h=1 off=slid up                      wall rays on  5.9 off  1.9 | human -0.0654  vision_only -0.0807  dog -0.0050  bat -0.0213  chimera -0.1156
+A/B agent (5.70, y-2) h=1 off=slid up                      wall rays on  4.0 off  1.0 | human -0.0459  vision_only -0.0565  dog -0.0053  bat -0.0100  chimera -0.0488
+A/B agent (5.85, y-2) h=1 off=slid up                      wall rays on  2.0 off  0.0 | human -0.0201  vision_only -0.0247  dog -0.0010  bat +0.0000  chimera +0.0000
+C occluder s=0.5 h=1.0 ext=0.0 agent (5, y-2)              wall rays on  8.9 off  7.0 | human +0.0237  vision_only +0.0303  dog +0.0018  bat +0.0019  chimera +0.0116
+C occluder s=0.5 h=1.0 ext=1.5 agent (5, y-2)              wall rays on  8.9 off 23.0 | human +0.1637  vision_only +0.2173  dog +0.0056  bat +0.0222  chimera +0.1483
+C occluder s=0.5 h=1.5 ext=0.0 agent (5, y-2)              wall rays on 16.8 off 14.0 | human +0.0269  vision_only +0.0356  dog +0.0021  bat +0.0020  chimera +0.0127
+C occluder s=0.5 h=1.5 ext=1.5 agent (5, y-2)              wall rays on 16.8 off 23.0 | human +0.0404  vision_only +0.0537  dog +0.0025  bat +0.0079  chimera +0.0527
+C occluder s=0.6 h=1.0 ext=0.0 agent (5, y-2)              wall rays on  8.9 off  7.0 | human +0.0237  vision_only +0.0303  dog +0.0018  bat +0.0019  chimera +0.0116
+C occluder s=0.6 h=1.0 ext=1.5 agent (5, y-2)              wall rays on  8.9 off 23.0 | human +0.1637  vision_only +0.2173  dog +0.0056  bat +0.0222  chimera +0.1483
+C occluder s=0.6 h=1.5 ext=0.0 agent (5, y-2)              wall rays on 16.8 off 14.0 | human +0.0269  vision_only +0.0356  dog +0.0021  bat +0.0020  chimera +0.0127
+C occluder s=0.6 h=1.5 ext=1.5 agent (5, y-2)              wall rays on 16.8 off 23.0 | human +0.0404  vision_only +0.0537  dog +0.0025  bat +0.0079  chimera +0.0527
+
+D: oblique full-length occluder below the path, between the rays of the on-wall's lower part
+D oblique h=1.5 delta=0.0 len=1.52 agent (5, y-2)          wall rays on 16.8 off 14.0 | human +0.0269  vision_only +0.0356  dog +0.0021  bat +0.0020  chimera +0.0127
+D oblique h=1.5 delta=2.0 len=1.52 agent (5, y-2)          wall rays on 16.8 off 13.0 | human +0.0265  vision_only +0.0348  dog +0.0019  bat +0.0020  chimera +0.0127
+D oblique h=1.5 delta=4.0 len=1.52 agent (5, y-2)          wall rays on 16.8 off 12.0 | human -0.0022  vision_only -0.0029  dog +0.0005  bat +0.0020  chimera +0.0127
+D oblique h=1.5 delta=6.0 len=1.52 agent (5, y-2)          wall rays on 16.8 off 11.0 | human -0.0299  vision_only -0.0385  dog -0.0006  bat -0.0237  chimera -0.1344
+D oblique h=1.5 delta=8.0 len=1.52 agent (5, y-2)          wall rays on 16.8 off 11.0 | human -0.0299  vision_only -0.0385  dog -0.0006  bat -0.0237  chimera -0.1344
+
+E: a screen in all four movies (D's occluder), the wall 1 above the path, slid away for no wall
+E common occluder delta=0.0 on h=1 off=slid up             wall rays on 15.9 off 16.6 | human +0.0001  vision_only +0.0001  dog +0.0001  bat +0.0004  chimera +0.0024
+E common occluder delta=2.0 on h=1 off=slid up             wall rays on 15.9 off 15.6 | human +0.0004  vision_only +0.0006  dog +0.0001  bat +0.0004  chimera +0.0024
+E common occluder delta=4.0 on h=1 off=slid up             wall rays on 15.9 off 14.6 | human -0.0091  vision_only -0.0119  dog +0.0001  bat +0.0004  chimera +0.0024
+E common occluder delta=6.0 on h=1 off=slid up             wall rays on 15.9 off 13.6 | human -0.0307  vision_only -0.0396  dog -0.0007  bat -0.0237  chimera -0.1344
+
+E, other agent positions and wall heights (event wall rays: the event wall alone)
+E agent x=5.0 wall [-1.0, +1.0] occluder to -1.5: event wall rays on  3.9 off  2.6, occluder in range True | human +0.0001  vision_only +0.0001  dog +0.0001  bat +0.0004  chimera +0.0024
+E agent x=5.0 wall [-1.0, +1.5] occluder to -1.5: event wall rays on  4.8 off  2.6, occluder in range True | human +0.0003  vision_only +0.0004  dog +0.0004  bat +0.0004  chimera +0.0024
+E agent x=4.5 wall [-1.0, +1.0] occluder to -1.5: event wall rays on  3.6 off  3.2, occluder in range True | human -0.0047  vision_only -0.0060  dog -0.0008  bat -0.0052  chimera -0.0291
+E agent x=4.5 wall [-1.0, +1.5] occluder to -1.5: event wall rays on  4.4 off  3.2, occluder in range True | human -0.0044  vision_only -0.0057  dog -0.0009  bat -0.0052  chimera -0.0291
+E agent x=4.0 wall [-1.0, +1.0] occluder to -1.5: event wall rays on  3.5 off  3.7, occluder in range True | human -0.0185  vision_only -0.0229  dog -0.0013  bat -0.0023  chimera -0.0112
+E agent x=4.0 wall [-1.0, +1.5] occluder to -1.5: event wall rays on  4.2 off  4.5, occluder in range True | human -0.0252  vision_only -0.0312  dog -0.0018  bat -0.0082  chimera -0.0421
+
+E as adopted in voe.py: wall 1.4 above the path, slid 0.75 clear of it for no wall
+E agent x=5.0 wall [-1.0, +1.4] occluder to -1.5: event wall rays on  4.8 off  2.6, occluder in range True | human +0.0003  vision_only +0.0004  dog +0.0004  bat +0.0004  chimera +0.0024

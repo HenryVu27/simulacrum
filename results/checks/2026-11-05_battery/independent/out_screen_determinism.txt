@@ -1,0 +1,4 @@
+j -0.5: voe [7.113221645355225, 3.5566108226776123, 5.599999904632568, 3.700000047683716] | plain==voe True | fma==voe True | float64 plain-vs-fma max diff 0.00e+00 | nearest float32 tie, in float32 ulps: 0.300
+j +0.0: voe [7.113221645355225, 4.056610584259033, 5.599999904632568, 4.199999809265137] | plain==voe True | fma==voe True | float64 plain-vs-fma max diff 0.00e+00 | nearest float32 tie, in float32 ulps: 0.074
+j +0.5: voe [7.113221645355225, 4.556610584259033, 5.599999904632568, 4.699999809265137] | plain==voe True | fma==voe True | float64 plain-vs-fma max diff 0.00e+00 | nearest float32 tie, in float32 ulps: 0.074
+bystander endpoints off the 1/256 grid by at most 0.0

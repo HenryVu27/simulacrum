@@ -54,8 +54,10 @@ def _point_seg(p, a, b):
 def _seg_dist(a1, a2, b1, b2):
     """Distance between segments a1-a2 and b1-b2 (broadcast). 0 where they touch, and also, to be safe, where
     they lie on one line."""
-    touch = (_cross2(b2 - b1, a1 - b1) * _cross2(b2 - b1, a2 - b1) <= 0) & (_cross2(a2 - a1, b1 - a1) * _cross2(a2 - a1, b2 - a1) <= 0)
-    d = np.minimum(np.minimum(_point_seg(a1, b1, b2), _point_seg(a2, b1, b2)), np.minimum(_point_seg(b1, a1, a2), _point_seg(b2, a1, a2)))
+    touch = (_cross2(b2 - b1, a1 - b1) * _cross2(b2 - b1, a2 - b1) <= 0) & (
+        _cross2(a2 - a1, b1 - a1) * _cross2(a2 - a1, b2 - a1) <= 0)
+    d = np.minimum(np.minimum(_point_seg(a1, b1, b2), _point_seg(a2, b1, b2)),
+                   np.minimum(_point_seg(b1, a1, a2), _point_seg(b2, a1, a2)))
     return np.where(touch, 0.0, d)
 
 
@@ -71,7 +73,7 @@ def _bystanders(n, rng, eye, th, events, objects):
     event's wall and the other bystanders, r + 0.3 from every object, r + 0.1 from every line of sight from the
     agent to an object, 0.1 from every sound path from an ear to an object, and 0.1 from every line of sight to
     the event's wall, so no ray that met an object or the event's wall meets a bystander instead
-    (tests/test_core.py renders every quadruplet with and without them to check)."""
+    (tests/test_core.py renders all 54 quadruplets with and without them to check)."""
     side = np.array([np.cos(th + np.pi / 2), np.sin(th + np.pi / 2)])
     c, r = objects[:, :2], objects[:, 2]
     # segments A-B to keep gap away from: the agent, the objects, the lines of sight and sound to them
@@ -171,7 +173,8 @@ def permanence(kind, j, layout_seed=LAYOUT_SEED):
     screen = np.array([5.0, 4.0 + j, 5.0, 6.0 + j], np.float32)
     eye = np.array([2.0, 5.0 + j])
     places = np.c_[pos[:, 0], np.full(T, kinds.RADIUS[kind])]  # P1 shows the object in every place it has
-    walls = np.r_[screen[None], _bystanders(2, _rng("permanence", kind, j=j, layout_seed=layout_seed), eye, 0.0, screen[None], places)]
+    rng = _rng("permanence", kind, j=j, layout_seed=layout_seed)
+    walls = np.r_[screen[None], _bystanders(2, rng, eye, 0.0, screen[None], places)]
     movies = []
     for v in VARIANTS:
         a = present.copy()
@@ -208,8 +211,9 @@ def solidity(kind, j, layout_seed=LAYOUT_SEED):
     # but the oracle's the wall movies equalled the no-wall movies.) A visible wall hides an object passing
     # through it, which no possible movie matches: without more, a predictor that only copies the last frame
     # finds the impossible movies easier (S -0.11 for the human's senses). So a screen below the path, in all
-    # four movies, covers exactly the sight lines to the path beyond the wall's line: both passing movies then
-    # look the same, and the wall shows above the screen, from the path up (about 5 of the human's rays).
+    # four movies, covers the sight lines to the path from the wall's line to about x = 9: both passing movies
+    # then look the same (the object reappears in their last 4 or 5 frames, in both), and the wall shows above
+    # the screen, from the path up (about 5 of the human's rays).
     # The copy predictor's S is then within 0.0025 of zero for every vision mind (experiments/battery_stimuli.py).
     eye = np.array([5.0, y - 2.0])
     wall_on = np.array([6.0, y - 1.0, 6.0, y + 1.4], np.float32)
@@ -218,7 +222,8 @@ def solidity(kind, j, layout_seed=LAYOUT_SEED):
     wall_off = np.array([6.0, y + 0.75, 6.0, y + 3.15], np.float32)
     screen = _solidity_screen(eye, y)
     places = np.c_[np.r_[x_pass, x_bounce], np.full(2 * T, y), np.full(2 * T, r)]
-    other = _bystanders(1, _rng("solidity", kind, j=j, layout_seed=layout_seed), eye, np.pi / 2, np.stack([wall_on, wall_off, screen]), places)
+    rng = _rng("solidity", kind, j=j, layout_seed=layout_seed)
+    other = _bystanders(1, rng, eye, np.pi / 2, np.stack([wall_on, wall_off, screen]), places)
     combos = {"P1": (wall_on, x_bounce, imp_bounce), "P2": (wall_off, x_pass, 0 * imp_bounce),
               "I1": (wall_on, x_pass, 0 * imp_bounce), "I2": (wall_off, x_bounce, imp_bounce)}
     active = np.zeros((T, N_SLOTS), bool)
@@ -250,7 +255,8 @@ def causality(ka, kb, j, layout_seed=LAYOUT_SEED):
               "I1": (xa_hit, xb_stay, imp), "I2": (xa_short, xb_launch, 0 * imp)}
     eye = np.array([6.0, 2.0])
     places = np.c_[np.r_[xa_hit, xa_short, xb_launch, xb_stay], np.full(4 * T, y), np.repeat([ra, ra, rb, rb], T)]
-    walls = _bystanders(3, _rng("causality", ka, kb, j=j, layout_seed=layout_seed), eye, np.pi / 2, np.zeros((0, 4)), places)
+    rng = _rng("causality", ka, kb, j=j, layout_seed=layout_seed)
+    walls = _bystanders(3, rng, eye, np.pi / 2, np.zeros((0, 4)), places)
     active = np.zeros((T, N_SLOTS), bool)
     active[:, :2] = True
     movies = []
@@ -267,8 +273,9 @@ def build_suite(jitters=(-0.5, 0.0, 0.5), device="cpu", layout_seed=LAYOUT_SEED)
     """All quadruplets, stacked as recorded-data dicts the presets can read.
 
     Rendered on the CPU by default, so every machine scores on the same movies: rendered on the GPU, 8 of the
-    solidity movies' 2.2 million vision values differ from the CPU's (by at most 0.000244), while the Mac's and
-    the PC's CPUs agree bit for bit (docs/gpu.md, 2026-11-05). device=None renders on JAX's default device."""
+    solidity movies' 2.2 million vision values differed from the CPU's (by at most 0.000244; measured on the
+    movies before the second correction), while the Mac's and the PC's CPUs agree bit for bit (docs/gpu.md,
+    2026-11-05). device=None renders on JAX's default device."""
     if device is not None:
         with jax.default_device(jax.devices(device)[0]):
             return build_suite(jitters, device=None, layout_seed=layout_seed)
@@ -276,7 +283,8 @@ def build_suite(jitters=(-0.5, 0.0, 0.5), device="cpu", layout_seed=LAYOUT_SEED)
     makers = {
         "permanence": [lambda k=k, j=j: permanence(k, j, layout_seed) for k in INERT for j in jitters],
         "solidity": [lambda k=k, j=j: solidity(k, j, layout_seed) for k in INERT for j in jitters],
-        "causality": [lambda a=a, b=b, j=j: causality(a, b, j, layout_seed) for a, b in zip(INERT, INERT[1:] + INERT[:1]) for j in jitters],
+        "causality": [lambda a=a, b=b, j=j: causality(a, b, j, layout_seed)
+                      for a, b in zip(INERT, INERT[1:] + INERT[:1]) for j in jitters],
     }
     for name, fns in makers.items():
         movies, crit = [], []
@@ -304,7 +312,8 @@ def suite_hash(suite):
 
 
 def surprise(err, crit, rng=None, n_boot=500):
-    """err (instances*4, T-1) one-step errors. Returns S, its 95% bootstrap interval, and per-instance S."""
+    """err (instances*4, T-1) one-step errors. Returns S and its 95% bootstrap interval over instances (the
+    sensor noise is one fixed draw per preset, so the interval does not cover it)."""
     n = len(crit)
     err = err.reshape(n, 4, -1)
     tot = np.array([err[i, :, crit[i] - 1 :].sum(-1) for i in range(n)])  # (n, 4): P1 P2 I1 I2

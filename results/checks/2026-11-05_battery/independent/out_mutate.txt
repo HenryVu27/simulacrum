@@ -1,0 +1,29 @@
+M1 bystanders unconstrained (may hide anything):
+        assert False
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:190: AssertionError: (('solidity', -0.5), 'P1', 'ray_tex')
+    FAILED tests/test_core.py::test_bystander_walls_hide_nothing - AssertionError...
+    1 failed, 2 passed, 8 deselected in 41.62s
+M2 bystanders ignore sight lines to objects (gap 0 on eye-object lines):
+    4 passed, 8 deselected in 52.75s
+M3 solidity screen removed (off the arena):
+    E   AssertionError: ('solidity', -0.5, 'P1', array([[ 6.       ,  4.7000003],
+        assert np.False_
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:163: AssertionError: ('solidity', -0.5, 'P1', array([[ 6.       ,  4.7000003],
+    1 failed, 1 passed, 8 deselected in 22.52s
+M4 bystander centres drawn from [1, 9], no range check:
+    E   AssertionError: ('permanence', -0.5, 'P1', array([[5.       , 4.5      ],
+        assert np.False_
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:163: AssertionError: ('permanence', -0.5, 'P1', array([[5.       , 4.5      ],
+    1 failed, 1 passed, 8 deselected in 14.33s
+M5 solidity eye back on the wall's line (x = 6):
+    E   AssertionError: (0, -0.5)
+        assert np.int64(0) >= 2
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:204: AssertionError: (0, -0.5)
+    1 failed, 3 passed, 8 deselected in 45.93s
+M6 bystanders differ between the movies of a quadruplet:
+    E   AssertionError: permanence
+        assert False
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:166: AssertionError: permanence
+    1 failed, 1 passed, 8 deselected in 13.22s
+M7 permanence: object vanishes in plain view in I1 (unbalanced):
+    4 passed, 8 deselected in 51.59s

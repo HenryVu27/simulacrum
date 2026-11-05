@@ -1,0 +1,4 @@
+kind 0 mass 1.0: world impulse at the bounce 1.982 (movie uses 2.700); speed just before 1.171, just after -0.881 (ratio 0.752); per-step speed decay before contact 0.940 (movies: 1.000)
+kind 1 mass 1.0: world impulse at the bounce 1.982 (movie uses 2.700); speed just before 1.171, just after -0.881 (ratio 0.752); per-step speed decay before contact 0.940 (movies: 1.000)
+kind 3 mass 1.0: world impulse at the bounce 1.982 (movie uses 2.700); speed just before 1.171, just after -0.881 (ratio 0.752); per-step speed decay before contact 0.940 (movies: 1.000)
+kind 6 mass 4.0: world impulse at the bounce 1.982 (movie uses 10.800); speed just before 1.171, just after -0.881 (ratio 0.752); per-step speed decay before contact 0.940 (movies: 1.000)

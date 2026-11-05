@@ -1,0 +1,6 @@
+kind 0 r 0.35: tc 37, frames at the wall [37], x[tc-2..tc+1] [5.35, 5.5, 5.65, 5.53], step before 0.1500, step at tc-1->tc 0.1500, step after -0.1200, impulse at [37] = 2.700
+kind 1 r 0.40: tc 37, frames at the wall [37], x[tc-2..tc+1] [5.35, 5.5, 5.6, 5.48], step before 0.1500, step at tc-1->tc 0.1000, step after -0.1200, impulse at [37] = 2.700
+kind 2 r 0.45: tc 37, frames at the wall [37], x[tc-2..tc+1] [5.35, 5.5, 5.55, 5.43], step before 0.1500, step at tc-1->tc 0.0500, step after -0.1200, impulse at [37] = 2.700
+kind 3 r 0.30: tc 38, frames at the wall [38], x[tc-2..tc+1] [5.5, 5.65, 5.7, 5.58], step before 0.1500, step at tc-1->tc 0.0500, step after -0.1200, impulse at [38] = 2.700
+kind 4 r 0.35: tc 37, frames at the wall [37], x[tc-2..tc+1] [5.35, 5.5, 5.65, 5.53], step before 0.1500, step at tc-1->tc 0.1500, step after -0.1200, impulse at [37] = 2.700
+kind 6 r 0.50: tc 36, frames at the wall [36], x[tc-2..tc+1] [5.2, 5.35, 5.5, 5.38], step before 0.1500, step at tc-1->tc 0.1500, step after -0.1200, impulse at [36] = 10.800

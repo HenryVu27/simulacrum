@@ -1,0 +1,7 @@
+main/lawful_s0     bat         stored draw S +0.0074 [+0.0000,+0.0151] (json +0.0074) | no noise +0.0082 [+0.0049,+0.0121] | 20 other draws: mean +0.0064 sd 0.0046 min -0.0071 max +0.0123
+main/lawful_s1     bat         stored draw S +0.0129 [+0.0050,+0.0213] (json +0.0129) | no noise +0.0120 [+0.0080,+0.0158] | 20 other draws: mean +0.0099 sd 0.0049 min -0.0030 max +0.0216
+main/lawful_mj_s0  bat         stored draw S +0.0199 [+0.0130,+0.0268] (json +0.0199) | no noise +0.0260 [+0.0222,+0.0305] | 20 other draws: mean +0.0189 sd 0.0050 min +0.0086 max +0.0270
+jepa/lawful_s0     human       stored draw S +0.0201 [+0.0093,+0.0311] (json +0.0201) | no noise +0.0207 [+0.0117,+0.0307] | 20 other draws: mean +0.0166 sd 0.0042 min +0.0104 max +0.0254
+main/lawful_s0     memoryless  stored draw S +0.0073 [+0.0001,+0.0144] (json +0.0073) | no noise +0.0066 [+0.0002,+0.0125] | 20 other draws: mean +0.0051 sd 0.0019 min +0.0024 max +0.0091
+main/lawful_s0     human       stored draw S -0.0029 [-0.0087,+0.0034] (json -0.0029) | no noise -0.0021 [-0.0079,+0.0032] | 20 other draws: mean -0.0024 sd 0.0019 min -0.0055 max +0.0018
+main/lawful_s1     passive     stored draw S +0.0098 [+0.0033,+0.0160] (json +0.0098) | no noise +0.0073 [+0.0009,+0.0135] | 20 other draws: mean +0.0058 sd 0.0017 min +0.0028 max +0.0097

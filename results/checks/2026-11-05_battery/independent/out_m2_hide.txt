@@ -1,0 +1,1 @@
+M2 bystanders that hide something: 1 quadruplets: ('solidity', 2, 0.5) P2: 2 ray-frames lost, senses ['ray_tex']; ('solidity', 2, 0.5) I1: 2 ray-frames lost, senses ['ray_tex']

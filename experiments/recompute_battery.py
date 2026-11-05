@@ -35,8 +35,9 @@ from umwelt import learner, learner_jepa, presets, voe
 from umwelt.experiment import RESULTS, _code_version, _jsonable, _voe_scores
 
 BEFORE = "d6c6763"  # the last commit with the previous movies
-# Every stored run with trained networks. The pilot's files are not in git. The bench_* runs keep no networks
-# (they time the code) and are left as they are.
+# Every stored run whose surprise scores are used. The pilot's files are not in git. The bench_* runs time the
+# code and are not in git either; bench_mac-cpu keeps a network, but its scores are used nowhere, so it is left
+# as it was (it still holds the previous movies' scores).
 RUNS = ["main/lawful_s0", "main/lawful_s1", "main/ghost_s0", "main/impermanent_s0", "main/nonlocal_s0",
         "main/lawful_mj_s0", "v2/dark_s0", "v2/dark_s1", "pilot/lawful_s0",
         "long/lawful_s0", "jepa/lawful_s0", "ab_drop/lawful_s0", "ab_h5/lawful_s0", "ab_h15/lawful_s0", "ab_h30/lawful_s0"]

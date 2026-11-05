@@ -1,0 +1,69 @@
+('permanence', 0, -0.5) done
+('permanence', 0, 0.0) done
+('permanence', 0, 0.5) done
+('permanence', 1, -0.5) done
+('permanence', 1, 0.0) done
+('permanence', 1, 0.5) done
+('permanence', 2, -0.5) done
+('permanence', 2, 0.0) done
+('permanence', 2, 0.5) done
+('permanence', 3, -0.5) done
+('permanence', 3, 0.0) done
+('permanence', 3, 0.5) done
+('permanence', 4, -0.5) done
+('permanence', 4, 0.0) done
+('permanence', 4, 0.5) done
+('permanence', 6, -0.5) done
+('permanence', 6, 0.0) done
+('permanence', 6, 0.5) done
+('solidity', 0, -0.5) done
+('solidity', 0, 0.0) done
+('solidity', 0, 0.5) done
+('solidity', 1, -0.5) done
+('solidity', 1, 0.0) done
+('solidity', 1, 0.5) done
+('solidity', 2, -0.5) done
+('solidity', 2, 0.0) done
+('solidity', 2, 0.5) done
+('solidity', 3, -0.5) done
+('solidity', 3, 0.0) done
+('solidity', 3, 0.5) done
+('solidity', 4, -0.5) done
+('solidity', 4, 0.0) done
+('solidity', 4, 0.5) done
+('solidity', 6, -0.5) done
+('solidity', 6, 0.0) done
+('solidity', 6, 0.5) done
+('causality', 0, 1, -0.5) done
+('causality', 0, 1, 0.0) done
+('causality', 0, 1, 0.5) done
+('causality', 1, 2, -0.5) done
+('causality', 1, 2, 0.0) done
+('causality', 1, 2, 0.5) done
+('causality', 2, 3, -0.5) done
+('causality', 2, 3, 0.0) done
+('causality', 2, 3, 0.5) done
+('causality', 3, 4, -0.5) done
+('causality', 3, 4, 0.0) done
+('causality', 3, 4, 0.5) done
+('causality', 4, 6, -0.5) done
+('causality', 4, 6, 0.0) done
+('causality', 4, 6, 0.5) done
+('causality', 6, 0, -0.5) done
+('causality', 6, 0, 0.0) done
+('causality', 6, 0, 0.5) done
+
+==== CLAIM 1
+quadruplets 54 | centre range seen 2.5 7.5 | half range seen 0.76 1.4902
+walls out of range: [] 0
+walls with end order unlike world.reset (angle not in [0, pi)): [] 0
+walls moving or oracle readback mismatch: []
+quadruplets whose non-event walls differ between movies: []
+
+==== CLAIM 2 (both absent places, 54 quads x 4 movies)
+non-vision sense changes: [] 0
+oracle non-bystander inputs changed: [] 0
+ray-frames changed in total: 316342
+changed rays that (by my float64 caster) met an object or the event's wall without bystanders: 0
+changed rays my caster does not attribute to a bystander: [] 0
+smallest distance behind an object/event hit at which a ray meets a bystander: 0.7768503009518666

@@ -1,0 +1,45 @@
+scores: 498 stimuli 016fc3d72807e39d
+solidity   trained  : 121 scores; interval above 0 after: 15 (before: 5); below 0 after: 5
+     above 0: main/lawful_s0       bat             S +0.0074 [+0.0000, +0.0151]  S_copy +0.0004
+     above 0: main/lawful_s0       memoryless      S +0.0073 [+0.0001, +0.0144]  S_copy +0.0078
+     above 0: main/lawful_s1       bat             S +0.0129 [+0.0050, +0.0213]  S_copy +0.0004
+     above 0: main/lawful_s1       chimera         S +0.0081 [+0.0002, +0.0155]  S_copy -0.0069
+     above 0: main/lawful_s1       memoryless      S +0.0089 [+0.0000, +0.0171]  S_copy +0.0078
+     above 0: main/lawful_s1       passive         S +0.0098 [+0.0033, +0.0160]  S_copy +0.0019
+     above 0: main/ghost_s0        bat             S +0.0122 [+0.0076, +0.0180]  S_copy +0.0041
+     above 0: main/ghost_s0        chimera         S +0.0110 [+0.0019, +0.0199]  S_copy -0.0072
+     above 0: main/impermanent_s0  bat             S +0.0112 [+0.0035, +0.0193]  S_copy +0.0011
+     above 0: main/nonlocal_s0     bat             S +0.0128 [+0.0051, +0.0204]  S_copy +0.0009
+     above 0: main/lawful_mj_s0    bat             S +0.0199 [+0.0130, +0.0268]  S_copy -0.0054
+     above 0: main/lawful_mj_s0    passive         S +0.0055 [+0.0002, +0.0108]  S_copy +0.0028
+     above 0: v2/dark_s0           bat             S +0.0091 [+0.0018, +0.0170]  S_copy +0.0004
+     above 0: v2/dark_s1           bat             S +0.0106 [+0.0037, +0.0183]  S_copy +0.0004
+     above 0: jepa/lawful_s0       human           S +0.0201 [+0.0093, +0.0311]  S_copy -0.0064
+solidity   untrained: 45 scores; interval above 0 after: 7 (before: 3); below 0 after: 0
+     above 0: main/lawful_s0       smell_only      S +0.0013 [+0.0003, +0.0020]  S_copy +0.0035
+     above 0: main/lawful_mj_s0    smell_only      S +0.0013 [+0.0004, +0.0021]  S_copy +0.0042
+     above 0: v2/dark_s0           human           S +0.0024 [+0.0003, +0.0048]  S_copy -0.0078
+     above 0: v2/dark_s0           passive         S +0.0025 [+0.0007, +0.0047]  S_copy +0.0006
+     above 0: v2/dark_s0           passive_novest  S +0.0027 [+0.0011, +0.0044]  S_copy -0.0027
+     above 0: v2/dark_s0           smell_only      S +0.0012 [+0.0003, +0.0020]  S_copy +0.0022
+     above 0: v2/dark_s0           vision_only     S +0.0022 [+0.0004, +0.0043]  S_copy -0.0002
+permanence trained  : 121 scores; interval above 0 after: 20 (before: 22); below 0 after: 0
+permanence untrained: 45 scores; interval above 0 after: 3 (before: 5); below 0 after: 6
+causality  trained  : 121 scores; interval above 0 after: 4 (before: 6); below 0 after: 21
+causality  untrained: 45 scores; interval above 0 after: 7 (before: 12); below 0 after: 6
+
+S_copy (standardised, noisy inputs, as stored) on solidity after the redesign, by mind (min..max over runs):
+  bat             -0.0054 .. +0.0041
+  blind           -0.0003 .. +0.0060
+  chimera         -0.0072 .. -0.0067
+  deafblind       +0.0133 .. +0.0356
+  dog             -0.0029 .. +0.0303
+  hearing_only    -0.0044 .. +0.0029
+  human           -0.0078 .. -0.0056
+  memoryless      +0.0046 .. +0.0122
+  oracle          +0.0000 .. +0.0000
+  passive         -0.0004 .. +0.0028
+  passive_novest  -0.0027 .. -0.0017
+  smell_only      +0.0016 .. +0.0042
+  touch_only      -0.0408 .. -0.0160
+  vision_only     -0.0006 .. -0.0002

@@ -1,0 +1,8 @@
+M2 (no clearance from eye-object sight lines): bystanders identical in 39 of 54 quadruplets, different in 15
+M3b solidity screen replaced by an in-range wall seen edge-on:
+    E   AssertionError: (0, -0.5, 'human', -0.13107742369174957)
+    /private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_voe_check/repo_mut/tests/test_core.py:210: AssertionError: (0, -0.5, 'human', -0.13107742369174957)
+    1 failed, 3 passed, 8 deselected in 43.41s
+M7b permanence: object vanishes in plain view, inside the window (I1 = t < tv + 12):
+    4 passed, 8 deselected in 55.84s
+test S with noise 0.07635681331157684 | noise-free 0.1210026666522026 
