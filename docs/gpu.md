@@ -140,6 +140,14 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   busy) and took the lock between two umwelt jobs; the next umwelt job waited, as designed. It was
   stopped with the new `remote.sh stop` (the other project's lock untouched) so the precision fix could go
   in first, and `gpu-checks-3` (`checks.sh precfix bench stage3`) was queued behind the other project run.
+- 2026-11-04 23:30. Overnight coordination with the other project's session (Henry asked both to share the GPU
+  while he sleeps). Agreed: one job per lock acquisition, released between jobs; any job planned ahead,
+  or over an hour, gets a line in `C:\gpu-schedule.txt` (project, job, start, end, GPU memory) before it
+  takes the lock; neither side touches the other's processes or lock; the other project splits long
+  generation into chunks of at most two hours. umwelt's line: `gpu-checks-4`, about 23:55 to 00:50, at
+  most 5 GB. The PC CPU benchmark (`pc-wsl-cpu`) left the default checks: it uses no GPU but would hold
+  the lock for 15 to 20 minutes (`checks.sh cpu` runs it). `gpu-checks-3` was stopped for that change
+  and requeued as `gpu-checks-4`.
 
 ## How to run on the GPU
 
