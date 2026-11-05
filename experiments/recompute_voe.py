@@ -18,18 +18,20 @@ oracle's result files, keeping the old ones under voe_before_wall_fix and voe_un
 import argparse
 import json
 import pickle
+import platform
 
 import jax
 import numpy as np
 
 from umwelt import learner, learner_jepa, presets, voe
-from umwelt.experiment import RESULTS, _jsonable, _voe_scores
+from umwelt.experiment import RESULTS, _code_version, _jsonable, _voe_scores
 
 OLD_HIDDEN_WALL = np.array([0.5, 0.0, 1.5, 0.0], np.float32)
 AFFECTED = ("dog", "oracle")
 CONTROL = "human"
 RUNS = ["main/lawful_s0", "main/lawful_s1", "main/ghost_s0", "main/impermanent_s0", "main/nonlocal_s0",
-        "main/lawful_mj_s0", "v2/dark_s0", "v2/dark_s1"]
+        "main/lawful_mj_s0", "v2/dark_s0", "v2/dark_s1", "pilot/lawful_s0"]  # the pilot's files are not in git
+WHAT = "surprise-test stimuli: hidden wall moved off the boundary (docs/preregistration.md, 2026-11-05)"
 
 
 def suite_with(wall):
@@ -59,6 +61,9 @@ def main(write):
         d = RESULTS / "runs" / run
         for name in AFFECTED + (CONTROL,):
             f = d / f"{name}.json"
+            if not f.exists():
+                print(f"{run}: no {name}", flush=True)
+                continue
             rec = json.loads(f.read_text())
             with open(d / f"{name}_params.pkl", "rb") as fh:
                 saved = pickle.load(fh)
@@ -81,17 +86,20 @@ def main(write):
                 for k in fixed:
                     rec.setdefault(f"{k}_before_wall_fix", stored[k])
                     rec[k] = fixed[k]
-                rec["corrections"] = sorted(set(rec.get("corrections", [])) | {
-                    "2026-11-05 surprise-test stimuli: hidden wall moved off the boundary (docs/preregistration.md)"})
+                kept = [c for c in rec.get("corrections", []) if not (isinstance(c, str) and "hidden wall" in c)
+                        and not (isinstance(c, dict) and c.get("what") == WHAT)]
+                rec["corrections"] = kept + [{"date": "2026-11-05", "what": WHAT, "script": "experiments/recompute_voe.py",
+                                              "code": _code_version(), "machine": platform.node()}]
                 f.write_text(json.dumps(rec, indent=1))
         print(f"{run}: old movies reproduce the stored scores exactly; {CONTROL} unchanged by the new movies"
               + ("; written" if write else ""), flush=True)
     out = RESULTS / "wall_fix_recompute.json"
-    out.write_text(json.dumps(report, indent=1))
+    if write:  # check mode leaves the record alone
+        out.write_text(json.dumps(report, indent=1))
     for r in report:
         if r["change"] != 0:
             print(f"  {r['run']:20} {r['mind']:7} {r['score']:28} {r['S_before']:+.5f} -> {r['S_after']:+.5f} ({r['change']:+.5f})")
-    print("wrote", out)
+    print("wrote" if write else "checked; not written:", out)
 
 
 if __name__ == "__main__":
