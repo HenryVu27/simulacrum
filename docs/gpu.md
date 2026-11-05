@@ -340,6 +340,15 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-05 13:05. Correction to the test counts: `test_job.sh` had 32 cases, not 34 (the 03:40 entry and
   "How to run"; counted from the file and from a run of it against the `job.sh` of that time). It now has
   35; a30fb0b's message says 37, which is wrong.
+- 2026-11-05 14:25 to 15:23. The surprise-test movies were redesigned at Henry's go-ahead ("Fix both"; the
+  oracle's input and the solidity movies, `docs/preregistration.md`, second correction), and every stored
+  mind's surprise scores were recomputed on the Mac from the stored networks. For this machine: the movies'
+  hash is now `016fc3d72807e39d`, still rendered on the CPU on every machine, and every stored result file's
+  provenance names it, so the pooling check compares it as before. The new movies are built with NumPy as
+  well as JAX (wall endpoints rounded to multiples of 1/256, no trigonometry in the solidity screen) so that
+  every machine builds the same walls; the GPU job below confirms the PC gets the Mac's hash.
+- 2026-11-05 15:23 to 15:40. `e7b-battery` (schedule line added at 15:23, lock free, marked DONE at 15:40):
+  E7b again on code c35cc6e; result below ("E7b after the battery redesign").
 
 ## How to run on the GPU
 
@@ -787,6 +796,28 @@ independent check reproduced every number above with its own code (setup log, 12
 also compiled everything from scratch (the cache was off, setup log 12:45), so it says nothing about the
 cache either way. It rendered the surprise-test movies on the GPU, where 8 solidity vision values differ
 from the Mac's by at most 0.000244 (setup log 13:00); runs from 7651cea on render them on the CPU.
+
+### E7b after the battery redesign (2026-11-05): the GPU reproduces every recomputed score
+
+Job `e7b-battery` (15:24 to 15:40), configuration `f32det-macdata`: the Mac's lawful recording (hash
+`e9b74db4218d7e27`), full float32, deterministic operations, code c35cc6e with no uncommitted files, which is
+E7b's code with the redesigned movies. The compile cache worked (5,480 entries before, 5,852 after, no errors).
+`experiments/gpu/compare_battery.py`, output `results/hardware/compare_e7b_battery.log`:
+
+- Both sides scored the same movies: every mind's provenance names `016fc3d72807e39d`, on the GPU and in the
+  Mac's recomputed files. The copy-baseline numbers agree exactly, as identical movies must make them.
+- Every surprise number, GPU against the Mac's recomputed values: trained `S` within 1.3e-6 and interval ends
+  within 2.2e-6 (both in smell_only's causality score); untrained networks within 1.3e-7.
+- Against the GPU's own previous E7b run (`f32det-macdata-wallfix`), only surprise numbers differ, and only
+  where the new movies reach: 24 per vision mind (three tests, trained and untrained, copy baseline
+  included), 18 for the oracle (its copy baseline is unchanged: the walls stand still), 8 for blind,
+  deafblind, hearing_only and smell_only (solidity only: the agent moved, and the bystander walls change none
+  of their senses), none for touch_only. Every probe, training-log and translation number is bit-identical.
+- Against the Mac's stored run, every number: largest 8.3e-5, hearing_only's MLP `number` probe (the flipped
+  prediction above); everything else within 4.5e-6.
+
+So the redesign changed what it was meant to and nothing else, the GPU still reproduces the Mac given the same
+recording, and the `stimuli` hash in provenance does the pooling check it was added for.
 
 ### What E4, E7 and E7b establish together
 

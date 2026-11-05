@@ -47,7 +47,8 @@ def minds(d):
 
 def main():
     print("0. the movies each side scored on (provenance stimuli)")
-    hashes = {(side, f.stem): json.loads(f.read_text())["provenance"].get("stimuli") for side, d in (("Mac", MAC), ("GPU", NEW)) for f in minds(d)}
+    hashes = {(side, f.stem): json.loads(f.read_text())["provenance"].get("stimuli") for side, d in (("Mac", MAC), ("GPU", NEW))
+              for f in minds(d) if f.stem != "translation"}  # the Mac's translation file predates provenance records
     print("  " + ", ".join(f"{side} {h}: {sum(v == h for (s, _), v in hashes.items() if s == side)} minds"
                            for side, h in sorted({(s, v) for (s, _), v in hashes.items()})))
     assert len(set(hashes.values())) == 1, "the two sides scored different movies"

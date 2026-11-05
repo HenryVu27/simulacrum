@@ -317,7 +317,8 @@ as uninterpretable, not as a control. One preregistered verdict depends on them:
 surprise") fails in v2 only because of the untrained oracle's permanence surprise (-0.0149, against a threshold of
 0.01); with the marker at y = -5 that score is -0.0090 and v2's V3 passes. In v1, V3 fails with or without the
 oracle (the untrained dog's causality surprise also fails it). The preregistered rule is not changed here; the
-verdict is reported with this dependence stated.
+verdict is reported with this dependence stated. (The second correction, below, removes the encoding. V3 in v2
+still fails on the untrained oracle's permanence surprise, for a reason that no longer depends on a choice.)
 
 **A second defect, found by the same check and not corrected here.** In the solidity movies the agent stands at
 x = 6.0 and the wall lies on the line x = 6.0, so it sees the wall edge-on and no ray ever hits it. For every mind
@@ -326,4 +327,133 @@ except the oracle, the "wall and bounce" movie is byte-identical to "no wall and
 from the stimuli's other differences (none, for the senses), in every run; for the oracle it contrasts only wall
 coordinates. No preregistered verdict rests on solidity surprise alone, but every solidity number in the reports
 is uninformative. Fixing it means redesigning those movies (moving the agent off the wall's line) and recomputing
-every mind's solidity surprise from the stored networks; that is left for a decision.
+every mind's solidity surprise from the stored networks; that is left for a decision. (Decided and done: second
+correction, below.)
+
+## Second correction to the surprise-test stimuli (2026-11-05, after all v1 and v2 runs)
+
+Not an amendment either: it corrects the two defects the previous section records, at Henry's go-ahead ("Fix
+both"). As before, nothing was retrained and every stored surprise score was recomputed from the stored networks.
+Unlike before, every mind's movies change, so every surprise number in both reports moves. The test that guarded
+the first correction (`test_the_absent_wall_is_really_absent`) went with the marker it tested; three new tests
+replace it (below).
+
+**The oracle's input.** Every training scene has exactly three internal walls (`world.reset`), so no encoding of a
+missing wall is like anything the oracle has seen. An input flag for "wall present" would not help: it would be
+constant in training, its "absent" value as unfamiliar as any marker, and the oracle would have to be retrained in
+every run. So the movies no longer have missing walls. Every movie has three internal walls in the training range
+(centre in [2.5, 7.5] squared, half-length in [0.75, 1.5]): the event's own walls, and "bystander" walls drawn the
+way `world.reset` draws walls and kept only where they touch no object's path and block no line of sight or sound
+between the agent and an object or the event's walls. A quadruplet's four movies share them (`voe._bystanders`,
+`voe.LAYOUT_SEED`).
+
+**The solidity movies.** The agent now stands below the path and to the left of the wall's line, at (5, y - 2)
+facing the path, so it sees the wall's face. Checking that view turned up a problem with seeing the wall at all. A
+visible wall hides an object that passes through it, and no possible movie has a matching moment. So the first
+version of the redesign broke the balance the design rests on. A predictor that copies the last frame found the
+impossible movies easier: S = -0.11 for the human's senses, -0.22 for the chimera's. Untrained networks of the
+vision minds scored -0.011 to -0.021 (the dog +0.017; lawful seed 0), beyond V3's threshold of 0.01. Moving the
+agent toward the wall's line shrinks the imbalance only as the wall disappears
+(`results/checks/2026-11-05_battery/solidity_designs.txt`, which also lists two occluder designs that missed). The
+adopted design adds a screen below the path, in all four movies. It covers exactly the sight lines from the agent
+to the path beyond the wall's line, so in both passing movies the object vanishes behind the same screen, and the
+wall shows above the screen from the path up. The screen's edge is the sight line to the point where the wall
+crosses the path, set by geometry, not tuned. With the wall in its first form (1 unit above the path, not 1.4),
+moving that edge 2 degrees kept the balance (within 0.0025) and 4 or 6 degrees did not (-0.009 and -0.031 for the
+human). "No wall" is now the same wall slid along its line until it clears the path (by 0.25 for the largest
+object), because the oracle cannot be shown a missing wall.
+
+**Checks** (`experiments/battery_stimuli.py`, output `results/checks/2026-11-05_battery/stimuli.txt`, unless
+stated):
+- All 54 quadruplets: walls in the training range, bystanders shared, and bystanders hide nothing. Rendered with
+  and without them, only rays that met a boundary wall change (to a nearer wall), and no other sense changes. Two
+  walls placed on purpose to block something are caught.
+- Solidity: before the contact, 2 to 6 of the human's rays per frame tell wall-in-the-path from wall-slid-away
+  (0 before). The passing object is seen in the same frames with the wall in its path and without (9.3 of 24 on
+  average).
+- Balance, copy predictor on noise-free inputs: solidity within 0.0025 of zero for human, vision_only, dog, bat and
+  chimera, and every one of the 18 instances within 0.0062. Permanence and causality are unchanged at 0. Found in
+  passing and unchanged: permanence is not balanced for smell (-0.082 for blind and smell_only), because scent
+  lingers after its source has gone.
+- `tests/test_core.py`: walls in the training range and bystanders that hide nothing, both on all 54
+  quadruplets; solidity shows the wall and stays balanced (this test fails without the screen); permanence is
+  balanced for the copy predictor (noise-free now, within 0.01; the old version, with sensor noise and a bound of
+  0.1, let an object vanish in plain view). 19 tests pass. As first committed (c35cc6e) the wall tests rendered 6
+  quadruplets, and a bystander allowed to cross the agent's line of sight to an object got through; the
+  independent check found it, and the 54-quadruplet tests catch it.
+- Where the bystanders stand (`experiments/battery_layouts.py`, `layouts.txt`): every mind of lawful seed 0 and
+  dark seed 0 was scored on five bystander layouts. Across layouts a score moves by at most 0.68 of its own 95
+  percent interval width (median 0.09 to 0.21 by test). The trained oracle's permanence surprise is 0.92 to 0.97
+  (lawful seed 0) and 0.90 to 0.92 (dark seed 0). Under the off-arena marker it ranged from 0 to 0.57 with the
+  marker's place.
+
+**What was redone.** `experiments/recompute_battery.py` recomputed all 498 surprise scores of the 121 stored minds,
+trained and untrained networks: the 8 runs of 14 minds, the pilot's 3, and the 6 single-mind follow-up runs (long,
+jepa, ab_*). It first required the previous movies to reproduce every stored score exactly; they did, for all 121
+minds (the first correction checked 3 minds per run). The previous scores are kept under `voe_before_battery_fix`
+and `voe_untrained_before_battery_fix`. Each file's provenance now names the new movies (`stimuli`
+016fc3d72807e39d), and every change is listed in `results/battery_fix_recompute.json`. Both reports first
+regenerated byte-identically from the unchanged files, then from the new ones.
+
+**What changed.**
+- Oracle: trained permanence surprise 0.386 to 0.953 (lawful seed 0) and 0.411 to 0.919 (dark seed 0); solidity
+  -0.062 to +0.007 (lawful seed 0). Untrained permanence -0.015 to -0.025, the same on every layout (within
+  0.001).
+- Causality, trained vision minds: most of the large negative scores moved toward zero (lawful seed 0: human -0.073
+  to -0.020, memoryless -0.076 to -0.022, passive -0.077 to -0.023; dark seed 0: human -0.037 to +0.002). Copy
+  balance did not change, so the networks, which only ever saw scenes with three walls, behave differently in an
+  empty arena. bat and chimera stay clearly negative (-0.074 and -0.058). The largest change for a mind other than
+  the oracle is 0.064.
+- Solidity: no mind shows a learned expectation that walls stop objects. Some minds' solidity intervals do exclude
+  zero (of 114 trained minds in the 8 full runs and the jepa and long runs: 16 above, 5 below; 9 also have |S| of
+  at least 0.01, V3's other condition). The bat accounts for most (above zero in all 8 v1 and v2 runs, up to +0.020
+  in the MuJoCo world), with the chimera and the jepa human (+0.020). But minds trained in the ghost world, where
+  objects pass through walls, score as high: the bat +0.012 and the chimera +0.011 there. Lawful minus ghost is
+  within 0.006 for every mind that can sense the wall (`experiments/solidity_split.py`, `solidity_split.txt`; post
+  hoc). So these scores come from how some learned predictors respond to the movies, not from solidity. (Commit
+  c35cc6e's message says "no trained mind shows solidity surprise"; that is wrong as stated, and the independent
+  check caught it.) Splitting S into "passing through the wall" (I1 - P2) and "bouncing off nothing" (I2 - P1) does
+  not help: for every vision mind both carry an equal and opposite effect of where the wall stands (about 0.1 of
+  the possible movies' error), which cancels only in S.
+- Permanence, minds other than the oracle: changed by at most 0.0035.
+- Verdicts. V3 fails as before, now only on the untrained oracle's permanence surprise (main report, both blocks;
+  v2). The untrained dog's causality surprise (+0.0118 to +0.0052) no longer fails it, so the non-preregistered "V3
+  excluding the oracle" goes from FAIL to PASS in v1 (it already passed in v2). The oracle's failure no longer
+  depends on a choice: its input contains the hidden event itself (whether an object is present), so the permanence
+  quadruplet is not balanced for it by construction. H6 and P4 fail as before, with parts that flip: H6's
+  "memoryless shows no surprise" goes from false to true in v1 and from true to false in v2. P4 now fails all three
+  of its parts: the memoryless mind's interval in dark seed 0 excludes zero (0.0045 [0.0012, 0.0076]), and the
+  human's mean S is no longer above its v1 value (0.0015 against 0.0023; before, 0.0039 against 0.0037). No other
+  check line changes: V1, V2, H1 to H5, H7, M1 and P1 to P3 use no surprise score.
+
+**Independent check** (outside-judge agent, on snapshots of c35cc6e and d6c6763; scripts and outputs in
+`results/checks/2026-11-05_battery/independent`). It confirmed every claim above with its own code: walls and
+bystanders on all 54 quadruplets with its own ray caster; balance, with how sensitive it is (moving the screen by
+up to 0.05 or turning it by up to 2 degrees keeps it; shortening it by 0.1 does not, -0.009 for the human; the
+echo minds are the most sensitive, up to +0.004); all 996 stored scores of the 121 minds, previous and new, in its
+own loop, exactly; 17 networks by its own float64 forward pass, within 3.2e-7; the oracle's permanence surprise
+across 20 layouts (0.89 to 0.98, lawful seed 0); and both reports, byte-identical. It found the wrong solidity
+statement, the 6-quadruplet tests and the limits below; each is corrected or recorded here.
+
+**Limits.**
+- Where the bystanders stand is a draw. The layout check above measures what it does, for two runs.
+- In the solidity movies the passing object is hidden from the wall's line on (it reappears, at x = 8.35 to 9.25,
+  in the last 4 or 5 frames), in both passing movies. So a mind can show solidity surprise only as "it should have
+  come back" or "it should not have come back".
+- Only vision and echolocation can locate the wall. For blind, deafblind, smell_only, hearing_only and touch_only,
+  solidity scores carry no information about solidity, as they should not.
+- The walls stay within v1's range of lengths; the occluder worlds (half-length 1.5 to 2.5) were never
+  surprise-tested.
+- The intervals do not cover the sensor noise. `presets.observe` draws a preset's noise from a seed fixed by its
+  name, so every run of a preset sees the same draw, and the bootstrap resamples only quadruplets. Across 20 other
+  draws the bat's solidity S (lawful seed 0) spans -0.0071 to +0.0123 (independent check, `noise_draws.py`).
+  This predates the redesign and applies to every surprise score.
+- Found by the independent check, older than the redesign, not changed: the movies' physics is simpler than the
+  world's. A bounce's sound is weighted by the object's mass (the world's is not), objects approach at constant
+  speed (the world slows them by 0.94 a step), for three radii the last step before a bounce is shortened, and in
+  the possible causality movie the struck object always leaves at the striker's speed while the striker stops dead,
+  whatever their masses. Each is shared by a possible and an impossible movie, so balance is unaffected, but a mind
+  that learned the world's physics exactly may find the possible movies slightly odd too.
+- `results/runs/bench_mac-cpu` (a timing run, not in git) keeps a network but was not recomputed; its human file
+  still holds the previous movies' scores. No report uses it.
+

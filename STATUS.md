@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-11-05, afternoon (GPU machine: E7b after the stimulus fix). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-05, evening (surprise-test movies redesigned; every mind's surprise scores recomputed). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
@@ -46,7 +46,8 @@ none is surprised by a vanishing object. The world lever is spent. The next leve
      memoryless -0.03. At 6 to 20 steps: -0.02, -0.02, -0.04.
    - P2, passive_novest is not below human (6 to 20 steps: -0.01 versus -0.02).
    - P3, counting: human -0.06, memoryless -0.07.
-   - P4, surprise: human permanence S 0.004 in both seeds, intervals include 0, the same as in v1.
+   - P4, surprise: human permanence S 0.002 and 0.001, intervals include 0, about the v1 value (0.002).
+     (0.004 in both seeds before the 2026-11-05 battery correction, below.)
 4. **Exploratory: a brief trace in the first moments of darkness, probably not memory updated by
    self-motion.** For objects hidden 1 to 5 steps and in a dark spell, the human mind scores 0.014 and 0.088
    (seeds 0 and 1) against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The
@@ -90,6 +91,8 @@ What is known (all in `docs/gpu.md`; every result recomputed by three independen
   Mac's full run (14 minds, probes, controls, surprise tests, translation) to about the sixth decimal for
   nearly every score (E7b), and a whole GPU run repeats bit for bit. Rerun after the stimulus fix: every
   surprise score within 2.5e-7 of the Mac's corrected values; the dog's old mismatch (8.7e-4) is gone.
+  Rerun after the battery redesign: every surprise score within 1.3e-6 of the Mac's recomputed values
+  (interval ends 2.2e-6), every other number bit-identical to the previous GPU run.
 - A data seed is not portable across machines; a recording is. Re-recorded episodes part within a few
   steps, and that moved `cause` scores by a learner seed's worth (E7, which failed for that reason).
 - Rules for pooling GPU and Mac results: share recordings (copy, never regenerate); run at full float32
@@ -114,12 +117,15 @@ Open, from the GPU work:
 - Done 2026-11-05 at Henry's go-ahead: the surprise-test "no wall" marker moved off the boundary wall; the
   dog's and oracle's surprise scores recomputed in all stored runs, no verdict changed
   (`docs/preregistration.md`, last section).
-- Decision needed: the surprise battery has two more defects (found 2026-11-05, recorded in
-  `docs/preregistration.md`). The oracle's surprise scores are set mostly by how an absent wall is encoded,
-  and v2's V3 verdict flips with that choice; and the solidity movies never show the wall to any sense but
-  the oracle's. Options: redesign the solidity movies (agent off the wall's line) and recompute every mind's
-  solidity surprise from the stored networks; give the oracle an explicit wall-present input or report its
-  surprise as uninterpretable.
+- Done 2026-11-05 at Henry's go-ahead ("Fix both"): the surprise-test movies redesigned and every mind's
+  surprise scores recomputed (`docs/preregistration.md`, second correction). Every movie now has three real
+  walls in the range training draws from, so the oracle's input is like its training; its permanence
+  surprise is now 0.92 to 0.97, whatever the extra walls' layout. The solidity agent now sees the wall, and a
+  screen keeps the movies balanced (a visible wall otherwise hides the object passing through it). No mind
+  shows a learned solidity expectation: some solidity scores exclude zero (the bat's in every run), but
+  ghost-trained minds, for which walls stop nothing, score the same. V3 still fails, now only because the
+  oracle sees the hidden event; "V3 excluding the oracle" now passes in v1; H6 and P4 still fail.
+  An independent check confirmed the redesign and caught a wrong statement and too-narrow tests, both fixed.
 - The `cause` probe is hypersensitive: 6 changed labels among 7,873 moved a score by 0.038, more than a
   learner seed. Every cause result so far should be read with that in mind; a more robust cause target or
   more probe data would help.
@@ -222,10 +228,14 @@ Open, from the GPU work:
   scores were recomputed from the stored networks in all 8 runs (and the pilot's oracle); old values kept
   in each file. Dog permanence moved by at most 0.0005, oracle permanence down by 0.03 to 0.11 (18 to 30
   percent); no verdict changed. Details: `docs/preregistration.md`, last section.
-- Found by the check of that correction, not corrected: the oracle's surprise scores depend mostly on how an
-  absent wall is encoded (permanence 0 to 0.57 across ten encodings), so they are uninterpretable, and v2's V3
-  FAIL rests only on one of them; and the solidity movies show the wall edge-on, so no sense but the oracle's
-  ever sees it and solidity surprise is noise for 13 of 14 minds in every run.
+- Found by the check of that correction: the oracle's surprise scores depended mostly on how an absent wall
+  was encoded (permanence 0 to 0.57 across ten encodings), and the solidity movies showed the wall edge-on, so
+  no sense but the oracle's ever saw it. Both corrected the same day (second correction): every movie has
+  three real walls, the solidity agent sees the wall, and a screen keeps those movies balanced. All 498
+  surprise scores of the 121 stored minds were recomputed from the stored networks (previous values kept in
+  each file). Verdicts: V3 still fails, now only on the oracle; "V3 excluding the oracle" (not preregistered)
+  now passes in v1; H6 and P4 still fail. Most vision minds' negative causality scores moved toward zero
+  (human -0.073 to -0.020, lawful seed 0).
 
 ## Machine notes
 
