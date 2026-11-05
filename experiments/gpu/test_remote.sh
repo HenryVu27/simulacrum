@@ -129,6 +129,14 @@ check "resume removes the switch and the job runs" '[ ! -e $UMWELT_PAUSE ] && [ 
 out=$(bash "$remote" status 2>&1)
 check "status shows no pause after resume" '! echo "$out" | grep -q "^pause:"'
 
+bash "$remote" run "${tag}d" sleep 30 >/dev/null 2>&1
+wait_for '[ -f $P/results/remote/${tag}d.pid ] && grep -q "start:" $P/results/remote/${tag}d.log'
+out=$(bash "$remote" stop "${tag}d" 2>&1)
+wait_for '[ -f $P/results/remote/${tag}d.exit ]'
+check "stop ends a running job and frees the lock" 'echo "$out" | grep -q "stop sent" && [ "$(cat $P/results/remote/${tag}d.exit)" = 143 ] && [ ! -e $UMWELT_LOCK ]'
+out=$(bash "$remote" stop "${tag}d" 2>&1)
+check "stop reports a job that is not running" 'echo "$out" | grep -q "not queued or running"'
+
 git clone -q "$repo" "$T/clone"
 cp "$remote" "$T/clone/experiments/gpu/remote.sh"  # the version under test, which may be uncommitted
 rm "$T/clone/README.md"

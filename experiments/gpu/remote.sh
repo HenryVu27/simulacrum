@@ -6,6 +6,7 @@
 #   remote.sh sh 'CMD'                       run a command in ~/umwelt now and wait for it
 #   remote.sh run [--allow-cpu] NAME CMD...  start CMD as a background job; it waits for a free GPU
 #   remote.sh status [NAME]                  GPU use, lock holder, pause switch, last lines of NAME's log
+#   remote.sh stop NAME                      stop a queued or running job (its lock, if any, is released)
 #   remote.sh pause | resume                 create or delete C:\gpu-pause: while it exists no job starts
 #                                            and running jobs are frozen (on the PC: mkdir C:\gpu-pause)
 #   remote.sh pull [--overwrite] PATH...     copy files under ~/umwelt back here (a local file that
@@ -28,7 +29,7 @@ export COPYFILE_DISABLE=1  # with --no-xattrs --no-mac-metadata: no macOS ._ fil
 
 ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"; }
 wsl_sh() { ssh_pc "$WSL bash -s"; }  # runs the bash script on stdin inside WSL
-usage() { sed -n '2,18p' "$self"; exit 2; }
+usage() { sed -n '2,19p' "$self"; exit 2; }
 valid_name() { [[ "$1" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "job name: letters, digits, . _ - only" >&2; exit 2; }; }
 code_files() {  # tracked and new files outside results/, skipping deleted ones
   git ls-files -co --exclude-standard | grep -v '^results/' | while IFS= read -r f; do
@@ -146,6 +147,20 @@ EOF
     else
       echo "pulled $moved files; kept $kept local files that differ (the PC's versions are in $stage)"
     fi
+    ;;
+  stop)
+    [ $# -eq 1 ] || usage
+    valid_name "$1"
+    { echo "name=$1"
+      cat <<'EOF'
+p=umwelt/results/remote/$name.pid
+if [ -f "$p" ] && kill -0 "$(cat "$p")" 2>/dev/null; then
+  kill -TERM "$(cat "$p")" && echo "stop sent to $name; it ends within a minute (exit code 143)"
+else
+  echo "$name is not queued or running"
+fi
+EOF
+    } | wsl_sh
     ;;
   pause)
     echo 'p=${UMWELT_PAUSE:-/mnt/c/gpu-pause}; [ -e "$p" ] || touch "$p"; echo "paused: no umwelt job starts, running ones freeze within 5 s"' | wsl_sh

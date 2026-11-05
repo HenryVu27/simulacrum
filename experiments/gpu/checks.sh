@@ -18,7 +18,7 @@
 #   uv run python experiments/gpu/bench_table.py                         # E6
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-parts=${*:-repro bench stage3}
+parts=${*:-repro precfix bench stage3}
 want() { [[ " $parts " == *" $1 "* ]]; }
 py() { uv run --no-sync python "$@"; }  # never let uv change the environment (a plain sync drops the CUDA plugin)
 ref=results/hardware/mac-cpu/data_dark.npz
@@ -35,6 +35,13 @@ repro pc-gpu-rerun
 repro pc-gpu-highest --precision highest
 XLA_FLAGS=$det repro pc-gpu-det
 XLA_FLAGS=$det repro pc-gpu-det-rerun
+fi
+
+if want precfix; then
+# Since 2026-11-04 the world simulates at full matmul precision whatever the default (src/umwelt/data.py):
+# a default-precision run must now record the same world as pc-gpu-highest.
+echo "== world precision fix: default precision again"
+repro pc-gpu-precfix
 fi
 
 if want bench; then
