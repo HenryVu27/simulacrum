@@ -204,7 +204,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   (`tests/test_precision.py`) traces a rollout in every world, and the senses, and fails if any
   `dot_general` is not at full precision; it fails on the previous code and passes now. On the Mac the
   output is byte-identical: recordings 19 of 19 arrays, senses 14 of 14, training identical, and the
-  surprise-test movies hash the same before and after (`a7c905e4e8ab2e20`). Tests 11 of 11.
+  surprise-test movies hash the same before and after (`a7c905e4e8ab2e20`; that hash describes the movies
+  before the 2026-11-05 wall correction). Tests 11 of 11.
 - 2026-11-05. Tooling fixes from the check, each with a test that the previous version fails:
   - `job.sh` removed the lock when its owner line was empty; another project may have just created it
     and not yet written its line. It now removes only a lock whose owner line is exactly its own.
@@ -286,6 +287,10 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   in all 8 Mac runs (`experiments/recompute_voe.py`, which first reproduced every stored value exactly), and
   both reports regenerated with no verdict changed. Full record: `docs/preregistration.md`, last section.
   E7b was queued again (`e7b-wallfix`) behind the other project's server, which held the GPU from 09:10.
+  How to read it when it comes back: not by `compare_e7.py`'s PASS line. The independent check showed that
+  the old E7b output, compared with the corrected Mac values, still prints PASS, because the per-family rule
+  absorbs one oracle score and `S_copy` cannot see a static wall. The test is the dog's and the oracle's
+  permanence surprise directly: GPU against corrected Mac, expected within about 1e-6.
 
 ## How to run on the GPU
 
