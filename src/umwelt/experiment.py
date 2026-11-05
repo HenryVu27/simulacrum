@@ -40,7 +40,7 @@ def _voe_scores(params, suite, preset, mu, sd, L=learner):
 
 
 # Settings that change the numbers: every mind under one tag must share them (docs/gpu.md, E7 and E7b).
-SETTINGS = ("backend", "matmul_precision", "xla_flags", "recording_hash")
+SETTINGS = ("backend", "matmul_precision", "xla_flags", "recording_hash", "stimuli")
 
 
 def _code_version():
@@ -55,13 +55,14 @@ def _code_version():
         return ""
 
 
-def provenance(world, n_episodes, data_seed, T=256):
-    """Where and how a result was computed, so a result file says whether it can be pooled with another."""
+def provenance(world, n_episodes, data_seed, T=256, stimuli=""):
+    """Where and how a result was computed, so a result file says whether it can be pooled with another.
+    stimuli: voe.suite_hash of the surprise-test movies it was scored on (docs/gpu.md, E7b after the fix)."""
     return {"machine": platform.node(), "platform": platform.platform(), "backend": jax.default_backend(),
             "device": jax.devices()[0].device_kind, "jax": jax.__version__,
             "matmul_precision": str(jax.config.jax_default_matmul_precision), "xla_flags": os.environ.get("XLA_FLAGS", ""),
             "code": _code_version(), "recording": f"{world}_s{data_seed}_e{n_episodes}_t{T}",
-            "recording_hash": recording_hash(world, n_episodes, T, data_seed)}
+            "recording_hash": recording_hash(world, n_episodes, T, data_seed), "stimuli": stimuli}
 
 
 def check_same_settings(path, prov):
@@ -84,14 +85,14 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
     out_dir.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
     d = load(world, n_train + n_test, 256, seed=data_seed)
-    prov = provenance(world, n_train + n_test, data_seed)
+    suite = voe.build_suite()
+    prov = provenance(world, n_train + n_test, data_seed, stimuli=voe.suite_hash(suite))
     tr = slice(0, n_train)  # slices, not index arrays, so memory-mapped data is viewed rather than copied
     te = slice(n_train, n_train + n_test)
     pr = slice(0, n_probe)
     gt_keys = [k for k in d if k.startswith("gt_")]
     T_tr = probes.targets({k: np.asarray(d[k][pr]) for k in gt_keys})
     T_te = probes.targets({k: np.asarray(d[k][te]) for k in gt_keys})
-    suite = voe.build_suite()
     keep_tr, keep_te = {}, {}
 
     for name in preset_names:

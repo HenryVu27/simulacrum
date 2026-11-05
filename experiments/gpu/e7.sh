@@ -36,6 +36,7 @@ out=results/hardware/e7/$name/lawful_s0
 mkdir -p "$out"
 cp "$root"/runs/e7/lawful_s0/*.json "$out/"
 { echo "configuration $cfg"; echo "JAX_DEFAULT_MATMUL_PRECISION=${JAX_DEFAULT_MATMUL_PRECISION:-}"; echo "XLA_FLAGS=${XLA_FLAGS:-}"
+  echo "code ${UMWELT_CODE:-unknown (not run by job.sh)}"  # two runs of one configuration differ here
   uv run --no-sync python -c "import jax; print('jax', jax.__version__, jax.default_backend(), jax.devices()[0].device_kind)"
   # per-file hashes in C-locale order, so the same recording gives the same line on the Mac (shasum -a 256)
   echo "recording $rec hash $(cd "$root/data/$rec" && sha256sum ./*.npy | LC_ALL=C sort -k2 | sha256sum | cut -c1-16)"; } > "$out/../env.txt"

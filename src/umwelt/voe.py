@@ -14,6 +14,8 @@ Surprise index S = (err(I1) + err(I2) - err(P1) - err(P2)) / (err(P1) + err(P2))
 the window after the critical moment. S > 0 means impossible events were harder to predict.
 """
 
+import hashlib
+
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -179,6 +181,17 @@ def build_suite(jitters=(-0.5, 0.0, 0.5)):
         d["action"] = np.zeros((len(movies) * 4, T, 2), np.float32)
         suite[name] = (d, np.array(crit))
     return suite
+
+
+def suite_hash(suite):
+    """16 hex digits naming the rendered movies, so a result says which stimuli it was scored on."""
+    h = hashlib.sha256()
+    for name in sorted(suite):
+        d, crit = suite[name]
+        for k in sorted(d):
+            h.update(f"{name}/{k}/{d[k].dtype}/{d[k].shape}".encode() + np.ascontiguousarray(d[k]).tobytes())
+        h.update(f"{name}/crit/{crit.dtype}/{crit.shape}".encode() + np.ascontiguousarray(crit).tobytes())
+    return h.hexdigest()[:16]
 
 
 def surprise(err, crit, rng=None, n_boot=500):

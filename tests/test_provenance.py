@@ -7,7 +7,7 @@ import subprocess
 import numpy as np
 import pytest
 
-from umwelt import data, experiment
+from umwelt import data, experiment, voe
 
 
 def test_a_job_that_must_not_record_refuses(tmp_path, monkeypatch):
@@ -32,7 +32,7 @@ def test_recording_hash_matches_the_shell(tmp_path, monkeypatch):
 
 def test_a_tag_refuses_minds_made_with_other_settings(tmp_path):
     prov = {"backend": "gpu", "matmul_precision": "highest", "xla_flags": "--xla_gpu_deterministic_ops=true",
-            "recording_hash": "e9b74db4218d7e27"}
+            "recording_hash": "e9b74db4218d7e27", "stimuli": "0123456789abcdef"}
     done = tmp_path / "human.json"
     done.write_text(json.dumps({"provenance": prov}))
     experiment.check_same_settings(done, dict(prov))  # same settings: reused
@@ -40,6 +40,22 @@ def test_a_tag_refuses_minds_made_with_other_settings(tmp_path):
         experiment.check_same_settings(done, prov | {"matmul_precision": "None"})
     with pytest.raises(RuntimeError, match="recording_hash"):
         experiment.check_same_settings(done, prov | {"recording_hash": "306a35611bc61e58"})
+    with pytest.raises(RuntimeError, match="stimuli"):  # scored on other surprise-test movies
+        experiment.check_same_settings(done, prov | {"stimuli": "fedcba9876543210"})
+    before = tmp_path / "before_stimulus_hashes.json"
+    before.write_text(json.dumps({"provenance": {k: v for k, v in prov.items() if k != "stimuli"}}))
+    with pytest.raises(RuntimeError, match="stimuli"):  # movies unknown: not reused
+        experiment.check_same_settings(before, prov)
     old = tmp_path / "old.json"
     old.write_text(json.dumps({"test_error": 0.2}))
     experiment.check_same_settings(old, prov)  # made before provenance existed: warned, reused
+
+
+def test_the_stimulus_hash_sees_every_movie_array():
+    def suite(vision=0.0, crit=3):
+        movie = {"obs_vision": np.full((4, 5, 2), vision, np.float16), "action": np.zeros((4, 5, 2), np.float32)}
+        return {"permanence": (movie, np.array([crit])), "solidity": ({k: v + 1 for k, v in movie.items()}, np.array([4]))}
+    h = voe.suite_hash(suite())
+    assert len(h) == 16 and h == voe.suite_hash(dict(reversed(list(suite().items()))))  # order of the dict ignored
+    assert voe.suite_hash(suite(vision=0.5)) != h
+    assert voe.suite_hash(suite(crit=2)) != h
