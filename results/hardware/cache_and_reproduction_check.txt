@@ -1,0 +1,8 @@
+1. Compile cache: one full mind (human, lawful, default precision), every non-timing number
+   cache-cold against no cache: 87 numbers, 41 differ, largest 3.16e-03 (['probes/object_seen', 'probes/object_hidden', 'probes/object_now'])
+   cache-warm against no cache: 87 numbers, 41 differ, largest 3.16e-03 (['probes/object_seen', 'probes/object_hidden', 'probes/object_now'])
+   training log entries compared too: 0, differ: 0
+
+2. Today's code on the Mac reproduces the stored v1 run (human, lawful, seed 0)
+   stored run (results/runs/main/lawful_s0/human.json) against today's rerun (results/runs/bench_mac-cpu/lawful_s0/human.json):
+   85 non-timing numbers in both, 0 differ []
