@@ -20,11 +20,14 @@ set -euo pipefail
 self=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")
 PC=${UMWELT_PC:-<pc-user>@<pc-ip>}  # known_hosts has the PC under its Tailscale IP
 DISTRO=${UMWELT_DISTRO:-Ubuntu-26.04}
+# umwelt runs as the distribution's root user, in /root/umwelt: no Linux account had to be created, and
+# naming the user keeps this working if Henry later makes his own (root in WSL has no extra Windows rights).
+WSL="wsl -d $DISTRO -u ${UMWELT_WSL_USER:-root} --cd ~ --"
 cd "$(dirname "$self")/../.."
 export COPYFILE_DISABLE=1  # with --no-xattrs --no-mac-metadata: no macOS ._ files or extended attributes
 
 ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"; }
-wsl_sh() { ssh_pc "wsl -d $DISTRO --cd ~ -- bash -s"; }  # runs the bash script on stdin inside WSL
+wsl_sh() { ssh_pc "$WSL bash -s"; }  # runs the bash script on stdin inside WSL
 usage() { sed -n '2,18p' "$self"; exit 2; }
 valid_name() { [[ "$1" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "job name: letters, digits, . _ - only" >&2; exit 2; }; }
 code_files() {  # tracked and new files outside results/, skipping deleted ones
@@ -32,8 +35,8 @@ code_files() {  # tracked and new files outside results/, skipping deleted ones
     if [ -f "$f" ]; then printf '%s\n' "$f"; fi
   done
 }
-manifest() {
-  echo "code $(code_files | tr '\n' '\0' | xargs -0 shasum -a 256 | shasum -a 256 | cut -c1-16)"
+manifest() {  # the code line hashes the files listed in .umwelt_files, which push writes first
+  echo "code $(tr '\n' '\0' < .umwelt_files | xargs -0 shasum -a 256 | shasum -a 256 | cut -c1-16)"
   echo "git $(git rev-parse --short HEAD)"
   echo "uncommitted $(git status --porcelain -- . ':!results' | wc -l | tr -d ' ') files, diff $(git diff HEAD -- . ':!results' | shasum -a 256 | cut -c1-16)"
   echo "pushed $(date '+%Y-%m-%dT%H:%M:%S%z')"
@@ -43,6 +46,7 @@ cmd=${1:-}
 [ -n "$cmd" ] && shift
 case "$cmd" in
   push)
+    code_files > .umwelt_files
     m=$(manifest)
     state=$({ cat <<'EOF'
 cd umwelt 2>/dev/null || exit 0
@@ -58,9 +62,15 @@ EOF
       exit 1
     fi
     printf '%s\n' "$m" > .umwelt_push
-    ssh_pc "wsl -d $DISTRO --cd ~ -- mkdir -p umwelt"
-    { code_files; echo .umwelt_push; if [ $# -gt 0 ]; then printf '%s\n' "$@"; fi; } \
-      | tar --no-xattrs --no-mac-metadata -cf - -T - | ssh_pc "wsl -d $DISTRO --cd ~ -- tar -xf - -C umwelt"
+    ssh_pc "$WSL mkdir -p umwelt"
+    { cat .umwelt_files; echo .umwelt_files; echo .umwelt_push; if [ $# -gt 0 ]; then printf '%s\n' "$@"; fi; } \
+      | tar --no-xattrs --no-mac-metadata -cf - -T - | ssh_pc "$WSL tar -xf - -C umwelt"
+    # the PC hashes what arrived the same way: catches anything the SSH, cmd and wsl.exe pipe altered
+    there=$(echo 'cd umwelt && echo "code $(tr "\n" "\0" < .umwelt_files | xargs -0 sha256sum | sha256sum | cut -c1-16)"' | wsl_sh | tr -d '\r')
+    if [ "$there" != "$(echo "$m" | grep '^code ')" ]; then
+      echo "push failed verification: the PC has '$there', the Mac sent '$(echo "$m" | grep '^code ')'" >&2
+      exit 1
+    fi
     echo "pushed the working tree${*:+ and $*} to $PC:~/umwelt ($DISTRO): $(echo "$m" | head -3 | tr '\n' ' ')"
     ;;
   setup)
@@ -90,7 +100,7 @@ EOF
              echo 'UMWELT_CMD_END'
              echo 'echo created'; } | wsl_sh | tr -d '\r')
     [ "$made" = created ] || { echo "a job named $name already exists on the PC; pick a new name" >&2; exit 1; }
-    ssh_pc "powershell -NoProfile -Command \"(Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine='wsl.exe -d $DISTRO --cd ~ -- bash umwelt/experiments/gpu/job.sh $name'}).ReturnValue\"" \
+    ssh_pc "powershell -NoProfile -Command \"(Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine='$WSL bash umwelt/experiments/gpu/job.sh $name'}).ReturnValue\"" \
       | tr -d '\r' | grep -qx 0 || { echo "could not start the job" >&2; exit 1; }
     echo "started $name; follow it with: experiments/gpu/remote.sh status $name"
     ;;

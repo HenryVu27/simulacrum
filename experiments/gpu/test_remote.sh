@@ -28,7 +28,11 @@ shift
 c="$*"
 cd "$FAKE_PC" || exit 1
 case "$c" in
-  "wsl -d "*" --cd ~ -- "*) HOME=$FAKE_PC exec bash -c "${c#* -- }" ;;
+  "wsl -d "*" --cd ~ -- "*)
+    HOME=$FAKE_PC bash -c "${c#* -- }"; r=$?
+    # FAKE_CORRUPT: alter a file after it arrives, as a faulty pipe would
+    if [ -n "${FAKE_CORRUPT:-}" ] && [[ "$c" == *"tar -xf"* ]]; then echo "# altered" >> umwelt/pyproject.toml; fi
+    exit $r ;;
   nvidia-smi*) echo "$(cat "$UMWELT_SMI.mem") MiB, 16303 MiB, 5 %" ;;
   powershell*Win32_Process*)
     cl=$(echo "$c" | sed -n "s/.*CommandLine='\([^']*\)'.*/\1/p")
@@ -57,6 +61,10 @@ check "push copies the code" '[ -f $P/experiments/gpu/job.sh ] && [ -f $P/src/um
 check "push leaves results/ behind" '[ ! -d $P/results/hardware ]'
 check "push sends no macOS ._ files" '[ -z "$(find $P -name "._*")" ]'
 check "push writes a manifest" 'grep -q "^code [0-9a-f]\{16\}$" $P/.umwelt_push && grep -q "^git " $P/.umwelt_push'
+out=$(FAKE_CORRUPT=1 bash "$remote" push 2>&1)
+check "push catches a file altered on the way" 'echo "$out" | grep -q "push failed verification"'
+out=$(bash "$remote" push 2>&1)
+check "push verifies a clean copy" 'echo "$out" | grep -q "^pushed" && cmp -s $repo/pyproject.toml $P/pyproject.toml'
 
 out=$(bash "$remote" run "${tag}a" echo "hello world" 2>&1)
 check "run starts a job" 'echo "$out" | grep -q "started ${tag}a"'

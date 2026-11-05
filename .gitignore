@@ -16,3 +16,4 @@ results/hardware/**/*.npz
 results/hardware/**/*.npy
 results/runs/bench_*/
 .umwelt_push
+.umwelt_files

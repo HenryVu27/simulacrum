@@ -34,6 +34,8 @@ XLA_FLAGS=$det repro pc-gpu-det
 XLA_FLAGS=$det repro pc-gpu-det-rerun
 
 echo "== E6: speed"
+# Other GPU load at the start (Henry's desktop: an animated wallpaper and the compositor used about 20%)
+for _ in 1 2 3 4 5; do /usr/lib/wsl/lib/nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader; sleep 1; done
 py experiments/gpu/bench.py pc-gpu
 py experiments/gpu/bench.py pc-gpu-highest --precision highest --parts update train
 JAX_PLATFORMS=cpu py experiments/gpu/bench.py pc-wsl-cpu --parts update train  # the PC's CPU under Linux
