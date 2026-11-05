@@ -89,8 +89,9 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   packages plus `jax-cuda13-plugin 0.12.0.1`. JAX reports backend `gpu` (`CudaDevice(id=0)`), a 4096 by
   4096 matrix multiply runs, and the test suite passes 9 of 9 (42 s). Log: `results/hardware/setup_wsl.log`.
 - 2026-11-04. Finding: inside WSL one GPU allocation of 4 GiB or more fails (`CUDA_ERROR_OUT_OF_MEMORY`)
-  with 14.7 GB free. 3.99 GiB works, 4.00 GiB fails, with JAX's default allocator and with the plain
-  one (`XLA_PYTHON_CLIENT_ALLOCATOR=platform`). Total memory is not capped there: ten 1 GiB arrays held
+  with 14.7 GB free. With the plain allocator (`XLA_PYTHON_CLIENT_ALLOCATOR=platform`) 3.99 GiB works and
+  4.00 GiB fails. (This entry first said the same of JAX's default allocator; its saved probe on
+  2026-11-05 shows the default fails already at 3.99 GiB and works at 3.5.) Total memory is not capped there: ten 1 GiB arrays held
   together worked (10.8 GB), stopping only at JAX's own ceiling of 75 percent of the card (11.9 GiB).
   This is why JAX's default up-front reservation (11.9 GiB) failed and retried smaller; jobs do not
   reserve up front anyway. `experiments/gpu/memprobe.py`. (Corrected below: the limit binds on a
@@ -127,7 +128,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-04. 128 minds at once under `cuda_async` run but take 457 ms per update (three repeats, 423 to
   466 ms), 12 times the 64-mind step for twice the work. Not explained; one guess, untested, is that
   Windows (WDDM) starts paging GPU memory when one process holds that much. In practice: at most 64
-  minds per compiled step.
+  minds per compiled step. (Evidence for the guess on 2026-11-05: under `cuda_async` one process held
+  16 GiB on this 15.9 GiB card, so allocations do spill past the card into system memory.)
 - 2026-11-04. Finding: on the GPU the matmul precision changed the recorded world, not only learning.
   The ray caster tests which object each ray hits with `u @ f.T` (`src/umwelt/senses.py:52`); at TF32
   its inputs keep about three significant digits, so hits at an object's edge flip. Against the Mac,
@@ -226,12 +228,30 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   `e7-default`, `speed-check-3`, `e7-f32det-rerun`), behind the other project's second generation chunk and its
   queued training run; the schedule line was updated. The first push with the new deletion step went
   through on the real PC (verified, nothing to delete). Log: `results/hardware/jobs/series-2026-11-05.log`.
+- 2026-11-05 03:08. Series done: all four jobs exit 0 (`e7-f32det` 01:49, `e7-default` 02:31,
+  `speed-check-3` 02:52, `e7-f32det-rerun` 03:08). The first ran at commit 7d70dde, the others at 3447602;
+  the two differ only in `docs/gpu.md`. Results under E7 and E6 below.
+- 2026-11-05. Saved memory probes (`results/hardware/memprobe_default.txt`, `memprobe_cuda_async.txt`):
+  - Default allocator: one array of 3.5 GiB works, 3.99 GiB fails. Ten 1 GiB arrays held at once work,
+    then the ceiling (JAX's 75 percent, 11.9 GiB).
+  - `cuda_async`: every single size up to 12 GiB works, and sixteen 1 GiB arrays were held at once:
+    16 GiB on a card with 15.9 GiB. Its memory ceiling is 0, which means none, so allocations spill past
+    the card into shared system memory.
+  - Hazard: a `cuda_async` job can grow past the card unnoticed, slowing itself, and anything else on the
+    GPU, without an error. It stays opt-in, for steps that need more than 3.5 GiB, and such a job should
+    keep its working set well under the card's free memory.
+- 2026-11-05 03:15. Pushing the Mac's lawful recording for E7b found the PC's copy of that folder holding
+  a 19th array (`gt_light.npy`) left from an earlier GPU recording: `push` adds and replaces files but
+  does not remove extras inside a pushed data folder. The stray array was all lit (no effect in the lawful
+  world) and was removed; the 18 arrays matched the Mac's file by file. Recording hashes are now taken in
+  C-locale file order (`e7.sh`), since the two shells list underscored names in different orders. Rule:
+  push a recording only into a folder that does not exist on the PC yet, or compare file lists after.
 
 ## How to run on the GPU
 
 Status: working against the real PC since 2026-11-04 (setup, push with verification, jobs, pause,
 pull; see the setup log). Both scripts also have tests on the Mac against stand-ins
-(`experiments/gpu/test_job.sh`, 26 cases; `experiments/gpu/test_remote.sh`, 36 cases, with a fake ssh
+(`experiments/gpu/test_job.sh`, 27 cases; `experiments/gpu/test_remote.sh`, 36 cases, with a fake ssh
 that plays the PC).
 
     experiments/gpu/remote.sh setup                       # once: copy code, install uv and CUDA JAX, run tests
@@ -264,6 +284,15 @@ What a job guarantees (`experiments/gpu/job.sh`):
   dead (`--force` overrides).
 - Job names are used once, so a log never mixes two runs. JAX takes GPU memory as needed
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
+- Every job uses a persistent compile cache (`results/jax_cache` on the PC), which halved a mind's time
+  and changed no result.
+
+For numbers that will be reported or pooled with the Mac's, run at full float32 with deterministic
+operations: a whole run then repeats bit for bit, and training matches the Mac to about five digits (E3,
+E5, E7). They cost 3 to 16 percent per update; full float32 costs up to 50 percent on the largest learner.
+
+    experiments/gpu/remote.sh run NAME env JAX_DEFAULT_MATMUL_PRECISION=highest \
+        XLA_FLAGS=--xla_gpu_deterministic_ops=true uv run umwelt run ...
 
 Several jobs go through `series.sh`, not several `run`s at once: it queues the next job only after the
 last has finished and 90 s have passed, so another project's job already waiting on the lock gets the GPU first.
@@ -579,9 +608,49 @@ comparison (`alloc_check.sh`). Each on-device setting is the median of three tim
 - One full mind, end to end (human, lawful world): 183 s against 295 s on the Mac. Training 55 s (Mac
   131), nonlinear probes 12 s (39), the two controls 1 and 9 s (38 and 41). But the surprise tests took 16 s
   (Mac 0.7) and time outside the mind's stages doubled (77 s against 38 s; the GPU run recorded its
-  1,280-episode world, 5 s, where the Mac's loaded an existing one). The working guess is compile time on many small functions; `speed-check-2` tests it with a
-  persistent compile cache, and also times the training loop properly and the cost of deterministic
-  operations.
+  1,280-episode world, 5 s, where the Mac's loaded an existing one). The guess was compile time on many
+  small functions; the follow-up below confirms it.
+
+### E6 follow-up: training loop, deterministic operations, compile cache (2026-11-05)
+
+`speed_check.sh` as `speed-check-3` (02:31 to 02:52). Training loop as experiments run it
+(`learner.train`, host batches), timed at 200 and 1,200 updates three times each, so compiling is
+separated from the cost of an update:
+
+| setting | ms per update | fixed cost per call (mostly compiling) |
+|---|---|---|
+| Mac, CPU (rerun under another job's load, see setup log) | 39.3 | 1.0 s |
+| Mac, CPU (idle, old method, about 1 s of compiling subtracted) | about 31.7 | |
+| GPU, full float32 | 10.6 | 0.9 s |
+| GPU, default (TF32) | 13.4 | 0.8 s |
+| GPU, default with deterministic operations | 11.5 | 0.8 s |
+| GPU, default with `cuda_async` | 14.6 | 1.5 s |
+
+- Like for like (float32), the training loop is about 3 times faster than on the idle Mac. The update
+  itself takes about 3 ms of the 10.6 (E6), so building each batch on the CPU and copying it over is most
+  of the loop. This is now measured, not assumed. Gathering batches on the GPU is the obvious next speedup.
+- Full float32 is faster than TF32 in this loop, in two separate measurements (10.6 against 13.4 ms; 12.6
+  against 15.1 by the old method). Not explained.
+- `cuda_async` costs 9 percent per update and 0.6 s more compiling per call. The earlier "25 percent"
+  included compiling. Keeping the default allocator still holds, on this smaller margin.
+
+What deterministic operations cost (`pc-gpu-det`, update alone, median of three): 1 mind 2.9 against 2.7
+ms (8 percent), largest learner 25.9 against 25.1 (3 percent), 32 minds 26.5 against 22.8 (16 percent),
+and 8 minds 14.2 against 28.1: the deterministic plan avoids the slow one. Small enough to make them the
+default for any work whose numbers will be reported.
+
+One full mind three times, the same job (human, lawful world, default precision):
+
+| | total | training | surprise tests | MLP probes | outside the stages | test error |
+|---|---|---|---|---|---|---|
+| no compile cache | 186 s | 65 s | 15.7 s | 11.6 s | 73 s | 0.227238 |
+| persistent cache, empty | 171 s | 64 s | 15.9 s | 11.6 s | 58 s | 0.227238 |
+| persistent cache, full | 98 s | 54 s | 0.2 s | 1.4 s | 38 s | 0.227238 |
+| Mac | 295 s | 131 s | 0.7 s | 38.7 s | 39 s | 0.227244 |
+
+Compiling was nearly half of a mind's time on the GPU. With a full cache a mind takes 98 s, 3 times faster
+than the Mac, and the result is unchanged (identical test error). The cache took 20 MB (2,940 entries).
+Recommendation: a persistent compile cache for every GPU job (`JAX_COMPILATION_CACHE_DIR`).
 
 ### E6 on the Mac (2026-11-04, Mac otherwise idle)
 

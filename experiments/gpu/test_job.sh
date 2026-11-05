@@ -113,9 +113,10 @@ new stray "sleep 34 & echo \$! > $T/stray; echo started"
 limit bash "$job" stray
 check "stops what the command left running before releasing the lock" '[ "$(cat $R/stray.exit)" = 0 ] && ! kill -0 $(cat $T/stray) 2>/dev/null && [ ! -e $UMWELT_LOCK ]'
 
-new plat 'echo "platforms=$JAX_PLATFORMS"'
+new plat 'echo "platforms=$JAX_PLATFORMS cache=$JAX_COMPILATION_CACHE_DIR"'
 limit bash "$job" plat
-check "a GPU job makes a missing GPU an error, not a CPU fallback" 'grep -q "^platforms=cuda,cpu$" $R/plat.log'
+check "a GPU job makes a missing GPU an error, not a CPU fallback" 'grep -q "^platforms=cuda,cpu " $R/plat.log'
+check "a job uses the persistent compile cache" 'grep -q "cache=$UMWELT_ROOT/results/jax_cache$" $R/plat.log'
 
 new cpu 'echo ran'
 limit env FAKE_BACKEND=cpu bash "$job" cpu

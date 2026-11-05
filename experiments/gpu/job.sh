@@ -34,6 +34,10 @@ now() { date '+%Y-%m-%dT%H:%M:%S%z'; }
 token="project=umwelt job=$name host=$(hostname) pid=$$ started=$(now)"
 export PATH="$HOME/.local/bin:$PATH"
 export XLA_PYTHON_CLIENT_PREALLOCATE=false  # take GPU memory as needed, not 75% up front: the card is shared
+# A persistent compile cache: compiling was nearly half of a mind's time on the GPU, and the cache changed
+# no result (docs/gpu.md, E6 follow-up). Keys include the program, precision and XLA flags.
+export JAX_COMPILATION_CACHE_DIR=${JAX_COMPILATION_CACHE_DIR:-$root/results/jax_cache}
+export JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS=0 JAX_PERSISTENT_CACHE_MIN_ENTRY_SIZE_BYTES=0
 have_lock=0
 child=
 
