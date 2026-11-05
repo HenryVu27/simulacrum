@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Two questions left by E6 (docs/gpu.md):
+# Three questions left by E6 (docs/gpu.md):
 # 1. The training loop as experiments run it, timed properly (two run lengths, so compiling is separated
 #    from the cost of an update), at the default precision and at full float32.
 # 2. Why one full mind gains only 1.6 times on the GPU against 2.4 for its training: the guess is compile
 #    time on many small functions. One full mind three times: no compile cache, then a persistent compile
 #    cache that starts empty, then the same cache full. If the guess holds, only the last run is faster.
+# 3. What repeatable runs cost: the same benchmarks with deterministic GPU operations.
 #
 #   experiments/gpu/remote.sh run speed-check bash experiments/gpu/speed_check.sh
 set -euo pipefail
@@ -14,6 +15,9 @@ py() { uv run --no-sync python "$@"; }
 echo "== training loop, default precision, then full float32"
 py experiments/gpu/bench.py pc-gpu --parts train
 py experiments/gpu/bench.py pc-gpu-highest --precision highest --parts train
+
+echo "== what repeatable runs cost: deterministic operations, update and training loop"
+XLA_FLAGS=--xla_gpu_deterministic_ops=true py experiments/gpu/bench.py pc-gpu-det --parts update train
 
 echo "== one full mind: no cache"
 py experiments/gpu/bench.py pc-gpu-nocache --parts e2e
