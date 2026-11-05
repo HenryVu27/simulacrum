@@ -46,7 +46,8 @@ def main(ref, other):
     out["pass"] = worst < BAR
     print(f"largest difference in M: {worst:.5f}; bar {BAR:.4f} (a quarter of the learner-seed spread): "
           + ("PASS" if out["pass"] else "FAIL"))
-    path = b / "compare_stage3.json"
+    # one file per reference, named after it: several references can be compared with the same run
+    path = b / f"compare_stage3_vs_{a.parent.name}_{a.name}.json"
     path.write_text(json.dumps(out, indent=1))
     print(f"wrote {path}")
 

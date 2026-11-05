@@ -7,8 +7,10 @@ Three parts, each written to results/hardware/<tag>/bench.json:
   so this is the ceiling. The clock stops only after the device finishes. Each setting is timed three
   times after one compile (the median is reported); a setting that fails (for example out of GPU
   memory) is recorded with its error instead of stopping the run.
-- train: learner.train itself, 500 updates of the current learner on host data, as experiments run it
-  (batches gathered on the host and copied in every update).
+- train: learner.train itself, the current learner on host data, as experiments run it (batches gathered
+  on the host and copied in every update). learner.train compiles its update on every call, so two run
+  lengths are timed, three times each: the slope is the cost of one update, the intercept the fixed cost
+  of a call (mostly compiling).
 - e2e: one full mind (human, lawful world, data seed 0, the v1 sizes) through experiment.run_world,
   with its per-stage timings: training, latents, probes, surprise tests, controls.
 
@@ -89,16 +91,22 @@ def bench_update(K, hidden, batch):
                   "minutes_per_4000_updates_all_minds": 4000 * s / 60}
 
 
-def bench_train(steps=500):
+def bench_train(short=200, long=1200, repeats=3):
     rng = np.random.default_rng(0)
     obs = rng.standard_normal((256, 256, D), dtype=np.float32).astype(np.float16)
     act = rng.standard_normal((256, 256, 2), dtype=np.float32)
-    cfg = learner.LearnerConfig(steps=20)
-    learner.train(obs, act, cfg, verbose=False)  # compile once, outside the clock
-    t0 = time.perf_counter()
-    learner.train(obs, act, learner.LearnerConfig(steps=steps), verbose=False)
-    s = (time.perf_counter() - t0) / steps
-    return {"ms_per_update": s * 1e3, "minutes_per_4000_updates": 4000 * s / 60}
+    learner.train(obs, act, learner.LearnerConfig(steps=20), verbose=False)  # warm the process
+    secs = {short: [], long: []}
+    for _ in range(repeats):
+        for n in (short, long):
+            t0 = time.perf_counter()
+            learner.train(obs, act, learner.LearnerConfig(steps=n), verbose=False)
+            secs[n].append(time.perf_counter() - t0)
+    a, b = float(np.median(secs[short])), float(np.median(secs[long]))
+    per = (b - a) / (long - short)
+    fixed = a - short * per
+    return {"ms_per_update": per * 1e3, "fixed_seconds_per_call": fixed,
+            "seconds": {str(k): v for k, v in secs.items()}, "minutes_per_4000_updates": (fixed + 4000 * per) / 60}
 
 
 def bench_e2e(tag):

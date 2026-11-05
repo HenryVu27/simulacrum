@@ -5,7 +5,8 @@
   "device": "cpu",
   "jax": "0.12.0.1",
   "matmul_precision": "default",
-  "xla_flags": ""
+  "xla_flags": "",
+  "allocator": "default"
  },
  "update": [
   {
@@ -74,8 +75,21 @@
   }
  ],
  "train": {
-  "ms_per_update": 33.69074874999933,
-  "minutes_per_4000_updates": 2.246049916666622
+  "ms_per_update": 39.32501450111158,
+  "fixed_seconds_per_call": 0.9971133077284327,
+  "seconds": {
+   "200": [
+    7.893270417000167,
+    8.862116207950749,
+    9.425178957986645
+   ],
+   "1200": [
+    48.18713070906233,
+    48.30430516600609,
+    46.426222958019935
+   ]
+  },
+  "minutes_per_4000_updates": 2.638286188536246
  },
  "e2e": {
   "seconds_total": 295.33096262498293,

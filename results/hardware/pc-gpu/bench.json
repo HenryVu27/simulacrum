@@ -1,0 +1,146 @@
+{
+ "env": {
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "backend": "gpu",
+  "device": "NVIDIA GeForce RTX 5080",
+  "jax": "0.12.0.1",
+  "matmul_precision": "default",
+  "xla_flags": "",
+  "allocator": "default"
+ },
+ "update": [
+  {
+   "minds": 1,
+   "hidden": 128,
+   "batch": 32,
+   "ms_per_update": 2.671755188281111,
+   "ms_runs": [
+    2.672342258593474,
+    2.654544078906085,
+    2.671755188281111
+   ],
+   "mind_updates_per_s": 374.2857895013037,
+   "minutes_per_4000_updates_all_minds": 0.17811701255207404
+  },
+  {
+   "minds": 1,
+   "hidden": 128,
+   "batch": 256,
+   "ms_per_update": 5.682389253124853,
+   "ms_runs": [
+    5.680254639062099,
+    5.682389253124853,
+    5.686112992187731
+   ],
+   "mind_updates_per_s": 175.98231227297234,
+   "minutes_per_4000_updates_all_minds": 0.37882595020832355
+  },
+  {
+   "minds": 1,
+   "hidden": 512,
+   "batch": 32,
+   "ms_per_update": 4.028801314843733,
+   "ms_runs": [
+    4.023784131249997,
+    4.028801314843733,
+    4.041969298437564
+   ],
+   "mind_updates_per_s": 248.2127863480375,
+   "minutes_per_4000_updates_all_minds": 0.2685867543229155
+  },
+  {
+   "minds": 1,
+   "hidden": 512,
+   "batch": 256,
+   "ms_per_update": 12.815445281249538,
+   "ms_runs": [
+    12.801089971874546,
+    12.815445281249538,
+    12.893049075000818
+   ],
+   "mind_updates_per_s": 78.03084310017026,
+   "minutes_per_4000_updates_all_minds": 0.8543630187499692
+  },
+  {
+   "minds": 1,
+   "hidden": 1024,
+   "batch": 256,
+   "ms_per_update": 25.12070133749944,
+   "ms_runs": [
+    25.084119162499974,
+    25.12070133749944,
+    25.13843538750109
+   ],
+   "mind_updates_per_s": 39.80780578395833,
+   "minutes_per_4000_updates_all_minds": 1.6747134224999627
+  },
+  {
+   "minds": 8,
+   "hidden": 128,
+   "batch": 32,
+   "ms_per_update": 28.07605304375045,
+   "ms_runs": [
+    27.539513637501045,
+    28.07605304375045,
+    28.616132837501596
+   ],
+   "mind_updates_per_s": 284.9403364331066,
+   "minutes_per_4000_updates_all_minds": 1.8717368695833632
+  },
+  {
+   "minds": 16,
+   "hidden": 128,
+   "batch": 32,
+   "ms_per_update": 16.451424234375622,
+   "ms_runs": [
+    16.451424234375622,
+    16.29433958437545,
+    16.485696565624153
+   ],
+   "mind_updates_per_s": 972.5601730315627,
+   "minutes_per_4000_updates_all_minds": 1.0967616156250415
+  },
+  {
+   "minds": 32,
+   "hidden": 128,
+   "batch": 32,
+   "ms_per_update": 22.846933274999515,
+   "ms_runs": [
+    23.04190597500053,
+    22.846933274999515,
+    22.780296793752086
+   ],
+   "mind_updates_per_s": 1400.6256163498458,
+   "minutes_per_4000_updates_all_minds": 1.5231288849999676
+  },
+  {
+   "minds": 64,
+   "hidden": 128,
+   "batch": 32,
+   "error": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 4.06GiB with allocator GPU_0_bfc on device 0. [tf-allocator-allocation-error=''] [executable_name='jit_update']"
+  },
+  {
+   "minds": 128,
+   "hidden": 128,
+   "batch": 32,
+   "error": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.12GiB with allocator GPU_0_bfc on device 0. [executable_name='jit_update'] [tf-allocator-allocation-error='']"
+  }
+ ],
+ "train": {
+  "ms_per_update": 15.078121053999894,
+  "minutes_per_4000_updates": 1.0052080702666595
+ },
+ "e2e": {
+  "seconds_total": 182.72213742800022,
+  "timing": {
+   "train": 54.6,
+   "latents": 4.1,
+   "probes_mlp": 11.8,
+   "probes_linear": 6.9,
+   "voe": 15.8,
+   "untrained": 1.4,
+   "raw": 8.9
+  },
+  "test_error": 0.22723807394504547
+ }
+}
