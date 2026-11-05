@@ -2,8 +2,9 @@
 # Does a GPU job score on the same surprise-test movies as the Mac, and does it use the compile cache?
 # (docs/gpu.md, E7b after the stimulus fix.) Hashes the movies an experiment would use (voe.build_suite, which
 # renders on the CPU since the first run of this check found GPU-rendered movies differ in 8 values; every
-# result's provenance records the hash) in three separate processes: at full float32 with deterministic operations twice
-# (the second should read the first's compiles: faster, no new cache entries), then at the GPU's defaults.
+# result's provenance records the hash) in three separate processes: at full float32 with deterministic
+# operations twice (the second should read the first's compiles: faster, no new cache entries), then at the
+# GPU's defaults.
 # The Mac's CPU and the PC's CPU both give e8b112a5e2a11879. job.sh logs the cache's entries before and after.
 #
 #   experiments/gpu/remote.sh run stimuli-check bash experiments/gpu/stimuli_check.sh
