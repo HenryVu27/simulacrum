@@ -148,6 +148,28 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   most 5 GB. The PC CPU benchmark (`pc-wsl-cpu`) left the default checks: it uses no GPU but would hold
   the lock for 15 to 20 minutes (`checks.sh cpu` runs it). `gpu-checks-3` was stopped for that change
   and requeued as `gpu-checks-4`.
+- 2026-11-05 00:05. `gpu-checks-4` ran from about 23:55 and finished at 00:05, earlier than planned (log
+  `results/hardware/jobs/gpu-checks-4.log`). The GPU's other load at the start was 1 to 2 percent (the
+  desktop was idle). The other project's session was told the GPU was free.
+- 2026-11-05. The precision fix holds on the GPU: a default-precision recording (`pc-gpu-precfix`) now
+  equals the full-float32 one array for array (19 of 19, 14 of 14 presets), and against the Mac only 4
+  visibility entries differ, as at full float32. At full scale too: the two stage 3 runs (default and
+  full float32) recorded byte-identical 8,448-episode worlds (3.4 GB, hash `f8379b8ed49a1423`).
+- 2026-11-05. Bug in the comparison tooling: `compare_stage3.py` wrote `compare_stage3.json` into the
+  compared run's folder, so two comparisons against one run overwrote each other (it happened twice).
+  It now names the file after the reference (`compare_stage3_vs_<machine>_<folder>.json`); every
+  comparison was redone.
+- 2026-11-05. Finding about the benchmark: `learner.train` defines its compiled update inside the function,
+  so every call compiles again, and E6's "training loop" number (one 500-update call) included that
+  compile. The benchmark now times two run lengths (200 and 1,200 updates, three times each): the slope
+  is the cost of an update, the intercept the fixed cost of a call. On the Mac the fixed cost is 1.0 s.
+  The Mac rerun (39.3 ms per update) is not clean: another project's text-generation job (MLX) was running on
+  the Mac at the time (load average 3.5 to 4). The idle measurement by the old method was 33.7 ms
+  including about 1 s of compiling, so about 31.7 ms per update. To repeat when the Mac is idle.
+- 2026-11-05 00:15. The other project took the GPU at 00:07 for 13B generation (two chunks, then a training
+  run, to about 03:30, per `C:\gpu-schedule.txt`). `speed_check.sh` (the training loop by the new method,
+  the cost of deterministic operations, and a compile-cache test) was queued as `speed-check-2` for the
+  first gap, with a line in the schedule.
 
 ## How to run on the GPU
 
@@ -350,6 +372,71 @@ world precision fix). Comparisons in `results/hardware/compare_gpu.log` and `com
 What this means so far: the GPU is not a source of error in itself. At full float32 it trains like the
 CPUs; the open question is whether TF32's one-percent drift, and run-to-run variation, matter at the
 level of the project's numbers. E4 answers that, with the GPU at both precisions.
+
+### E4 on the GPU (2026-11-05)
+
+`checks.sh stage3` on the RTX 5080, with the world precision fix in. Three passes, each recording its own
+8,448 episodes except the last: the GPU's default precision (TF32 learner), full float32, and the default
+precision on the very episodes the PC's CPU run recorded under Windows. Compared with
+`experiments/gpu/compare_stage3.py`; full output `results/hardware/compare_gpu_stage3.log`.
+
+| M (memory value) | Mac | GPU default | GPU full float32 | GPU on the PC CPU run's episodes |
+|---|---|---|---|---|
+| all steps | 0.0218 | 0.0218 | 0.0218 | 0.0217 |
+| dark steps | -0.0278 | -0.0277 | -0.0278 | -0.0278 |
+| first lit step | 0.1362 | 0.1363 | 0.1361 | 0.1362 |
+| object returns | 0.1060 | 0.1060 | 0.1059 | 0.1060 |
+| largest difference from the Mac | | 0.00004 | 0.00011 | 0.00006 |
+| test error, human (Mac 0.21917) | | 0.21917 | 0.21917 | 0.21917 |
+| test error, memoryless (Mac 0.22405) | | 0.22406 | 0.22405 | 0.22404 |
+
+Two comparisons isolate one cause each:
+- Same episodes in, GPU against the PC's CPU: largest difference in M 0.00008. This is GPU arithmetic
+  alone.
+- GPU default against GPU full float32, on byte-identical recorded worlds: 0.00013. This is TF32 in the
+  learner alone. The one-percent drift in the loss at 300 updates (E3) does not reach the result.
+
+Every difference is 70 to 220 times under the bar (0.009, a quarter of the learner-seed spread of M at
+object returns), and the largest difference in overall M (0.00005) is 14 times under a quarter of overall
+M's own seed spread (0.0007). Per-step errors correlate at 1.0000 with the Mac's in every pass. PASS: GPU
+results can be compared with and pooled with the Mac's, at either precision.
+
+Speed on the way: recording the 8,448 episodes took 14 s on the GPU (41 s on the PC's CPU under Windows);
+training took 68 s for human and 22 s for memoryless (idle Mac 134 s and 58 s).
+
+### E6 on the GPU (2026-11-05)
+
+`checks.sh bench` in `gpu-checks-4` (GPU load from other programs 1 to 2 percent), plus the allocator
+comparison (`alloc_check.sh`). Each on-device setting is the median of three timings; table from
+`experiments/gpu/bench_table.py`, saved in `results/hardware/bench_table.txt`.
+
+| minds at once | hidden | batch | Mac (ms) | GPU default (ms) | GPU full float32 (ms) |
+|---|---|---|---|---|---|
+| 1 | 128 | 32 | 31.8 | 2.7 (12x) | 3.0 (11x) |
+| 1 | 128 | 256 | 185 | 5.7 (33x) | 7.0 (26x) |
+| 1 | 512 | 32 | 98 | 4.0 (24x) | 5.0 (20x) |
+| 1 | 512 | 256 | 570 | 12.8 (45x) | 16.9 (34x) |
+| 1 | 1024 | 256 | 1,542 | 25.1 (61x) | 38.2 (40x) |
+| 8 | 128 | 32 | 171 | 28.1 (6x) | 14.3 (12x) |
+| 16 | 128 | 32 | not run | 16.5 | 18.1 |
+| 32 | 128 | 32 | 783 | 22.8 (34x) | 25.9 (30x) |
+| 64 | 128 | 32 | not run | fails; 37.1 with `cuda_async` | fails |
+| 128 | 128 | 32 | 9,852 | fails; 457 with `cuda_async` | fails |
+
+- Larger learners gain most: the biggest core tested runs 61 times faster than on the Mac. The current
+  learner (hidden 128, batch 32) is too small to fill the GPU and gains 12 times.
+- Many minds at once: 32 minds run 34 times faster than the Mac, about 1,400 mind-updates per second; 64 (with
+  `cuda_async`) reach 1,725. At 128 the step collapses (setup log).
+- 8 minds at once is slower than 16 at the default precision, in every repeat and in two separate jobs,
+  but not at full float32 (14.3 ms). The compiler picks a poor plan for that shape under TF32.
+- Full float32 costs 10 percent at the current size and 50 percent at the largest.
+- The same settings timed in two jobs an hour apart agree within 5 percent.
+- One full mind, end to end (human, lawful world): 183 s against 295 s on the Mac. Training 55 s (Mac
+  131), nonlinear probes 12 s (39), the two controls 1 and 9 s (38 and 41). But the surprise tests took 16 s
+  (Mac 0.7) and time outside the mind's stages doubled (77 s against 38 s, including 5 s to record the
+  world). The working guess is compile time on many small functions; `speed-check-2` tests it with a
+  persistent compile cache, and also times the training loop properly and the cost of deterministic
+  operations.
 
 ### E6 on the Mac (2026-11-04, Mac otherwise idle)
 
