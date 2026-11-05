@@ -280,6 +280,12 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   the card, the 2 GB cache cap and its code version (ecf3527); `experiment.provenance` on the GPU gave the
   recording hash `e9b74db4218d7e27`, the same as the Mac's; asking for a recording that is not there was
   refused and nothing was recorded.
+- 2026-11-05 about 04:45 to 10:05. Henry chose to fix the surprise-test geometry. `voe.HIDDEN_WALL` now lies
+  one unit outside the arena (a test checks that moving it further changes only the oracle's input). Only
+  the dog's permanence movies and the oracle's change; their scores were recomputed from the stored networks
+  in all 8 Mac runs (`experiments/recompute_voe.py`, which first reproduced every stored value exactly), and
+  both reports regenerated with no verdict changed. Full record: `docs/preregistration.md`, last section.
+  E7b was queued again (`e7b-wallfix`) behind the other project's server, which held the GPU from 09:10.
 
 ## How to run on the GPU
 
@@ -342,9 +348,9 @@ For numbers that will be reported or pooled with the Mac's (E7b):
    Full float32 costs 10 to 50 percent per update on the update alone and was faster in the training
    loop; deterministic operations cost 3 to 16 percent, within the noise between jobs; the two together
    were not timed separately (a full 14-mind run took about 15 minutes either way).
-3. The surprise-test movies are rendered on each machine, not copied, and contain a geometric tie that
-   makes the dog's permanence score device-dependent (see E7b). Until that is fixed, treat the dog's
-   surprise scores from the two machines as not poolable.
+3. The surprise-test movies are rendered on each machine, not copied. They contained a geometric tie that
+   made the dog's permanence score device-dependent (see E7b); it was fixed on 2026-11-05, and E7b was rerun
+   to confirm.
 
     experiments/gpu/remote.sh run NAME env JAX_DEFAULT_MATMUL_PRECISION=highest \
         XLA_FLAGS=--xla_gpu_deterministic_ops=true uv run umwelt run ...
@@ -679,7 +685,7 @@ operations reproduces the Mac's run to about the sixth decimal for nearly every 
   0.00586 around the GPU's 0.00560). Strongly supported, not proven: proof needs a GPU render. That spread
   (0.0011) is 29 percent of the dog's permanence seed difference, above the quarter bar for that score.
   The fix is to move the hidden wall off the boundary, which changes the dog's stored results on the Mac
-  too; it is Henry's call (STATUS).
+  too; Henry chose to fix it (2026-11-05, see "E7b after the stimulus fix" below).
 So E7b isolates GPU arithmetic for everything but the surprise-test movies. The prediction held: E7's
 failure came from the recordings.
 
@@ -696,8 +702,8 @@ failure came from the recordings.
   much as a learner seed moves them.
 - Rule for pooling GPU and Mac results: record each world once, on one machine, and copy that recording
   to the other (`remote.sh push results/data/<recording>`, verified file by file); run at full float32
-  with deterministic operations; and do not pool the dog's surprise scores until the hidden-wall tie is
-  fixed. Do not regenerate a data seed on another machine and call it the same data. Since 2026-11-05 the
+  with deterministic operations. (The hidden-wall tie that made the dog's surprise scores device-dependent
+  was fixed on 2026-11-05.) Do not regenerate a data seed on another machine and call it the same data. Since 2026-11-05 the
   tooling enforces the first part (a GPU job refuses to record) and every result says how it was made
   (`provenance`).
 - Repeatability: with full float32 and deterministic operations a whole GPU run repeats bit for bit

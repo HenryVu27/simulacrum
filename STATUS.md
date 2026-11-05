@@ -93,7 +93,8 @@ What is known (all in `docs/gpu.md`; every result recomputed by three independen
   steps, and that moved `cause` scores by a learner seed's worth (E7, which failed for that reason).
 - Rules for pooling GPU and Mac results: share recordings (copy, never regenerate); run at full float32
   with deterministic operations (at the GPU's default precision one `cause` score moved a seed's worth on
-  identical data); do not pool the dog's surprise scores yet (next steps). The tooling enforces the first
+  identical data). The surprise-test geometry that made the dog's scores device-dependent is fixed
+  (2026-11-05 correction); E7b is being rerun to confirm. The tooling enforces the first
   rule (a GPU job refuses to record unless `run --record`) and every result file carries a `provenance`
   block (machine, backend, precision, XLA flags, code, recording hash).
 - Speed at full float32: one update 11 times the Mac, the largest learner tested 40 times, 32 minds at
@@ -104,11 +105,11 @@ What is known (all in `docs/gpu.md`; every result recomputed by three independen
   full precision, enforced by a test); several job-tooling risks on the shared PC.
 - Scope: the current learner. A new learner family needs an E7b-style full run on a shared recording.
 
-Open, from the GPU work (decisions for Henry first):
-- The surprise-test movies place a hidden wall exactly on the boundary wall (`voe.HIDDEN_WALL`), so 3 to 5
-  of the dog's rays see two walls at the same distance and the colour depends on last-bit rounding. That
-  makes the dog's permanence surprise device-dependent (29 percent of its seed difference). Moving the wall
-  off the boundary fixes it but changes the dog's stored v1 and v2 surprise scores on the Mac too.
+Open, from the GPU work:
+- Done 2026-11-05 at Henry's go-ahead: the surprise-test "no wall" marker moved off the boundary wall; the
+  dog's and oracle's surprise scores recomputed in all stored runs, no verdict changed
+  (`docs/preregistration.md`, last section). It exposed that the oracle's surprise scores partly measure
+  how an absent wall is encoded (its permanence surprise moved by up to a quarter).
 - The `cause` probe is hypersensitive: 6 changed labels among 7,873 moved a score by 0.038, more than a
   learner seed. Every cause result so far should be read with that in mind; a more robust cause target or
   more probe data would help.
@@ -206,6 +207,11 @@ Open, from the GPU work (decisions for Henry first):
   - memory diagnostics.
 - A guard was added for concepts that do not exist in a world (nothing is ever pushed in the ghost
   world, so cause is "not applicable" there).
+- 2026-11-05, after all runs: the surprise-test stimuli were corrected (a "no wall" marker lay on the
+  boundary wall, making some of the dog's rays device-dependent). The dog's and the oracle's surprise
+  scores were recomputed from the stored networks in all 8 runs; old values kept in each file. Dog
+  permanence moved by at most 0.0005, oracle permanence down by 0.03 to 0.11; no verdict changed. Details
+  and a caveat on the oracle's surprise scores: `docs/preregistration.md`, last section.
 
 ## Machine notes
 
