@@ -12,8 +12,9 @@
 #   R="uv run python experiments/gpu/repro.py compare"
 #   for t in pc-gpu pc-gpu-highest pc-gpu-det; do $R mac-cpu $t; done   # E1 to E3, E5 precision
 #   $R pc-gpu pc-gpu-rerun; $R pc-gpu-det pc-gpu-det-rerun              # E5 run-to-run determinism
-#   for t in pc-gpu pc-gpu-highest; do                                   # E4
-#     uv run python experiments/gpu/compare_stage3.py results/hardware/mac-cpu/stage3_ref results/hardware/$t/stage3; done
+#   S="uv run python experiments/gpu/compare_stage3.py"; H=results/hardware
+#   for t in pc-gpu pc-gpu-highest pc-gpu-pcdata; do $S $H/mac-cpu/stage3_ref $H/$t/stage3; done  # E4
+#   $S $H/pc-cpu/stage3 $H/pc-gpu-pcdata/stage3                         # E4, same episodes: GPU against CPU only
 #   uv run python experiments/gpu/bench_table.py                         # E6
 set -euo pipefail
 cd "$(dirname "$0")/../.."
@@ -39,11 +40,25 @@ JAX_PLATFORMS=cpu py experiments/gpu/bench.py pc-wsl-cpu --parts update train  #
 
 echo "== E4: calibration stage 3 end to end, default precision, then full float32"
 # Each pass gets its own results folder, so each records its own episodes under its own precision.
-for tag in pc-gpu pc-gpu-highest; do
-  root=results/stage3_runs/$tag  # outside results/hardware, so pulling that folder skips the recordings
-  if [ "$tag" = pc-gpu-highest ]; then prec=highest; else prec=default; fi
-  UMWELT_RESULTS=$root JAX_DEFAULT_MATMUL_PRECISION=$prec py experiments/calibrate.py dark --episodes 8192
-  mkdir -p "results/hardware/$tag/stage3"
-  cp "$root"/calibration/errors/dark_n8192_* "$root"/calibration/dark_n8192.json "results/hardware/$tag/stage3/"
-done
+stage3() {  # tag, precision
+  root=results/stage3_runs/$1  # outside results/hardware, so pulling that folder skips the recordings
+  UMWELT_RESULTS=$root JAX_DEFAULT_MATMUL_PRECISION=$2 py experiments/calibrate.py dark --episodes 8192
+  mkdir -p "results/hardware/$1/stage3"
+  cp "$root"/calibration/errors/dark_n8192_* "$root"/calibration/dark_n8192.json "results/hardware/$1/stage3/"
+}
+stage3 pc-gpu default
+stage3 pc-gpu-highest highest
+
+# E4 once more on the very episodes the PC's CPU run used (recorded under Windows, results/hardware/pc-cpu/stage3),
+# so against that run only the arithmetic differs: GPU against CPU, same bytes in.
+pcdata=${PC_CPU_DATA:-/mnt/c/umwelt/results/data/dark_s0_e8448_t256}
+if [ -d "$pcdata" ]; then
+  echo "== E4 on the PC CPU run's episodes ($pcdata)"
+  mkdir -p results/stage3_runs/pc-gpu-pcdata/data
+  rm -rf results/stage3_runs/pc-gpu-pcdata/data/dark_s0_e8448_t256
+  cp -r "$pcdata" results/stage3_runs/pc-gpu-pcdata/data/
+  stage3 pc-gpu-pcdata default
+else
+  echo "== skipped E4 on the PC CPU run's episodes: $pcdata not found"
+fi
 echo "== all checks done"

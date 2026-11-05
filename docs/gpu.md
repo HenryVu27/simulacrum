@@ -127,6 +127,9 @@ project already has to survive.
   M overall, and M at object returns with the Mac's numbers (M 0.022, M at returns 0.106). The yardstick
   is the learner-seed spread in the confirmatory run: M at returns 0.093 (seed 0) against 0.057 (seed 1).
   Pass: every hardware difference is under a quarter of that spread (0.009 in M at returns).
+  Added before the GPU run: a third GPU pass on the very episodes the PC's CPU run recorded under
+  Windows, compared with that CPU run. Same bytes in, so the difference is GPU arithmetic alone; the
+  end-to-end passes also carry the small difference between recordings made on different chips (E1).
 - E5 GPU only. Matrix multiply precision (JAX's default on this GPU class, TF32, against
   `jax_default_matmul_precision=highest`) and run-to-run determinism (the same GPU run twice, with and
   without `--xla_gpu_deterministic_ops=true`).
