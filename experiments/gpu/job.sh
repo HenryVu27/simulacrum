@@ -3,14 +3,16 @@
 #
 # 1. Waits until the GPU is free: the lock folder C:\gpu-lock (shared with the other project) does
 #    not exist and less than BUSY_MB of GPU memory is in use (the Windows desktop alone uses about 3 GB).
-# 2. Takes the lock with mkdir (atomic) and writes its own owner line. It only ever removes a lock it
-#    created and whose owner line is still its own.
-# 3. Refuses to run if the code in ~/umwelt is no longer the code pushed for this job, or if JAX does
-#    not see the GPU (remote.sh run --allow-cpu writes results/remote/<name>.allow_cpu to allow a CPU
-#    job). Records both checks in the job's log.
+# 2. Takes the lock with mkdir (atomic) and writes its own owner line. It only ever removes a lock whose
+#    owner line is exactly its own (an empty one may be another project's, just created).
+# 3. Refuses to run if the code in ~/umwelt is no longer the code pushed for this job (the files are
+#    rehashed, not only the manifest), or if JAX does not see the GPU (remote.sh run --allow-cpu writes
+#    results/remote/<name>.allow_cpu to allow a CPU job; otherwise JAX_PLATFORMS=cuda,cpu makes a
+#    missing GPU an error, never a quiet CPU fallback). Records both checks in the job's log.
 # 4. Runs results/remote/<name>.cmd in its own process group. SIGTERM, SIGINT or SIGHUP to this script
-#    stops that whole group first; only then is the lock released. A SIGKILL leaves the lock in place
-#    (held too long, never released early); remote.sh unlock clears it.
+#    stops that whole group first; anything the command leaves running is stopped too; only then is the
+#    lock released. A SIGKILL leaves the lock in place (held too long, never released early); remote.sh
+#    unlock clears it.
 # 5. Pause switch, for when Henry wants the PC: while C:\gpu-pause exists (a file or a folder), a job
 #    does not start, and a running job's processes are stopped (SIGSTOP) until it is deleted, then
 #    continued (SIGCONT). A paused job keeps the lock and the GPU memory it holds, but uses no GPU time.
@@ -39,7 +41,7 @@ say() { echo "[$(now)] $*" >> "$log"; }
 finish() {
   if [ "$have_lock" = 1 ]; then
     owner=$(head -n 1 "$lock/owner" 2>/dev/null || true)
-    if [ -z "$owner" ] || [ "$owner" = "$token" ]; then
+    if [ "$owner" = "$token" ]; then
       rm -rf "$lock"
     else
       say "lock not released: its owner is now '$owner'"
@@ -47,12 +49,20 @@ finish() {
   fi
   rm -f "$dir/$name.pid"
 }
+reap() {  # stop whatever the command left running in its process group, so nothing outlives the lock
+  kill -TERM -- "-$1" 2>/dev/null || return 0
+  kill -CONT -- "-$1" 2>/dev/null
+  sleep 2
+  kill -KILL -- "-$1" 2>/dev/null
+  return 0
+}
 stop() {
   say "stop signal: stopping the command"
   if [ -n "$child" ]; then
     kill -TERM -- "-$child" 2>/dev/null || kill -TERM "$child" 2>/dev/null
     kill -CONT -- "-$child" 2>/dev/null  # a paused command only acts on the TERM once continued
     wait "$child" 2>/dev/null
+    reap "$child"
   fi
   echo 143 > "$dir/$name.exit"
   exit 143
@@ -84,10 +94,13 @@ say "lock taken: $token"
 
 pushed=$(grep '^code ' "$dir/$name.push" 2>/dev/null)
 current=$(grep '^code ' .umwelt_push 2>/dev/null)
-[ -n "$pushed" ] && [ "$pushed" = "$current" ] || end 3 "refused: code changed since this job was queued (job: '$pushed', now: '$current')"
+files="code $(tr '\n' '\0' < .umwelt_files 2>/dev/null | xargs -0 sha256sum 2>/dev/null | sha256sum | cut -c1-16)"
+[ -n "$pushed" ] && [ "$pushed" = "$current" ] && [ "$pushed" = "$files" ] \
+  || end 3 "refused: code changed since this job was queued (job: '$pushed', manifest now: '$current', files now: '$files')"
 say "code: $(tr '\n' ' ' < "$dir/$name.push")"
 uv sync --frozen --extra gpu --quiet >> "$log" 2>&1 || end 4 "refused: uv sync failed"
 export UV_NO_SYNC=1  # from here on uv run never changes the environment (a plain sync would drop the CUDA plugin)
+[ -f "$dir/$name.allow_cpu" ] || export JAX_PLATFORMS=cuda,cpu  # no GPU is then an error, not a CPU fallback
 backend=$(uv run python -c "import jax; print(jax.default_backend(), jax.devices()[0].device_kind)" 2>> "$log")
 say "JAX backend: $backend"
 case "$backend" in
@@ -109,5 +122,6 @@ while kill -0 "$child" 2>/dev/null; do
 done
 wait "$child"
 code=$?
+reap "$child"
 child=
 end "$code" "exit $code"

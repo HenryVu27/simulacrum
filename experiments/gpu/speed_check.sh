@@ -16,6 +16,14 @@ echo "== training loop, default precision, then full float32"
 py experiments/gpu/bench.py pc-gpu --parts train
 py experiments/gpu/bench.py pc-gpu-highest --precision highest --parts train
 
+echo "== the allocator decision again, on the training loop timed the new way"
+XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async py experiments/gpu/bench.py pc-gpu-async --parts train
+
+echo "== GPU memory limits inside WSL, saved this time"
+for a in default cuda_async; do
+  XLA_PYTHON_CLIENT_ALLOCATOR=$a py experiments/gpu/memprobe.py 2>/dev/null | tee "results/hardware/memprobe_$a.txt"
+done
+
 echo "== what repeatable runs cost: deterministic operations, update and training loop"
 XLA_FLAGS=--xla_gpu_deterministic_ops=true py experiments/gpu/bench.py pc-gpu-det --parts update train
 

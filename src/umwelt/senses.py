@@ -27,6 +27,17 @@ from umwelt.world import (
     wrap,
 )
 
+# The world is physics, not learning: every matrix product here runs in full float32 on every device. A
+# GPU's default (TF32) rounds the inputs to about three significant digits, which flipped which object a
+# ray hits (docs/gpu.md). Set per product, so every caller is covered: recordings, the surprise-test
+# movies and anything added later. tests/test_precision.py checks that none is missed.
+HI = jax.lax.Precision.HIGHEST
+
+
+def _mm(a, b):
+    return jnp.matmul(a, b, precision=HI)
+
+
 N_RAYS = 128
 RAY_REL = (-np.pi + (np.arange(N_RAYS) + 0.5) * 2 * np.pi / N_RAYS).astype(np.float32)
 MAX_RANGE = 12.0
@@ -49,7 +60,7 @@ def raycast(s: State):
     u = jnp.stack([jnp.cos(ang), jnp.sin(ang)], -1)  # (R, 2)
     r = RADIUS[s.obj_kind]
     f = s.obj_pos - s.agent_pos  # (N, 2)
-    b = u @ f.T  # (R, N)
+    b = _mm(u, f.T)  # (R, N)
     c2 = jnp.sum(f * f, -1) - r * r
     disc = b * b - c2[None]
     t_obj = b - jnp.sqrt(jnp.maximum(disc, 0.0))
@@ -101,9 +112,9 @@ def hearing(s: State, c: Contacts):
     occ = jnp.where(blocked, 0.3, 1.0)
     src_dir = s.obj_pos - s.agent_pos
     src_dir = src_dir / (jnp.linalg.norm(src_dir, axis=-1, keepdims=True) + 1e-6)
-    shadow = 0.7 + 0.3 * (ear_dir @ src_dir.T)  # (2, N)
+    shadow = 0.7 + 0.3 * _mm(ear_dir, src_dir.T)  # (2, N)
     gain = amp[None] * att * occ * shadow * s.obj_active[None]
-    level = gain @ spec  # (2, B)
+    level = _mm(gain, spec)  # (2, B)
     level = level + c.agent_wall_impulse * jnp.asarray(kinds.WALL_SPECTRUM)[None]
     return jnp.log1p(10.0 * level).reshape(-1)
 
@@ -142,14 +153,14 @@ def touch(s: State, c: Contacts):
     w = jnp.maximum(jnp.cos(angs[None] - TOUCH_REL[:, None]), 0.0) ** 8 * ps[None]  # (S, contacts)
     pressure = jnp.sum(w, 1)
     denom = pressure + 1e-6
-    return jnp.stack([pressure, (w @ texs) / denom, (w @ temps) / denom], -1).reshape(-1)
+    return jnp.stack([pressure, _mm(w, texs) / denom, _mm(w, temps) / denom], -1).reshape(-1)
 
 
 def proprio(s: State):
     """Vestibular and kinesthetic sense: own forward speed, sideways speed, turning rate."""
     h = jnp.array([jnp.cos(s.agent_th), jnp.sin(s.agent_th)])
     left = jnp.array([-h[1], h[0]])
-    return jnp.array([s.agent_vel @ h, s.agent_vel @ left, s.agent_om / 2.0])
+    return jnp.array([_mm(s.agent_vel, h), _mm(s.agent_vel, left), s.agent_om / 2.0])
 
 
 def sense_all(s: State, c: Contacts):

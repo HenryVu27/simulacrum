@@ -83,21 +83,26 @@ JAX publishes GPU builds for Linux only, so it runs inside WSL2 (Ubuntu 26.04, a
 user, no Linux account needed). `experiments/gpu/remote.sh` pushes the code (verified on the PC), queues
 jobs that wait for a shared GPU lock (`C:\gpu-lock`, also used by the other project), and pulls results
 back. Henry can pause umwelt jobs while he uses the PC (`mkdir C:\gpu-pause`). Everything is in
-`docs/gpu.md`: the setup log, a protocol written before any run (E1 to E6), and the results.
+`docs/gpu.md`: the setup log, a protocol written before any run (E1 to E7), and the results.
 
-What is known so far (all in `docs/gpu.md`):
+What is known so far (all in `docs/gpu.md`, checked twice by an independent verifier):
 - The PC's CPU gives the same project numbers as the Mac (stage 3 memory value within 0.00003).
-- On the GPU at full float32, training matches the Mac to about five digits. At the GPU's default TF32
-  precision it drifts about 1 percent in 300 updates, and default GPU runs are not repeatable (with
-  deterministic operations they are, bit for bit).
-- Bug found and fixed: at TF32 the ray caster flipped object visibility; the world now always simulates at
-  full precision (`src/umwelt/data.py`; Mac output byte-identical).
-- Speed: one update of the current learner 2.6 ms against 31.8 ms on the Mac; the largest learner tested
-  25 ms against 1,542 ms. The training loop as experiments run it gains only 2.2 times, because batches
-  are built on the CPU: building them on the GPU is the obvious next speedup. WSL limits one compiled step to
-  under 4 GiB of GPU memory with the default allocator (32 minds at once; 64 with `cuda_async`).
-- Pending (job `gpu-checks-4`, queued overnight): stage 3 on the GPU at both precisions, which decides
-  whether GPU results can be pooled with the Mac's, and the full speed table.
+- On the GPU, stage 3 memory value M is within 0.00013 of the Mac at either precision, 68 to 204 times
+  under the bar. That covers prediction error only: whether probe scores, surprise tests and translation
+  agree is E7, preregistered and queued. Until E7 passes, do not pool GPU probe or surprise results
+  with the Mac's.
+- At full float32 the GPU trains like the Mac to about five digits; at the GPU's default (TF32) the loss
+  drifts about 1 percent in 300 updates. Default GPU runs are not repeatable; with deterministic
+  operations they are, bit for bit.
+- Bug found and fixed: TF32 was changing the simulated world (which object a ray hits). Every matrix
+  product in the senses now names full precision, a test enforces it, and the Mac's output is unchanged.
+- Speed, against the Mac at like precision (full float32): one update of the current learner 11 times
+  faster, the largest learner tested 40 times, 32 minds at once 30 times. One full mind end to end only
+  1.6 times; why (compile time is the guess) and the training loop's real per-update cost are being
+  measured (`speed_check.sh`). WSL caps one compiled step at under 4 GiB with the default allocator (32
+  minds at once; 64 with `cuda_async`).
+- Recommended for confirmatory GPU work, pending E7: full float32 with deterministic operations, and
+  rerun E4 for any new learner family before pooling.
 
 ## Next steps, in order
 

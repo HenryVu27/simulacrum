@@ -1,10 +1,12 @@
 """How much GPU memory can one JAX process get inside WSL? (docs/gpu.md, setup log.)
 
 JAX's default reservation (75 percent of the card) failed at setup with only 1.5 GB in use, and
-settled near 4 GB. This finds the real limit two ways: one array of each size in turn, then 1 GiB
-arrays held together until an allocation fails.
+settled near 4 GB. This finds the real limit two ways: one array of each size in turn (around 4 GiB
+finely), then 1 GiB arrays held together until an allocation fails. Run it under each allocator; the
+output is the record (speed_check.sh saves it to results/hardware/memprobe_<allocator>.txt).
 
     XLA_PYTHON_CLIENT_PREALLOCATE=false uv run python experiments/gpu/memprobe.py
+    XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async uv run python experiments/gpu/memprobe.py
 """
 
 import json
@@ -22,10 +24,11 @@ def alloc(gib):
 
 def main():
     dev = jax.devices()[0]
-    print("device", dev, "preallocate", os.environ.get("XLA_PYTHON_CLIENT_PREALLOCATE"))
+    print("device", dev, "preallocate", os.environ.get("XLA_PYTHON_CLIENT_PREALLOCATE"),
+          "allocator", os.environ.get("XLA_PYTHON_CLIENT_ALLOCATOR", "default"))
     print("memory_stats", json.dumps(dev.memory_stats()))
     single = {}
-    for g in (2, 4, 6, 8, 10, 12, 13, 14):
+    for g in (2, 3.5, 3.99, 4.0, 4.01, 6, 8.2, 10, 12):
         try:
             x = alloc(g)
             single[g] = True

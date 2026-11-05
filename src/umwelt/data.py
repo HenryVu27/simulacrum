@@ -58,11 +58,7 @@ def chunks(world: str, n_episodes: int, T: int = 256, seed: int = 0, chunk: int 
     rules = WORLDS[world]
     keys = jax.random.split(jax.random.PRNGKey(seed), n_episodes)
     for i in range(0, n_episodes, chunk):
-        # The world is physics, not learning: its matrix multiplies (ray casting, hearing) run in full
-        # float32 on every device. A GPU's default (TF32) rounds their inputs to about three digits, which
-        # flipped object visibility at 130 of 98,304 entries (docs/gpu.md). On a CPU this changes nothing.
-        with jax.default_matmul_precision("highest"):
-            a, o, g = rollout_batch(keys[i : i + chunk], rules, T)
+        a, o, g = rollout_batch(keys[i : i + chunk], rules, T)  # full float32 products: see senses.py
         rec = {"action": np.asarray(a, np.float32)}
         rec.update({f"obs_{k}": np.asarray(o[k], np.float16) for k in OBS_KEYS})
         rec.update({f"gt_{k}": np.asarray(v) for k, v in g.items()})

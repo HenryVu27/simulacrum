@@ -26,9 +26,13 @@ chmod +x "$UMWELT_SMI" "$HOME/.local/bin/uv"
 R=$UMWELT_ROOT/results/remote
 fails=0
 check() { if eval "$2"; then echo "PASS $1"; else echo "FAIL $1"; fails=$((fails + 1)); fi; }
+echo "print('code')" > "$UMWELT_ROOT/code.py"  # the pushed code, hashed the way remote.sh push does
+echo code.py > "$UMWELT_ROOT/.umwelt_files"
+codehash() { (cd "$UMWELT_ROOT" && tr '\n' '\0' < .umwelt_files | xargs -0 shasum -a 256 | shasum -a 256 | cut -c1-16); }
 new() {  # new job: name, command
-  echo "code abc" > "$UMWELT_ROOT/.umwelt_push"
-  printf 'code abc\ngit 1234567\n' > "$R/$1.push"
+  h=$(codehash)
+  echo "code $h" > "$UMWELT_ROOT/.umwelt_push"
+  printf 'code %s\ngit 1234567\n' "$h" > "$R/$1.push"
   echo "$2" > "$R/$1.cmd"
 }
 wait_for() { for _ in $(seq 100); do eval "$1" && return 0; sleep 0.1; done; return 1; }
@@ -44,7 +48,7 @@ new ok 'echo hello'
 limit bash "$job" ok
 check "a free GPU runs the job" '[ "$(cat $R/ok.exit)" = 0 ] && grep -q hello $R/ok.log'
 check "the lock is released after a job" '[ ! -e $UMWELT_LOCK ]'
-check "the log records code and backend" 'grep -q "code: code abc git 1234567" $R/ok.log && grep -q "JAX backend: gpu" $R/ok.log'
+check "the log records code and backend" 'grep -q "code: code $(codehash) git 1234567" $R/ok.log && grep -q "JAX backend: gpu" $R/ok.log'
 check "the pid file is removed" '[ ! -e $R/ok.pid ]'
 
 new fail 'exit 7'
@@ -90,6 +94,28 @@ new stale 'echo ran'
 echo "code xyz" > "$UMWELT_ROOT/.umwelt_push"
 limit bash "$job" stale
 check "refuses code pushed after the job was queued" '[ "$(cat $R/stale.exit)" = 3 ] && ! grep -q "^ran" $R/stale.log && [ ! -e $UMWELT_LOCK ]'
+
+new edited 'echo ran'
+echo "print('changed on the PC')" >> "$UMWELT_ROOT/code.py"
+limit bash "$job" edited
+check "refuses code edited on the PC after the job was queued" '[ "$(cat $R/edited.exit)" = 3 ] && ! grep -q "^ran" $R/edited.log'
+echo "print('code')" > "$UMWELT_ROOT/code.py"
+
+new empty 'sleep 1.5'
+bash "$job" empty & pid=$!
+wait_for '[ -f $UMWELT_LOCK/owner ]'
+: > "$UMWELT_LOCK/owner"  # as if another project had just created the lock and not yet written its owner
+limit_wait $pid
+check "never removes a lock whose owner line is empty" '[ -d $UMWELT_LOCK ] && grep -q "lock not released" $R/empty.log'
+rm -rf "$UMWELT_LOCK"
+
+new stray "sleep 34 & echo \$! > $T/stray; echo started"
+limit bash "$job" stray
+check "stops what the command left running before releasing the lock" '[ "$(cat $R/stray.exit)" = 0 ] && ! kill -0 $(cat $T/stray) 2>/dev/null && [ ! -e $UMWELT_LOCK ]'
+
+new plat 'echo "platforms=$JAX_PLATFORMS"'
+limit bash "$job" plat
+check "a GPU job makes a missing GPU an error, not a CPU fallback" 'grep -q "^platforms=cuda,cpu$" $R/plat.log'
 
 new cpu 'echo ran'
 limit env FAKE_BACKEND=cpu bash "$job" cpu

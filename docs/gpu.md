@@ -115,13 +115,15 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   step's whole working memory: 64 minds at once (just over 4 GiB) fails as well. Correction to the
   memory entry above: the binding limit is per compiled step, not per array.
 - 2026-11-04 23:05. JAX's `cuda_async` allocator (`XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async`) gets blocks
-  of 4, 6 and 8.2 GiB. Compared with the default in one job (`experiments/gpu/alloc_check.sh`): training
+  of 4, 6 and 8.2 GiB (seen over SSH; the output was not saved until `speed_check.sh` recorded it). Compared with the default in one job (`experiments/gpu/alloc_check.sh`): training
   with deterministic operations gives byte-identical weights (hash `69122ab38190b194`); on-device
-  updates for 1 to 32 minds take the same time (within 3 percent, three repeats each); 64 minds run
+  updates for 1 to 32 minds take about the same time (within 4 percent, three repeats each, except the
+  current learner alone: 2.57 ms under `cuda_async` against 2.87 ms, 11 percent faster); 64 minds run
   (37 ms per update) where the default fails; but the host-batch training loop that experiments use is
   25 percent slower (19.2 against 15.3 ms per update; the pause runs agree, 41 s against 37 s). Decision:
   jobs keep the default allocator; a job that needs a step of 4 GiB or more sets `cuda_async` itself:
-  `remote.sh run NAME env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async CMD...`.
+  `remote.sh run NAME env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async CMD...`. (Provisional: those
+  training-loop numbers include compiling, see 2026-11-05 below; `speed_check.sh` times the loop again.)
 - 2026-11-04. 128 minds at once under `cuda_async` run but take 457 ms per update (three repeats, 423 to
   466 ms), 12 times the 64-mind step for twice the work. Not explained; one guess, untested, is that
   Windows (WDDM) starts paging GPU memory when one process holds that much. In practice: at most 64
@@ -131,9 +133,13 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   its inputs keep about three significant digits, so hits at an object's edge flip. Against the Mac,
   object visibility differed at 130 of 98,304 entries (47 of 64 episodes) at the default precision, 4
   at full float32, 2 on the PC's CPU; vision values differed in 3.0, 0.6 and 0.3 percent of entries.
-  Physics, actions and every other sense were byte-identical between the two GPU precisions. Fix:
-  `data.chunks` now rolls the world out under `jax.default_matmul_precision("highest")`, so a recording
-  no longer depends on the device's default. On the Mac the output is byte-identical with the fix (world
+  Physics, actions, hearing, touch, smell, body sense, compass and oracle were byte-identical between
+  the two GPU precisions; vision, ray texture and the visibility labels were not, so every mind reading
+  the ray caster (eyes, or echolocation's depth and texture) saw different observations: bat 2.8,
+  chimera 4.2, vision_only 2.0, human 1.6 percent of entries (counted by the second independent check;
+  this entry first said "every other sense", which was wrong). First fix:
+  `data.chunks` rolls the world out under `jax.default_matmul_precision("highest")`, so a recording
+  no longer depends on the device's default (superseded 2026-11-05: it missed the surprise-test movies). On the Mac the output is byte-identical with the fix (world
   19 of 19 arrays, senses 14 of 14, training identical; tests 9 of 9). The check on the GPU is
   `checks.sh precfix` (a default-precision recording must equal the full-precision one).
 - 2026-11-04 23:19. The other project started a 13B training run (12.8 GB, 99 percent
@@ -148,7 +154,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   most 5 GB. The PC CPU benchmark (`pc-wsl-cpu`) left the default checks: it uses no GPU but would hold
   the lock for 15 to 20 minutes (`checks.sh cpu` runs it). `gpu-checks-3` was stopped for that change
   and requeued as `gpu-checks-4`.
-- 2026-11-05 00:05. `gpu-checks-4` ran from about 23:55 and finished at 00:05, earlier than planned (log
+- 2026-11-05 00:05. `gpu-checks-4` took the lock at 23:40, when the other project's training run ended early,
+  15 minutes before its announced slot (23:55), and finished at 00:05:03 (log
   `results/hardware/jobs/gpu-checks-4.log`). The GPU's other load at the start was 1 to 2 percent (the
   desktop was idle). The other project's session was told the GPU was free.
 - 2026-11-05. The precision fix holds on the GPU: a default-precision recording (`pc-gpu-precfix`) now
@@ -170,12 +177,57 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   run, to about 03:30, per `C:\gpu-schedule.txt`). `speed_check.sh` (the training loop by the new method,
   the cost of deterministic operations, and a compile-cache test) was queued as `speed-check-2` for the
   first gap, with a line in the schedule.
+- 2026-11-05 about 00:45. Second independent check (outside-judge agent, given the artifacts and the
+  claims, not the reasoning; it recomputed E1 to E5 and E4 from the raw arrays and read the stage 3
+  recordings' hashes on the PC). Every number held. What it found, and what was done:
+  - The precision fix missed a path: `voe._render` calls `sense_all` outside `data.chunks`, so on the GPU
+    the surprise-test movies were still ray-cast at TF32. Proof: surprise from the stimuli alone
+    (`S_copy`, the same for every learner seed) came out 0.005146 / -0.001158 / -0.001371 on the GPU against
+    0.005597 / -0.001628 / -0.001204 on the Mac, and rounding the ray caster's inputs to TF32 on the Mac
+    reproduced the GPU values within 4e-6. Fixed at the source (next entry).
+  - E4's PASS was stated too broadly (it covers M, not probes or surprise tests); the "isolate one cause"
+    lines left out run-to-run variation and a last-bit NumPy difference; "68 to 204 times", not "70 to
+    220"; two timing-agreement claims were wrong; `gpu-checks-4` started at 23:40, not 23:55; a sense
+    list and the test counts were wrong; STATUS was stale; `compare_gpu_stage3.log` predated the
+    file-naming fix (regenerated). All corrected in place, each correction marked.
+  - Not backed by a saved file: the memory-probe numbers, the `cuda_async` block sizes, the VM stopping
+    within 20 s, the per-process GPU load (wallpaper, compositor) and the stopped (T) state of paused
+    processes. They were seen over SSH; their output was not saved. The memory probe now saves its
+    output (`results/hardware/memprobe_<allocator>.txt`, in `speed_check.sh`); the rest stand as
+    observations.
+  - Four tooling risks to the shared PC, and four smaller ones, fixed in the entry after next.
+- 2026-11-05. Precision fixed at the source: every matrix product in `src/umwelt/senses.py` (ray caster,
+  hearing, touch, body sense) names `precision=HIGHEST`, so every caller is covered: recordings, the
+  surprise-test movies, anything added later. The `data.chunks` context is removed. A new test
+  (`tests/test_precision.py`) traces a rollout in every world, and the senses, and fails if any
+  `dot_general` is not at full precision; it fails on the previous code and passes now. On the Mac the
+  output is byte-identical: recordings 19 of 19 arrays, senses 14 of 14, training identical, and the
+  surprise-test movies hash the same before and after (`a7c905e4e8ab2e20`). Tests 11 of 11.
+- 2026-11-05. Tooling fixes from the check, each with a test that the previous version fails:
+  - `job.sh` removed the lock when its owner line was empty; another project may have just created it
+    and not yet written its line. It now removes only a lock whose owner line is exactly its own.
+  - `job.sh` compared manifest lines, so a file edited on the PC after queueing ran unnoticed. It now
+    rehashes the files at start, as `push` verification does.
+  - `push` never removed files deleted on the Mac, so the PC could keep importing a module the Mac no
+    longer has. It now removes the files the previous push sent that are gone.
+  - A `.pid` file outlives a VM restart, and the process id can be reused: `stop` could signal an
+    unrelated process (shown in isolation with the previous version), and `unlock` and the push guard
+    could be fooled. They now check that the process is that job's `job.sh`.
+  - Smaller: `job.sh` stops whatever the command left running before releasing the lock; it sets
+    `JAX_PLATFORMS=cuda,cpu` so a missing GPU is an error, not a CPU fallback (unless `--allow-cpu`);
+    `resume` removes only a pause `remote.sh pause` made, so Henry's own `mkdir C:\gpu-pause` stays
+    (`--force` overrides); `remote.sh sh` no longer lets JAX reserve 75 percent of the GPU; `setup` runs
+    outside the lock, so its GPU check is now a small product run only when the card is nearly idle, and
+    the tests run on the CPU.
+  - Tests: `job.sh` 26 of 26 (the previous version fails the 4 new ones); `remote.sh` 36 of 36.
+  - Not changed: jobs take the lock whenever it is free and do not read the schedule's times; the
+    schedule is a courtesy between sessions, the lock is the rule.
 
 ## How to run on the GPU
 
 Status: working against the real PC since 2026-11-04 (setup, push with verification, jobs, pause,
 pull; see the setup log). Both scripts also have tests on the Mac against stand-ins
-(`experiments/gpu/test_job.sh`, 22 cases; `experiments/gpu/test_remote.sh`, 29 cases, with a fake ssh
+(`experiments/gpu/test_job.sh`, 26 cases; `experiments/gpu/test_remote.sh`, 36 cases, with a fake ssh
 that plays the PC).
 
     experiments/gpu/remote.sh setup                       # once: copy code, install uv and CUDA JAX, run tests
@@ -257,6 +309,31 @@ project already has to survive.
   the world simulator. Time one full mind end to end (training, probes, surprise tests).
   Expectation, to be tested: the current learner is too small to fill a GPU, so one mind may run no
   faster than on the Mac; the gain should come from many minds at once and from larger learners.
+
+Added 2026-11-05, after the second independent check and before running it:
+
+- E7 Full results. E4 checks prediction error only. E7 checks every score a run reports. The run:
+  `umwelt run --world lawful --seed 0`, all 14 minds with controls, surprise tests and translation. On
+  the GPU it records its own world, in three configurations, one job each (`experiments/gpu/e7.sh`):
+  full float32 with deterministic operations (`f32det`, the candidate standard for real GPU work), the
+  same again (`f32det-rerun`), and the GPU's defaults (`default`: TF32 products, nondeterministic
+  operations). The reference is the Mac's stored run (`results/runs/main/lawful_s0`). Today's code
+  reproduces it exactly: all 72 non-timing numbers of the human mind are identical. The yardstick is
+  each score's own learner-seed difference on the Mac (`results/runs/main/lawful_s1` against `lawful_s0`).
+  Comparison: `experiments/gpu/compare_e7.py`. Families: test error (14 scores), MLP probes (168),
+  linear probes (168), surprise S (42), translation CKA (182), translation R squared (182). A family passes
+  when the median and the 95th percentile of its hardware differences are both at most a quarter of the
+  same statistics of its seed differences. E7 passes when every family passes and no score is missing.
+  Reported but not judged:
+  - the controls (untrained network, raw senses; the seed-1 run skipped them, so there is no yardstick);
+  - `S_copy`, surprise from the stimuli alone, which must match the Mac's to float precision now that the
+    movies render at full precision;
+  - for `f32det` against `f32det-rerun`, whether every number is identical.
+  The comparison was tried on the Mac first: the Mac against itself passes with every difference zero; seed
+  1 posing as another machine fails every family; a run with only one mind fails as incomplete.
+- Standing rule, from E4 and E7 together: a result is validated for the learner it was run with. Before a
+  new learner family (larger cores, attention) is pooled across machines, rerun E4 for it, or run its
+  confirmatory work at full float32 with deterministic operations.
 
 ## Results
 
@@ -343,10 +420,11 @@ world precision fix). Comparisons in `results/hardware/compare_gpu.log` and `com
   episodes (14 of them from the first step, median first difference at step 2; PC CPU: 61 episodes,
   median step 50), by at most 0.031 (PC CPU 0.010). Agent position differs by at most 0.035 and heading
   by 0.014 radians; object positions by more than 0.0001 in 9 episodes and by more than 0.1 in 2 (PC
-  CPU: 3 and 1). Physics and every sense but vision were byte-identical between the two GPU
-  precisions. Vision and the object-visibility labels were not: at the default precision (TF32) the
-  ray caster flipped visibility at 130 of 98,304 entries, against 4 at full float32 and 2 on the PC's
-  CPU. That was fixed (setup log); `checks.sh precfix` checks the fix on the GPU.
+  CPU: 3 and 1). Physics and every sense but the ray caster's (vision, ray texture, and through them
+  echolocation) were byte-identical between the two GPU precisions. Those, and the object-visibility
+  labels, were not: at the default precision (TF32) the ray caster flipped visibility at 130 of 98,304
+  entries, against 4 at full float32 and 2 on the PC's CPU. That was fixed (setup log, two steps);
+  `checks.sh precfix` checks the fix on the GPU.
 - E2 Senses, on the Mac's episodes: the sense presets are NumPy code and run on the CPU in a GPU job
   too. Same pattern as the PC CPU: the same 5 presets are identical, the 9 with smell differ, by at most
   7.5e-9 here (Linux's math library against the Mac's; Windows' against the Mac's gave 1.2e-7).
@@ -386,22 +464,33 @@ precision on the very episodes the PC's CPU run recorded under Windows. Compared
 | dark steps | -0.0278 | -0.0277 | -0.0278 | -0.0278 |
 | first lit step | 0.1362 | 0.1363 | 0.1361 | 0.1362 |
 | object returns | 0.1060 | 0.1060 | 0.1059 | 0.1060 |
+| other steps | 0.0098 | 0.0099 | 0.0099 | 0.0098 |
 | largest difference from the Mac | | 0.00004 | 0.00011 | 0.00006 |
 | test error, human (Mac 0.21917) | | 0.21917 | 0.21917 | 0.21917 |
 | test error, memoryless (Mac 0.22405) | | 0.22406 | 0.22405 | 0.22404 |
 
 Two comparisons isolate one cause each:
-- Same episodes in, GPU against the PC's CPU: largest difference in M 0.00008. This is GPU arithmetic
-  alone.
+- Same episodes in, GPU against the PC's CPU: largest difference in M 0.00008. This is GPU arithmetic,
+  plus a last-bit difference in the smell channel between Windows' and Linux's math libraries (E2),
+  which is negligible.
 - GPU default against GPU full float32, on byte-identical recorded worlds: 0.00013. This is TF32 in the
-  learner alone. The one-percent drift in the loss at 300 updates (E3) does not reach the result.
+  learner plus the run-to-run variation default GPU runs have (E5); stage 3 at the default precision ran
+  once, so the two are not separated. The one-percent drift in the loss at 300 updates (E3) does not reach the result.
 
-Every difference is 70 to 220 times under the bar (0.009, a quarter of the learner-seed spread of M at
+Every difference is 68 to 204 times under the bar (0.009, a quarter of the learner-seed spread of M at
 object returns), and the largest difference in overall M (0.00005) is 14 times under a quarter of overall
-M's own seed spread (0.0007). Per-step errors correlate at 1.0000 with the Mac's in every pass. PASS: GPU
-results can be compared with and pooled with the Mac's, at either precision.
+M's own seed spread (0.0007). Per-step errors correlate at 1.0000 with the Mac's in every pass (0.999996 at least).
 
-Speed on the way: recording the 8,448 episodes took 14 s on the GPU (41 s on the PC's CPU under Windows);
+PASS, for what E4 measures: prediction error and memory value M, for two minds, one world, one seed and
+the current learner. It does not cover probe scores or surprise tests. The one full mind run on both
+machines (human, lawful world, `bench.py` e2e) differs from the Mac in some probe scores by more than a
+quarter of their learner-seed difference, and its surprise-test movies were still rendered at TF32 (fixed
+2026-11-05). E7 tests that level before any GPU result is pooled. (The first version of this section
+said "GPU results can be pooled with the Mac's, at either precision"; the second independent check showed
+that went beyond the evidence.)
+
+Speed on the way: recording the 8,448 episodes took 14 s on the GPU (41 s on the PC's CPU under Windows,
+at idle priority beside another project's GPU job, so not a clean comparison);
 training took 68 s for human and 22 s for memoryless (idle Mac 134 s and 58 s).
 
 ### E6 on the GPU (2026-11-05)
@@ -430,11 +519,16 @@ comparison (`alloc_check.sh`). Each on-device setting is the median of three tim
 - 8 minds at once is slower than 16 at the default precision, in every repeat and in two separate jobs,
   but not at full float32 (14.3 ms). The compiler picks a poor plan for that shape under TF32.
 - Full float32 costs 10 percent at the current size and 50 percent at the largest.
-- The same settings timed in two jobs an hour apart agree within 5 percent.
+- The same setting timed in separate jobs differs by up to 7 percent for one mind and 10 to 11 percent
+  for 8 minds (three jobs), more than within a job. Treat differences under about 10 percent between jobs
+  as noise. (This line first said "within 5 percent", which was wrong.)
+- The default-precision column compares TF32 on the GPU with float32 on the Mac. The like-for-like
+  comparison is the full-float32 column: 11 to 40 times. Mac cells are single timings, GPU cells medians
+  of three.
 - One full mind, end to end (human, lawful world): 183 s against 295 s on the Mac. Training 55 s (Mac
   131), nonlinear probes 12 s (39), the two controls 1 and 9 s (38 and 41). But the surprise tests took 16 s
-  (Mac 0.7) and time outside the mind's stages doubled (77 s against 38 s, including 5 s to record the
-  world). The working guess is compile time on many small functions; `speed-check-2` tests it with a
+  (Mac 0.7) and time outside the mind's stages doubled (77 s against 38 s; the GPU run recorded its
+  1,280-episode world, 5 s, where the Mac's loaded an existing one). The working guess is compile time on many small functions; `speed-check-2` tests it with a
   persistent compile cache, and also times the training loop properly and the cost of deterministic
   operations.
 

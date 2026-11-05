@@ -6,7 +6,7 @@
 #
 #   bash experiments/gpu/test_remote.sh
 set -u
-remote=$(cd "$(dirname "$0")" && pwd)/remote.sh
+remote=${1:-$(cd "$(dirname "$0")" && pwd)/remote.sh}  # or a path to another version, to check the tests can fail
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 T=$(mktemp -d)
 tmpcode=$repo/experiments/gpu/_test_remote_tmp.txt  # a new file, to change the code hash
@@ -107,11 +107,16 @@ check "pull handles a path with spaces" '[ -f "$repo/results/remote/${tag} space
 mkdir "$UMWELT_LOCK" && echo "other-project job" > "$UMWELT_LOCK/owner"
 out=$(bash "$remote" unlock 2>&1)
 check "unlock refuses another project's lock" 'echo "$out" | grep -q "refused: the lock is not umwelt" && [ -d $UMWELT_LOCK ]'
-sleep 30 & live=$!
+bash -c 'sleep 30; :' umwelt/experiments/gpu/job.sh x & live=$!  # looks like job x's job.sh to ps
 echo "project=umwelt job=x host=h pid=$live started=now" > "$UMWELT_LOCK/owner"
 out=$(bash "$remote" unlock 2>&1)
 check "unlock refuses a running umwelt job's lock" 'echo "$out" | grep -q "still running" && [ -d $UMWELT_LOCK ]'
 kill $live
+sleep 30 & other=$!
+echo "project=umwelt job=x host=h pid=$other started=now" > "$UMWELT_LOCK/owner"
+out=$(bash "$remote" unlock 2>&1)
+check "unlock is not fooled by a reused process id" 'echo "$out" | grep -q "removed lock" && [ ! -d $UMWELT_LOCK ]'
+mkdir "$UMWELT_LOCK"
 echo "project=umwelt job=x host=h pid=999999 started=now" > "$UMWELT_LOCK/owner"
 out=$(bash "$remote" unlock 2>&1)
 check "unlock removes a dead umwelt job's lock" 'echo "$out" | grep -q "removed lock" && [ ! -d $UMWELT_LOCK ]'
@@ -136,12 +141,23 @@ wait_for '[ -f $P/results/remote/${tag}d.exit ]'
 check "stop ends a running job and frees the lock" 'echo "$out" | grep -q "stop sent" && [ "$(cat $P/results/remote/${tag}d.exit)" = 143 ] && [ ! -e $UMWELT_LOCK ]'
 out=$(bash "$remote" stop "${tag}d" 2>&1)
 check "stop reports a job that is not running" 'echo "$out" | grep -q "not queued or running"'
+sleep 30 & other=$!
+echo "$other" > "$P/results/remote/${tag}e.pid"  # a stale pid file whose number another program now has
+out=$(bash "$remote" stop "${tag}e" 2>&1)
+check "stop never signals a process that is not that job" 'echo "$out" | grep -q "not queued or running" && kill -0 $other'
+kill $other
+mkdir "$UMWELT_PAUSE"  # Henry pausing by hand on the PC
+out=$(bash "$remote" resume 2>&1)
+check "resume leaves a pause Henry made" 'echo "$out" | grep -q "refused" && [ -d $UMWELT_PAUSE ]'
+out=$(bash "$remote" resume --force 2>&1)
+check "resume --force removes it" '[ ! -e $UMWELT_PAUSE ]'
 
 git clone -q "$repo" "$T/clone"
 cp "$remote" "$T/clone/experiments/gpu/remote.sh"  # the version under test, which may be uncommitted
 rm "$T/clone/README.md"
 out=$(bash "$T/clone/experiments/gpu/remote.sh" push 2>&1)
 check "push skips a tracked file deleted but not committed" 'echo "$out" | grep -q "^pushed"'
+check "push removes on the PC a file deleted here" '[ ! -e $P/README.md ] && echo "$out" | grep -q "removed on the PC.*README.md"'
 
 cd /tmp && out=$(bash "$remote" 2>&1)
 check "works when called from another folder" 'echo "$out" | grep -q "remote.sh push"'

@@ -3,18 +3,21 @@
 #
 #   remote.sh push [PATH...]                 copy the working tree (not results/), plus PATHs, to ~/umwelt
 #   remote.sh setup                          one-time install (runs setup_wsl.sh)
-#   remote.sh sh 'CMD'                       run a command in ~/umwelt now and wait for it
+#   remote.sh sh 'CMD'                       run a command in ~/umwelt now and wait for it (no lock: keep
+#                                            it off the GPU, or small)
 #   remote.sh run [--allow-cpu] NAME CMD...  start CMD as a background job; it waits for a free GPU
 #   remote.sh status [NAME]                  GPU use, lock holder, pause switch, last lines of NAME's log
 #   remote.sh stop NAME                      stop a queued or running job (its lock, if any, is released)
-#   remote.sh pause | resume                 create or delete C:\gpu-pause: while it exists no job starts
-#                                            and running jobs are frozen (on the PC: mkdir C:\gpu-pause)
+#   remote.sh pause | resume [--force]       create or delete C:\gpu-pause: while it exists no job starts
+#                                            and running jobs are frozen. resume removes only a pause that
+#                                            remote.sh made; Henry's own (mkdir C:\gpu-pause) needs --force
 #   remote.sh pull [--overwrite] PATH...     copy files under ~/umwelt back here (a local file that
 #                                            differs is kept, unless --overwrite)
 #   remote.sh unlock [--force]               remove C:\gpu-lock left by a killed umwelt job
 #
 # A job survives the SSH connection closing: it is started through Windows' Win32_Process.Create,
-# outside the SSH session. Each push writes .umwelt_push (code hash, git commit, uncommitted changes);
+# outside the SSH session. Each push writes .umwelt_push (code hash, git commit, uncommitted changes),
+# removes files the previous push sent that are gone here, and has the PC rehash what arrived;
 # a job keeps a copy, records it in its log and refuses to start on different code. A push that would
 # change the code while an umwelt job is queued or running is refused. Job names are used once.
 set -euo pipefail
@@ -29,7 +32,9 @@ export COPYFILE_DISABLE=1  # with --no-xattrs --no-mac-metadata: no macOS ._ fil
 
 ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"; }
 wsl_sh() { ssh_pc "$WSL bash -s"; }  # runs the bash script on stdin inside WSL
-usage() { sed -n '2,19p' "$self"; exit 2; }
+# For WSL-side scripts: is PID still job NAME's job.sh? A bare kill -0 is fooled by a reused process id.
+IS_JOB='is_job() { [ -n "$1" ] && ps -p "$1" -o args= 2>/dev/null | grep -q "job.sh $2\$"; }'
+usage() { sed -n '2,22p' "$self"; exit 2; }
 valid_name() { [[ "$1" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "job name: letters, digits, . _ - only" >&2; exit 2; }; }
 code_files() {  # tracked and new files outside results/, skipping deleted ones
   git ls-files -co --exclude-standard | grep -v '^results/' | while IFS= read -r f; do
@@ -49,11 +54,12 @@ case "$cmd" in
   push)
     code_files > .umwelt_files
     m=$(manifest)
-    state=$({ cat <<'EOF'
+    state=$({ echo "$IS_JOB"; cat <<'EOF'
 cd umwelt 2>/dev/null || exit 0
 grep '^code ' .umwelt_push 2>/dev/null || echo "code none"
 for p in results/remote/*.pid; do
-  if [ -f "$p" ] && kill -0 "$(cat "$p")" 2>/dev/null; then echo "active $(basename "$p" .pid)"; fi
+  n=$(basename "$p" .pid)
+  if [ -f "$p" ] && is_job "$(cat "$p")" "$n"; then echo "active $n"; fi
 done
 EOF
     } | wsl_sh | tr -d '\r')
@@ -64,8 +70,15 @@ EOF
     fi
     printf '%s\n' "$m" > .umwelt_push
     ssh_pc "$WSL mkdir -p umwelt"
+    echo 'cd umwelt && if [ -f .umwelt_files ]; then cp .umwelt_files .umwelt_files.prev; else : > .umwelt_files.prev; fi' | wsl_sh
     { cat .umwelt_files; echo .umwelt_files; echo .umwelt_push; if [ $# -gt 0 ]; then printf '%s\n' "$@"; fi; } \
       | tar --no-xattrs --no-mac-metadata -cf - -T - | ssh_pc "$WSL tar -xf - -C umwelt"
+    # files the previous push sent that are gone here: remove them there, or the PC keeps running them
+    gone=$(echo 'cd umwelt && sort .umwelt_files.prev > .p1 && sort .umwelt_files > .p2 && comm -23 .p1 .p2; rm -f .p1 .p2 .umwelt_files.prev' | wsl_sh | tr -d '\r')
+    if [ -n "$gone" ]; then
+      { echo 'cd umwelt'; printf '%s\n' "$gone" | while IFS= read -r f; do printf 'rm -f -- %q\n' "$f"; done; } | wsl_sh
+      echo "removed on the PC (deleted here): $(echo "$gone" | tr '\n' ' ')"
+    fi
     # the PC hashes what arrived the same way: catches anything the SSH, cmd and wsl.exe pipe altered
     there=$(echo 'cd umwelt && echo "code $(tr "\n" "\0" < .umwelt_files | xargs -0 sha256sum | sha256sum | cut -c1-16)"' | wsl_sh | tr -d '\r')
     if [ "$there" != "$(echo "$m" | grep '^code ')" ]; then
@@ -80,7 +93,7 @@ EOF
     ;;
   sh)
     [ $# -gt 0 ] || usage
-    printf 'cd umwelt && export PATH="$HOME/.local/bin:$PATH" && %s\n' "$*" | wsl_sh
+    printf 'cd umwelt && export PATH="$HOME/.local/bin:$PATH" XLA_PYTHON_CLIENT_PREALLOCATE=false && %s\n' "$*" | wsl_sh
     ;;
   run)
     allow=0
@@ -151,10 +164,10 @@ EOF
   stop)
     [ $# -eq 1 ] || usage
     valid_name "$1"
-    { echo "name=$1"
+    { echo "name=$1"; echo "$IS_JOB"
       cat <<'EOF'
 p=umwelt/results/remote/$name.pid
-if [ -f "$p" ] && kill -0 "$(cat "$p")" 2>/dev/null; then
+if [ -f "$p" ] && is_job "$(cat "$p")" "$name"; then
   kill -TERM "$(cat "$p")" && echo "stop sent to $name; it ends within a minute (exit code 143)"
 else
   echo "$name is not queued or running"
@@ -163,26 +176,35 @@ EOF
     } | wsl_sh
     ;;
   pause)
-    echo 'p=${UMWELT_PAUSE:-/mnt/c/gpu-pause}; [ -e "$p" ] || touch "$p"; echo "paused: no umwelt job starts, running ones freeze within 5 s"' | wsl_sh
+    echo 'p=${UMWELT_PAUSE:-/mnt/c/gpu-pause}; [ -e "$p" ] || echo "made by remote.sh pause $(date)" > "$p"; echo "paused: no umwelt job starts, running ones freeze within 5 s"' | wsl_sh
     ;;
   resume)
-    echo 'rm -rf "${UMWELT_PAUSE:-/mnt/c/gpu-pause}"; echo "resumed"' | wsl_sh
+    { echo "force=$([ "${1:-}" = --force ] && echo 1 || echo 0)"
+      cat <<'EOF'
+p=${UMWELT_PAUSE:-/mnt/c/gpu-pause}
+if [ ! -e "$p" ]; then echo "not paused"
+elif [ "$force" = 1 ] || { [ -f "$p" ] && grep -q "^made by remote.sh pause" "$p"; }; then rm -rf "$p" && echo "resumed"
+else echo "refused: someone else made C:\gpu-pause (Henry?); remote.sh resume --force removes it anyway"; exit 1
+fi
+EOF
+    } | wsl_sh
     ;;
   unlock)
     force=0
     if [ "${1:-}" = --force ]; then force=1; fi
-    { echo "force=$force"
+    { echo "force=$force"; echo "$IS_JOB"
       cat <<'EOF'
 lock=${UMWELT_LOCK:-/mnt/c/gpu-lock}
 if [ ! -d "$lock" ]; then echo "no lock"; exit 0; fi
 owner=$(head -n 1 "$lock/owner" 2>/dev/null)
 pid=$(echo "$owner" | sed -n 's/.* pid=\([0-9]*\) .*/\1/p')
+job=$(echo "$owner" | sed -n 's/.* job=\([^ ]*\) .*/\1/p')
 if [ "$force" != 1 ]; then
   case "$owner" in
     project=umwelt*) ;;
     *) echo "refused: the lock is not umwelt's ('$owner'); use --force only if that job is surely gone"; exit 1 ;;
   esac
-  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then echo "refused: its job is still running (pid $pid)"; exit 1; fi
+  if is_job "$pid" "$job"; then echo "refused: its job is still running (pid $pid)"; exit 1; fi
 fi
 rm -rf "$lock" && echo "removed lock: $owner"
 EOF
