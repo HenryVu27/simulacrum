@@ -275,6 +275,11 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
     unrelated process holding a reused id; the new one does not).
   - The dog's wall tie is not fixed: moving the hidden wall changes the dog's stored results on the Mac,
     so it is Henry's call.
+- 2026-11-05 04:21. The new tooling on the real PC (`smoke-final`, log in `results/hardware/jobs/`): the
+  Mac's lawful recording pushed and verified file by file; the job ran with the recording guard on, half
+  the card, the 2 GB cache cap and its code version (ecf3527); `experiment.provenance` on the GPU gave the
+  recording hash `e9b74db4218d7e27`, the same as the Mac's; asking for a recording that is not there was
+  refused and nothing was recorded.
 
 ## How to run on the GPU
 

@@ -1,0 +1,10 @@
+[2026-11-05T04:21:27-0600] lock taken: project=umwelt job=smoke-final host=HenrysPC pid=531 started=2026-11-05T04:21:27-0600
+[2026-11-05T04:21:27-0600] code: code 99316a140b095133 git ecf3527 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:21:24-0600 
+[2026-11-05T04:21:29-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T04:21:29-0600] start: bash -c $'echo "norecord=${UMWELT_NO_RECORD:-} fraction=$XLA_PYTHON_CLIENT_MEM_FRACTION cachemax=$JAX_COMPILATION_CACHE_MAX_SIZE code=$UMWELT_CODE"; uv run --no-sync python -c "\nfrom umwelt import data, experiment\np = experiment.provenance(\\"lawful\\", 1280, 0)\nprint(\\"provenance\\", {k: p[k] for k in (\\"backend\\", \\"device\\", \\"matmul_precision\\", \\"recording_hash\\", \\"code\\")})\ntry:\n    data.load(\\"lawful\\", 7, 256, seed=99)\n    print(\\"RECORDED: the guard failed\\")\nexcept FileNotFoundError as e:\n    print(\\"refused to record:\\", str(e)[:90])\n"' 
+norecord=1 fraction=0.5 cachemax=2000000000 code=code 99316a140b095133 git ecf3527 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:21:24-0600 
+/root/umwelt/.venv/lib/python3.13/site-packages/jax/_src/compiler.py:826: UserWarning: Error reading persistent compilation cache entry for 'jit_stage': RuntimeError: Please install the `filelock` package to set `jax_compilation_cache_max_size`
+  warnings.warn(
+provenance {'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'matmul_precision': 'None', 'recording_hash': 'e9b74db4218d7e27', 'code': 'code 99316a140b095133 git ecf3527 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:21:24-0600 '}
+refused to record: lawful_s99_e7_t256 is not here and UMWELT_NO_RECORD is set: record it once and copy it (re
+[2026-11-05T04:21:34-0600] exit 0
