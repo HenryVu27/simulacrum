@@ -107,6 +107,40 @@
  },
  "voe": {
   "permanence": {
+   "S": 0.0069967592135071754,
+   "ci": [
+    -0.0018308048573089763,
+    0.015438482235185796
+   ],
+   "S_copy": 0.003829943249002099
+  },
+  "solidity": {
+   "S": 0.007907806895673275,
+   "ci": [
+    -1.721330736472719e-05,
+    0.015356862824410199
+   ],
+   "S_copy": -0.006982045713812113
+  },
+  "causality": {
+   "S": -0.04061969742178917,
+   "ci": [
+    -0.05850092489272356,
+    -0.021749651478603492
+   ],
+   "S_copy": -0.010329816490411758
+  }
+ },
+ "timing": {
+  "train": 189.8,
+  "latents": 2.1,
+  "probes_mlp": 41.7,
+  "probes_linear": 3.5,
+  "voe": 0.8
+ },
+ "seconds": 247.93308901786804,
+ "voe_before_battery_fix": {
+  "permanence": {
    "S": 0.006620125845074654,
    "ci": [
     -0.0035269448475446553,
@@ -131,12 +165,18 @@
    "S_copy": -0.010543130338191986
   }
  },
- "timing": {
-  "train": 189.8,
-  "latents": 2.1,
-  "probes_mlp": 41.7,
-  "probes_linear": 3.5,
-  "voe": 0.8
+ "provenance": {
+  "stimuli": "016fc3d72807e39d"
  },
- "seconds": 247.93308901786804
+ "corrections": [
+  {
+   "date": "2026-11-05",
+   "what": "surprise-test stimuli redesigned: three real walls in every movie, solidity wall seen face-on (docs/preregistration.md, second correction, 2026-11-05)",
+   "script": "experiments/recompute_battery.py",
+   "code": "d6c6763 with uncommitted changes in src",
+   "machine": "Henrys-MacBook-Pro-2.local",
+   "stimuli": "016fc3d72807e39d",
+   "stimuli_before": "not recorded"
+  }
+ ]
 }

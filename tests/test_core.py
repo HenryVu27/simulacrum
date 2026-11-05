@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -137,16 +139,72 @@ def test_look_back_turns_away_and_returns():
     assert any(big > np.deg2rad(110) and end < np.deg2rad(30) for big, end in swings), swings
 
 
-def test_the_absent_wall_is_really_absent(monkeypatch):
-    """voe.HIDDEN_WALL stands for "no wall here" in the surprise-test movies. Moving it further away must change
-    no observation except the oracle's, which reads wall coordinates directly."""
-    makers = [lambda: voe.permanence(voe.INERT[0], -0.5), lambda: voe.solidity(voe.INERT[0], 0.5),
-              lambda: voe.causality(voe.INERT[0], voe.INERT[1], -0.5)]
-    base = [m()[0] for m in makers]
-    monkeypatch.setattr(voe, "HIDDEN_WALL", voe.HIDDEN_WALL + np.array([0.0, -5.0, 0.0, -5.0], np.float32))
-    moved = [m()[0] for m in makers]
-    for movies_a, movies_b in zip(base, moved):
-        for va, vb in zip(movies_a, movies_b):
-            for k in va:
-                if k != "oracle":
-                    assert np.array_equal(va[k], vb[k]), k
+# One quadruplet per test, at both jitter extremes: enough to cover every geometry without rendering the suite.
+QUADS = [("permanence", lambda j: voe.permanence(voe.INERT[-1], j)), ("solidity", lambda j: voe.solidity(voe.INERT[-1], j)),
+         ("causality", lambda j: voe.causality(voe.INERT[-1], voe.INERT[0], j))]
+OFF_ARENA = np.array([0.5, -1.0, 1.5, -1.0], np.float32)  # the old "no wall here" marker, where nothing reaches
+
+
+def _walls(movie):
+    """The internal walls a movie shows, read back from the oracle's input: (T, 3, 4)."""
+    return movie["oracle"][:, -12:].reshape(-1, 3, 4) * 10.0
+
+
+def test_every_movie_has_three_walls_from_the_training_range():
+    """The oracle reads wall coordinates, so a wall it has never seen the like of sets its scores
+    (docs/preregistration.md, second correction of 2026-11-05)."""
+    for name, make in QUADS:
+        for j in (-0.5, 0.5):
+            movies, _ = make(j)
+            for v, m in zip(voe.VARIANTS, movies):
+                w = _walls(m)
+                assert np.array_equal(w, np.broadcast_to(w[0], w.shape)), (name, v)  # walls stand still
+                mid, half = (w[0, :, :2] + w[0, :, 2:]) / 2, np.linalg.norm(w[0, :, 2:] - w[0, :, :2], axis=-1) / 2
+                assert ((2.5 - 1e-5 <= mid) & (mid <= 7.5 + 1e-5)).all(), (name, j, v, mid)
+                assert ((0.75 - 1e-5 <= half) & (half <= 1.5 + 1e-5)).all(), (name, j, v, half)
+            shared = slice(1, 3) if name == "solidity" else slice(0, 3)  # solidity's first wall is the event's
+            assert all(np.array_equal(_walls(m)[0, shared], _walls(movies[0])[0, shared]) for m in movies), name
+
+
+def test_bystander_walls_hide_nothing(monkeypatch):
+    """Render every quadruplet with its bystander walls and again with them off the arena. Apart from the oracle's
+    wall coordinates, only rays that met a boundary wall may change (they now meet a bystander), and no other
+    sense may change at all."""
+    with_them = {(n, j): make(j)[0] for n, make in QUADS for j in (-0.5, 0.5)}
+    monkeypatch.setattr(voe, "_bystanders", lambda n, *a: np.tile(OFF_ARENA, (n, 1)))
+    without = {(n, j): make(j)[0] for n, make in QUADS for j in (-0.5, 0.5)}
+    boundary = np.asarray(kinds.BOUNDARY_COLOR)
+    seen = 0
+    for key in with_them:
+        for v, a, b in zip(voe.VARIANTS, with_them[key], without[key]):
+            for k in a:
+                if k == "vision":
+                    changed = (a[k] != b[k]).any(-1)
+                    was = b[k][changed][:, :3]
+                    assert (np.abs(was[:, None] - boundary[None]).max(-1) < 1e-6).any(-1).all(), (key, v)
+                    assert (a[k][changed][:, 3] < b[k][changed][:, 3]).all(), (key, v)  # the bystander is nearer
+                    seen += changed.sum()
+                elif k == "oracle":
+                    assert np.array_equal(a[k][:, :-12], b[k][:, :-12]), (key, v)
+                else:
+                    assert np.array_equal(a[k], b[k]), (key, v, k)
+    assert seen > 0  # a bystander can stand edge-on or in a shadow, as walls do in training, but not all of them
+
+
+def test_solidity_shows_the_wall_and_stays_balanced():
+    """Until the second correction of 2026-11-05 the agent saw the wall edge-on: no ray met it, and every sense but
+    the oracle's saw the wall movies exactly as the no-wall movies. Now the eyes tell them apart, and a predictor that
+    copies the last frame still finds the possible and impossible movies equally hard. (Without the solidity screen
+    it found the impossible ones easier, because the wall hid the object passing through it.)"""
+    human = np.abs(np.rad2deg(RAY_REL)) <= 90
+    for kind in (voe.INERT[0], voe.INERT[-1]):
+        for j in (-0.5, 0.5):
+            (p1, p2, i1, i2), tc = voe.solidity(kind, j)
+            differ = ((p1["vision"][voe.PRE:tc] != i2["vision"][voe.PRE:tc]).any(-1) & human).sum(-1)
+            assert differ.min() >= 2, (kind, j)  # same motion, wall in the path or slid away
+            d = {f"obs_{k}": np.stack([m[k] for m in (p1, p2, i1, i2)]) for k in p1}
+            d["action"] = np.zeros((4, len(p1["oracle"]), 2), np.float32)
+            for name in ("human", "bat", "chimera", "dog"):
+                p = replace(PRESETS[name], senses=tuple(replace(x, noise=0.0) for x in PRESETS[name].senses))
+                s, _ = voe.surprise(voe.copy_errors(observe(d, p)), np.array([tc]), n_boot=1)
+                assert abs(s) < 0.01, (kind, j, name, s)

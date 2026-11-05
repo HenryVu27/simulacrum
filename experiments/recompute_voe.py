@@ -1,5 +1,8 @@
 """Correction to the surprise-test stimuli (docs/preregistration.md, 2026-11-05): recompute surprise scores.
 
+Kept as the record of the first correction. It runs only on voe.py as of cf27e28 to d6c6763 (it moves
+voe.HIDDEN_WALL); the second correction removed that marker and is recomputed by recompute_battery.py.
+
 voe.HIDDEN_WALL ("no wall here") lay on the boundary wall, so some of the dog's rays met two walls at the same
 distance and took their colour from last-bit rounding, which differs between devices. It now lies outside the
 arena. Only two minds' surprise-test inputs change (every preset's observations of the suite were compared):

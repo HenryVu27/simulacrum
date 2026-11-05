@@ -107,26 +107,26 @@
  },
  "voe": {
   "permanence": {
-   "S": 0.3920349180698395,
+   "S": 1.0283125638961792,
    "ci": [
-    0.37018268182873726,
-    0.420397212356329
+    0.8375391781330108,
+    1.3511048674583435
    ],
    "S_copy": 5082.447265625
   },
   "solidity": {
-   "S": -0.045023273676633835,
+   "S": -0.0012464789906516671,
    "ci": [
-    -0.050922829657793045,
-    -0.039039933960884815
+    -0.008046536077745258,
+    0.005714939313475038
    ],
    "S_copy": 0.0
   },
   "causality": {
-   "S": -0.018165087327361107,
+   "S": -0.045856282114982605,
    "ci": [
-    -0.026431713020429015,
-    -0.010876255109906202
+    -0.05786752151325345,
+    -0.03435020009055734
    ],
    "S_copy": 0.0
   }
@@ -172,6 +172,44 @@
    "script": "experiments/recompute_voe.py",
    "code": "ad270b0",
    "machine": "Mac-2199.lan"
+  },
+  {
+   "date": "2026-11-05",
+   "what": "surprise-test stimuli redesigned: three real walls in every movie, solidity wall seen face-on (docs/preregistration.md, second correction, 2026-11-05)",
+   "script": "experiments/recompute_battery.py",
+   "code": "d6c6763 with uncommitted changes in src",
+   "machine": "Henrys-MacBook-Pro-2.local",
+   "stimuli": "016fc3d72807e39d",
+   "stimuli_before": "not recorded"
   }
- ]
+ ],
+ "voe_before_battery_fix": {
+  "permanence": {
+   "S": 0.3920349180698395,
+   "ci": [
+    0.37018268182873726,
+    0.420397212356329
+   ],
+   "S_copy": 5082.447265625
+  },
+  "solidity": {
+   "S": -0.045023273676633835,
+   "ci": [
+    -0.050922829657793045,
+    -0.039039933960884815
+   ],
+   "S_copy": 0.0
+  },
+  "causality": {
+   "S": -0.018165087327361107,
+   "ci": [
+    -0.026431713020429015,
+    -0.010876255109906202
+   ],
+   "S_copy": 0.0
+  }
+ },
+ "provenance": {
+  "stimuli": "016fc3d72807e39d"
+ }
 }

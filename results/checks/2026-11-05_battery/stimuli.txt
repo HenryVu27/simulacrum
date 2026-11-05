@@ -1,0 +1,67 @@
+1 and 2. every quadruplet: walls in the training range, shared bystanders, bystanders hide nothing
+  ('permanence', 0, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 5270
+  ('solidity', 0, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1472
+  ('permanence', 0, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 5544
+  ('solidity', 0, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1914
+  ('permanence', 0, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3432
+  ('solidity', 0, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1060
+  ('permanence', 1, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2376
+  ('solidity', 1, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 113
+  ('permanence', 1, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 5808
+  ('solidity', 1, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1654
+  ('permanence', 1, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 5808
+  ('solidity', 1, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2260
+  ('permanence', 2, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2866
+  ('solidity', 2, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 332
+  ('permanence', 2, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3432
+  ('solidity', 2, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 0
+  ('permanence', 2, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3168
+  ('solidity', 2, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3172
+  ('permanence', 3, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 5262
+  ('solidity', 3, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3210
+  ('permanence', 3, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 766
+  ('solidity', 3, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 232
+  ('permanence', 3, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 792
+  ('solidity', 3, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3720
+  ('permanence', 4, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3400
+  ('solidity', 4, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2130
+  ('permanence', 4, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1046
+  ('solidity', 4, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1494
+  ('permanence', 4, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1584
+  ('solidity', 4, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2084
+  ('permanence', 6, -0.5)          walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 0
+  ('solidity', 6, -0.5)            walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1342
+  ('permanence', 6, 0.0)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 6072
+  ('solidity', 6, 0.0)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1128
+  ('permanence', 6, 0.5)           walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3696
+  ('solidity', 6, 0.5)             walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3840
+  ('causality', 0, 1, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3146
+  ('causality', 0, 1, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1746
+  ('causality', 0, 1, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 6038
+  ('causality', 1, 2, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 4960
+  ('causality', 1, 2, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3122
+  ('causality', 1, 2, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 4270
+  ('causality', 2, 3, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2590
+  ('causality', 2, 3, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 4774
+  ('causality', 2, 3, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1984
+  ('causality', 3, 4, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2982
+  ('causality', 3, 4, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2220
+  ('causality', 3, 4, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 6286
+  ('causality', 4, 6, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 4472
+  ('causality', 4, 6, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 2226
+  ('causality', 4, 6, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 1464
+  ('causality', 6, 0, -0.5)        walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 3290
+  ('causality', 6, 0, 0.0)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 4778
+  ('causality', 6, 0, 0.5)         walls in range True, bystanders shared True, hide nothing True, ray-frames on bystanders 6344
+  54 of 54 quadruplets pass; 2 have bystanders no ray meets (edge-on or in a shadow)
+  a wall placed across the object's path on purpose is caught: True
+  a wall placed between the agent and the screen on purpose is caught: True
+
+3. solidity: rays (of the human's) that differ between wall-in-path and wall-slid-away movies before the contact; frames after the contact in which the passing object is seen
+  previous rays that differ per frame: min 0, mean 0.0, max 0; frames the passing object is seen (of 24), wall in path / slid away: mean 24.0 / 24.0, equal in 18 of 18 movies
+  new      rays that differ per frame: min 2, mean 5.6, max 6; frames the passing object is seen (of 24), wall in path / slid away: mean 9.3 / 9.3, equal in 18 of 18 movies
+
+4. balance: copy predictor's S on noise-free observations (0 = balanced), previous -> new movies
+  permanence human +0.0000 -> +0.0000, vision_only +0.0000 -> +0.0000, dog +0.0000 -> +0.0000, bat +0.0000 -> +0.0000, chimera +0.0000 -> +0.0000, blind -0.0817 -> -0.0817, hearing_only +nan -> +nan, smell_only -0.0817 -> -0.0817, oracle +1287.3229 -> +1287.3229
+  solidity   human +0.0000 -> +0.0002, vision_only +0.0000 -> +0.0003, dog +0.0000 -> +0.0004, bat +0.0000 -> +0.0003, chimera +0.0000 -> +0.0024, blind +0.0000 -> +0.0000, hearing_only +0.0000 -> +0.0000, smell_only +0.0000 -> +0.0000, oracle +0.0000 -> +0.0000
+  causality  human +0.0000 -> +0.0000, vision_only -0.0000 -> +0.0000, dog +0.0000 -> -0.0000, bat +0.0000 -> +0.0000, chimera -0.0000 -> -0.0000, blind +0.0000 -> +0.0000, hearing_only +0.0000 -> +0.0000, smell_only +0.0002 -> +0.0002, oracle +0.0000 -> +0.0000

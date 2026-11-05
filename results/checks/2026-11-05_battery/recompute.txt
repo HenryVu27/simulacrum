@@ -1,0 +1,17 @@
+suites built in 64 s; new stimuli 016fc3d72807e39d, previous e8b112a5e2a11879
+main/lawful_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+main/lawful_s1: previous movies reproduce all 14 minds' stored scores exactly; written
+main/ghost_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+main/impermanent_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+main/nonlocal_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+main/lawful_mj_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+v2/dark_s0: previous movies reproduce all 14 minds' stored scores exactly; written
+v2/dark_s1: previous movies reproduce all 14 minds' stored scores exactly; written
+pilot/lawful_s0: previous movies reproduce all 3 minds' stored scores exactly; written
+long/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+jepa/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+ab_drop/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+ab_h5/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+ab_h15/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+ab_h30/lawful_s0: previous movies reproduce all 1 minds' stored scores exactly; written
+wrote /Users/henryvu/personal/umwelt/results/battery_fix_recompute.json (498 scores, 121 s)

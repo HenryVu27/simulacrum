@@ -1,0 +1,208 @@
+5 suites in 134 s: seed 0 016fc3d72807e39d, seed 1 f223a41c6e002363, seed 2 986cedf85638dda2, seed 3 1974f99e5d6731c2, seed 4 b87feb120df19051
+main/lawful_s0 bat: done (137 s)
+main/lawful_s0 blind: done (139 s)
+main/lawful_s0 chimera: done (140 s)
+main/lawful_s0 deafblind: done (142 s)
+main/lawful_s0 dog: done (144 s)
+main/lawful_s0 hearing_only: done (146 s)
+main/lawful_s0 human: done (149 s)
+main/lawful_s0 memoryless: done (150 s)
+main/lawful_s0 oracle: done (152 s)
+main/lawful_s0 passive: done (154 s)
+main/lawful_s0 passive_novest: done (156 s)
+main/lawful_s0 smell_only: done (157 s)
+main/lawful_s0 touch_only: done (159 s)
+main/lawful_s0 vision_only: done (161 s)
+v2/dark_s0 bat: done (161 s)
+v2/dark_s0 blind: done (162 s)
+v2/dark_s0 chimera: done (163 s)
+v2/dark_s0 deafblind: done (164 s)
+v2/dark_s0 dog: done (165 s)
+v2/dark_s0 hearing_only: done (166 s)
+v2/dark_s0 human: done (167 s)
+v2/dark_s0 memoryless: done (168 s)
+v2/dark_s0 oracle: done (168 s)
+v2/dark_s0 passive: done (170 s)
+v2/dark_s0 passive_novest: done (171 s)
+v2/dark_s0 smell_only: done (172 s)
+v2/dark_s0 touch_only: done (172 s)
+v2/dark_s0 vision_only: done (173 s)
+
+S on layout seeds [0, 1, 2, 3, 4]; spread = max - min across layouts; CI width = 95% interval on seed 0
+main/lawful_s0   bat             trained   permanence -0.0052 -0.0019 -0.0012 -0.0042 -0.0037  spread 0.0041  CI width 0.0186
+main/lawful_s0   bat             trained   solidity   +0.0074 +0.0081 +0.0091 +0.0039 +0.0059  spread 0.0052  CI width 0.0151  interval-excludes-0 differs between layouts
+main/lawful_s0   bat             trained   causality  -0.0742 -0.0742 -0.0634 -0.0634 -0.0708  spread 0.0108  CI width 0.0454
+main/lawful_s0   bat             untrained permanence -0.0008 -0.0001 +0.0001 -0.0005 -0.0004  spread 0.0008  CI width 0.0058
+main/lawful_s0   bat             untrained solidity   +0.0029 +0.0027 +0.0028 +0.0027 +0.0024  spread 0.0005  CI width 0.0073
+main/lawful_s0   bat             untrained causality  +0.0002 -0.0003 +0.0006 +0.0007 -0.0007  spread 0.0014  CI width 0.0070
+main/lawful_s0   blind           trained   permanence -0.0082 -0.0082 -0.0082 -0.0082 -0.0082  spread 0.0000  CI width 0.0588
+main/lawful_s0   blind           trained   solidity   -0.0031 -0.0031 -0.0031 -0.0031 -0.0031  spread 0.0000  CI width 0.0618
+main/lawful_s0   blind           trained   causality  +0.0057 +0.0057 +0.0057 +0.0057 +0.0057  spread 0.0000  CI width 0.0721
+main/lawful_s0   blind           untrained permanence -0.0031 -0.0031 -0.0031 -0.0031 -0.0031  spread 0.0000  CI width 0.0297
+main/lawful_s0   blind           untrained solidity   -0.0016 -0.0016 -0.0016 -0.0016 -0.0016  spread 0.0000  CI width 0.0291
+main/lawful_s0   blind           untrained causality  +0.0002 +0.0002 +0.0002 +0.0002 +0.0002  spread 0.0000  CI width 0.0334
+main/lawful_s0   chimera         trained   permanence +0.0081 +0.0086 +0.0077 +0.0071 +0.0055  spread 0.0031  CI width 0.0157  interval-excludes-0 differs between layouts
+main/lawful_s0   chimera         trained   solidity   +0.0033 +0.0032 +0.0048 +0.0019 +0.0011  spread 0.0037  CI width 0.0142
+main/lawful_s0   chimera         trained   causality  -0.0584 -0.0629 -0.0523 -0.0509 -0.0671  spread 0.0163  CI width 0.0372
+main/lawful_s0   chimera         untrained permanence +0.0030 +0.0033 +0.0035 +0.0029 +0.0033  spread 0.0005  CI width 0.0051
+main/lawful_s0   chimera         untrained solidity   +0.0022 +0.0028 +0.0031 +0.0028 +0.0019  spread 0.0013  CI width 0.0059  interval-excludes-0 differs between layouts
+main/lawful_s0   chimera         untrained causality  +0.0050 +0.0043 +0.0046 +0.0050 +0.0044  spread 0.0007  CI width 0.0054
+main/lawful_s0   deafblind       trained   permanence +0.0017 +0.0017 +0.0017 +0.0017 +0.0017  spread 0.0000  CI width 0.0538
+main/lawful_s0   deafblind       trained   solidity   -0.0013 -0.0013 -0.0013 -0.0013 -0.0013  spread 0.0000  CI width 0.0697
+main/lawful_s0   deafblind       trained   causality  +0.0057 +0.0057 +0.0057 +0.0057 +0.0057  spread 0.0000  CI width 0.0523
+main/lawful_s0   deafblind       untrained permanence -0.0083 -0.0083 -0.0083 -0.0083 -0.0083  spread 0.0000  CI width 0.0290
+main/lawful_s0   deafblind       untrained solidity   -0.0016 -0.0016 -0.0016 -0.0016 -0.0016  spread 0.0000  CI width 0.0386
+main/lawful_s0   deafblind       untrained causality  -0.0065 -0.0065 -0.0065 -0.0065 -0.0065  spread 0.0000  CI width 0.0338
+main/lawful_s0   dog             trained   permanence +0.0020 +0.0057 +0.0032 +0.0055 +0.0039  spread 0.0037  CI width 0.0160
+main/lawful_s0   dog             trained   solidity   -0.0097 -0.0105 -0.0087 -0.0035 -0.0098  spread 0.0071  CI width 0.0240
+main/lawful_s0   dog             trained   causality  +0.0175 +0.0238 +0.0180 +0.0138 +0.0143  spread 0.0100  CI width 0.0147
+main/lawful_s0   dog             untrained permanence -0.0005 +0.0016 -0.0004 +0.0018 +0.0006  spread 0.0023  CI width 0.0053
+main/lawful_s0   dog             untrained solidity   -0.0002 +0.0002 +0.0005 +0.0014 +0.0002  spread 0.0016  CI width 0.0057
+main/lawful_s0   dog             untrained causality  +0.0052 +0.0064 +0.0031 +0.0028 +0.0046  spread 0.0037  CI width 0.0133
+main/lawful_s0   hearing_only    trained   permanence -0.0097 -0.0097 -0.0097 -0.0097 -0.0097  spread 0.0000  CI width 0.0895
+main/lawful_s0   hearing_only    trained   solidity   +0.0045 +0.0045 +0.0045 +0.0045 +0.0045  spread 0.0000  CI width 0.0151
+main/lawful_s0   hearing_only    trained   causality  -0.0076 -0.0076 -0.0076 -0.0076 -0.0076  spread 0.0000  CI width 0.0436
+main/lawful_s0   hearing_only    untrained permanence -0.0051 -0.0051 -0.0051 -0.0051 -0.0051  spread 0.0000  CI width 0.0112
+main/lawful_s0   hearing_only    untrained solidity   -0.0020 -0.0020 -0.0020 -0.0020 -0.0020  spread 0.0000  CI width 0.0140
+main/lawful_s0   hearing_only    untrained causality  +0.0035 +0.0035 +0.0035 +0.0035 +0.0035  spread 0.0000  CI width 0.0180
+main/lawful_s0   human           trained   permanence +0.0020 +0.0028 +0.0017 +0.0038 +0.0017  spread 0.0021  CI width 0.0065
+main/lawful_s0   human           trained   solidity   -0.0029 -0.0062 -0.0043 -0.0051 -0.0061  spread 0.0033  CI width 0.0122  interval-excludes-0 differs between layouts
+main/lawful_s0   human           trained   causality  -0.0197 -0.0165 -0.0132 -0.0125 -0.0187  spread 0.0072  CI width 0.0671
+main/lawful_s0   human           untrained permanence +0.0006 +0.0008 +0.0014 +0.0013 +0.0012  spread 0.0008  CI width 0.0026  interval-excludes-0 differs between layouts
+main/lawful_s0   human           untrained solidity   -0.0017 -0.0019 -0.0021 -0.0026 -0.0025  spread 0.0008  CI width 0.0042  interval-excludes-0 differs between layouts
+main/lawful_s0   human           untrained causality  +0.0000 +0.0008 -0.0018 -0.0001 -0.0009  spread 0.0026  CI width 0.0038
+main/lawful_s0   memoryless      trained   permanence +0.0030 +0.0023 +0.0031 +0.0031 +0.0027  spread 0.0008  CI width 0.0061  interval-excludes-0 differs between layouts
+main/lawful_s0   memoryless      trained   solidity   +0.0073 +0.0068 +0.0059 +0.0067 +0.0060  spread 0.0014  CI width 0.0144  interval-excludes-0 differs between layouts
+main/lawful_s0   memoryless      trained   causality  -0.0216 -0.0191 -0.0152 -0.0140 -0.0225  spread 0.0085  CI width 0.0740
+main/lawful_s0   memoryless      untrained permanence +0.0005 +0.0002 +0.0006 -0.0000 +0.0007  spread 0.0007  CI width 0.0022
+main/lawful_s0   memoryless      untrained solidity   -0.0014 -0.0008 -0.0012 -0.0010 -0.0013  spread 0.0005  CI width 0.0037
+main/lawful_s0   memoryless      untrained causality  +0.0030 +0.0024 +0.0029 +0.0021 +0.0043  spread 0.0022  CI width 0.0043  interval-excludes-0 differs between layouts
+main/lawful_s0   oracle          trained   permanence +0.9529 +0.9393 +0.9242 +0.9618 +0.9705  spread 0.0463  CI width 0.2490
+main/lawful_s0   oracle          trained   solidity   +0.0069 +0.0074 +0.0073 +0.0080 +0.0086  spread 0.0018  CI width 0.0231
+main/lawful_s0   oracle          trained   causality  -0.0215 -0.0187 -0.0134 -0.0204 -0.0138  spread 0.0081  CI width 0.0297  interval-excludes-0 differs between layouts
+main/lawful_s0   oracle          untrained permanence -0.0248 -0.0245 -0.0251 -0.0251 -0.0254  spread 0.0009  CI width 0.0028
+main/lawful_s0   oracle          untrained solidity   +0.0011 +0.0007 +0.0011 +0.0013 +0.0010  spread 0.0006  CI width 0.0048
+main/lawful_s0   oracle          untrained causality  -0.0025 -0.0019 -0.0018 -0.0025 -0.0019  spread 0.0007  CI width 0.0032
+main/lawful_s0   passive         trained   permanence -0.0020 -0.0021 -0.0011 -0.0019 -0.0018  spread 0.0010  CI width 0.0078
+main/lawful_s0   passive         trained   solidity   +0.0036 -0.0014 +0.0011 +0.0024 -0.0003  spread 0.0050  CI width 0.0107
+main/lawful_s0   passive         trained   causality  -0.0232 -0.0209 -0.0179 -0.0158 -0.0210  spread 0.0074  CI width 0.0755
+main/lawful_s0   passive         untrained permanence -0.0002 +0.0002 +0.0003 +0.0006 +0.0005  spread 0.0008  CI width 0.0029
+main/lawful_s0   passive         untrained solidity   -0.0015 -0.0019 -0.0019 -0.0018 -0.0024  spread 0.0009  CI width 0.0043  interval-excludes-0 differs between layouts
+main/lawful_s0   passive         untrained causality  +0.0007 +0.0010 -0.0007 +0.0003 +0.0004  spread 0.0018  CI width 0.0034
+main/lawful_s0   passive_novest  trained   permanence -0.0026 -0.0029 -0.0016 -0.0025 -0.0028  spread 0.0013  CI width 0.0086  interval-excludes-0 differs between layouts
+main/lawful_s0   passive_novest  trained   solidity   +0.0005 -0.0002 -0.0001 -0.0026 -0.0028  spread 0.0033  CI width 0.0116
+main/lawful_s0   passive_novest  trained   causality  -0.0197 -0.0201 -0.0160 -0.0174 -0.0224  spread 0.0064  CI width 0.0661
+main/lawful_s0   passive_novest  untrained permanence -0.0015 -0.0019 -0.0014 -0.0019 -0.0020  spread 0.0006  CI width 0.0031  interval-excludes-0 differs between layouts
+main/lawful_s0   passive_novest  untrained solidity   -0.0009 -0.0005 -0.0010 -0.0005 -0.0015  spread 0.0010  CI width 0.0028  interval-excludes-0 differs between layouts
+main/lawful_s0   passive_novest  untrained causality  -0.0014 -0.0021 -0.0018 -0.0003 -0.0016  spread 0.0017  CI width 0.0045
+main/lawful_s0   smell_only      trained   permanence +0.0401 +0.0401 +0.0401 +0.0401 +0.0401  spread 0.0000  CI width 0.1032
+main/lawful_s0   smell_only      trained   solidity   -0.0061 -0.0061 -0.0061 -0.0061 -0.0061  spread 0.0000  CI width 0.0659
+main/lawful_s0   smell_only      trained   causality  +0.0129 +0.0129 +0.0129 +0.0129 +0.0129  spread 0.0000  CI width 0.0984
+main/lawful_s0   smell_only      untrained permanence -0.0005 -0.0005 -0.0005 -0.0005 -0.0005  spread 0.0000  CI width 0.0020
+main/lawful_s0   smell_only      untrained solidity   +0.0013 +0.0013 +0.0013 +0.0013 +0.0013  spread 0.0000  CI width 0.0017
+main/lawful_s0   smell_only      untrained causality  +0.0009 +0.0009 +0.0009 +0.0009 +0.0009  spread 0.0000  CI width 0.0025
+main/lawful_s0   touch_only      trained   permanence -0.0025 -0.0025 -0.0025 -0.0025 -0.0025  spread 0.0000  CI width 0.0599
+main/lawful_s0   touch_only      trained   solidity   -0.0198 -0.0198 -0.0198 -0.0198 -0.0198  spread 0.0000  CI width 0.0732
+main/lawful_s0   touch_only      trained   causality  -0.0142 -0.0142 -0.0142 -0.0142 -0.0142  spread 0.0000  CI width 0.0696
+main/lawful_s0   touch_only      untrained permanence +0.0015 +0.0015 +0.0015 +0.0015 +0.0015  spread 0.0000  CI width 0.0121
+main/lawful_s0   touch_only      untrained solidity   -0.0044 -0.0044 -0.0044 -0.0044 -0.0044  spread 0.0000  CI width 0.0124
+main/lawful_s0   touch_only      untrained causality  +0.0004 +0.0004 +0.0004 +0.0004 +0.0004  spread 0.0000  CI width 0.0113
+main/lawful_s0   vision_only     trained   permanence +0.0017 +0.0019 +0.0010 +0.0022 +0.0026  spread 0.0016  CI width 0.0048  interval-excludes-0 differs between layouts
+main/lawful_s0   vision_only     trained   solidity   +0.0018 +0.0012 +0.0009 -0.0015 +0.0003  spread 0.0033  CI width 0.0132
+main/lawful_s0   vision_only     trained   causality  -0.0124 -0.0141 -0.0123 -0.0084 -0.0138  spread 0.0057  CI width 0.0710
+main/lawful_s0   vision_only     untrained permanence -0.0003 -0.0005 -0.0009 -0.0003 -0.0002  spread 0.0007  CI width 0.0023
+main/lawful_s0   vision_only     untrained solidity   -0.0005 -0.0010 -0.0006 -0.0009 -0.0011  spread 0.0006  CI width 0.0038
+main/lawful_s0   vision_only     untrained causality  -0.0020 -0.0027 -0.0022 -0.0027 -0.0024  spread 0.0007  CI width 0.0031
+v2/dark_s0       bat             trained   permanence -0.0060 -0.0023 -0.0012 -0.0043 -0.0040  spread 0.0048  CI width 0.0202
+v2/dark_s0       bat             trained   solidity   +0.0091 +0.0094 +0.0092 +0.0059 +0.0071  spread 0.0035  CI width 0.0152  interval-excludes-0 differs between layouts
+v2/dark_s0       bat             trained   causality  -0.0694 -0.0701 -0.0588 -0.0606 -0.0678  spread 0.0113  CI width 0.0459
+v2/dark_s0       bat             untrained permanence -0.0007 -0.0001 +0.0001 -0.0005 -0.0004  spread 0.0008  CI width 0.0059
+v2/dark_s0       bat             untrained solidity   +0.0029 +0.0027 +0.0029 +0.0027 +0.0024  spread 0.0005  CI width 0.0073
+v2/dark_s0       bat             untrained causality  +0.0002 -0.0003 +0.0006 +0.0007 -0.0007  spread 0.0014  CI width 0.0070
+v2/dark_s0       blind           trained   permanence -0.0097 -0.0097 -0.0097 -0.0097 -0.0097  spread 0.0000  CI width 0.0613
+v2/dark_s0       blind           trained   solidity   -0.0041 -0.0041 -0.0041 -0.0041 -0.0041  spread 0.0000  CI width 0.0621
+v2/dark_s0       blind           trained   causality  +0.0071 +0.0071 +0.0071 +0.0071 +0.0071  spread 0.0000  CI width 0.0744
+v2/dark_s0       blind           untrained permanence -0.0030 -0.0030 -0.0030 -0.0030 -0.0030  spread 0.0000  CI width 0.0294
+v2/dark_s0       blind           untrained solidity   -0.0013 -0.0013 -0.0013 -0.0013 -0.0013  spread 0.0000  CI width 0.0286
+v2/dark_s0       blind           untrained causality  +0.0003 +0.0003 +0.0003 +0.0003 +0.0003  spread 0.0000  CI width 0.0324
+v2/dark_s0       chimera         trained   permanence +0.0079 +0.0081 +0.0071 +0.0063 +0.0049  spread 0.0032  CI width 0.0155  interval-excludes-0 differs between layouts
+v2/dark_s0       chimera         trained   solidity   +0.0047 +0.0048 +0.0064 +0.0036 +0.0027  spread 0.0038  CI width 0.0151
+v2/dark_s0       chimera         trained   causality  -0.0569 -0.0569 -0.0474 -0.0474 -0.0604  spread 0.0129  CI width 0.0386
+v2/dark_s0       chimera         untrained permanence +0.0030 +0.0033 +0.0035 +0.0030 +0.0033  spread 0.0005  CI width 0.0052
+v2/dark_s0       chimera         untrained solidity   +0.0022 +0.0027 +0.0031 +0.0028 +0.0018  spread 0.0013  CI width 0.0059  interval-excludes-0 differs between layouts
+v2/dark_s0       chimera         untrained causality  +0.0049 +0.0043 +0.0046 +0.0050 +0.0044  spread 0.0007  CI width 0.0054
+v2/dark_s0       deafblind       trained   permanence +0.0021 +0.0021 +0.0021 +0.0021 +0.0021  spread 0.0000  CI width 0.0521
+v2/dark_s0       deafblind       trained   solidity   -0.0041 -0.0041 -0.0041 -0.0041 -0.0041  spread 0.0000  CI width 0.0699
+v2/dark_s0       deafblind       trained   causality  +0.0068 +0.0068 +0.0068 +0.0068 +0.0068  spread 0.0000  CI width 0.0553
+v2/dark_s0       deafblind       untrained permanence -0.0081 -0.0081 -0.0081 -0.0081 -0.0081  spread 0.0000  CI width 0.0284
+v2/dark_s0       deafblind       untrained solidity   -0.0015 -0.0015 -0.0015 -0.0015 -0.0015  spread 0.0000  CI width 0.0380
+v2/dark_s0       deafblind       untrained causality  -0.0064 -0.0064 -0.0064 -0.0064 -0.0064  spread 0.0000  CI width 0.0334
+v2/dark_s0       dog             trained   permanence +0.0022 +0.0059 +0.0047 +0.0065 +0.0067  spread 0.0045  CI width 0.0165
+v2/dark_s0       dog             trained   solidity   -0.0063 -0.0068 -0.0045 -0.0047 -0.0094  spread 0.0049  CI width 0.0159  interval-excludes-0 differs between layouts
+v2/dark_s0       dog             trained   causality  +0.0014 +0.0116 +0.0028 +0.0043 +0.0052  spread 0.0101  CI width 0.0216
+v2/dark_s0       dog             untrained permanence -0.0010 +0.0000 -0.0012 +0.0005 -0.0004  spread 0.0017  CI width 0.0045
+v2/dark_s0       dog             untrained solidity   +0.0004 +0.0006 +0.0009 +0.0009 +0.0007  spread 0.0006  CI width 0.0053
+v2/dark_s0       dog             untrained causality  -0.0007 +0.0001 -0.0019 -0.0017 -0.0014  spread 0.0019  CI width 0.0129
+v2/dark_s0       hearing_only    trained   permanence -0.0037 -0.0037 -0.0037 -0.0037 -0.0037  spread 0.0000  CI width 0.0838
+v2/dark_s0       hearing_only    trained   solidity   +0.0042 +0.0042 +0.0042 +0.0042 +0.0042  spread 0.0000  CI width 0.0157
+v2/dark_s0       hearing_only    trained   causality  -0.0096 -0.0096 -0.0096 -0.0096 -0.0096  spread 0.0000  CI width 0.0393
+v2/dark_s0       hearing_only    untrained permanence -0.0051 -0.0051 -0.0051 -0.0051 -0.0051  spread 0.0000  CI width 0.0113
+v2/dark_s0       hearing_only    untrained solidity   -0.0020 -0.0020 -0.0020 -0.0020 -0.0020  spread 0.0000  CI width 0.0141
+v2/dark_s0       hearing_only    untrained causality  +0.0035 +0.0035 +0.0035 +0.0035 +0.0035  spread 0.0000  CI width 0.0177
+v2/dark_s0       human           trained   permanence +0.0018 +0.0032 +0.0008 +0.0019 +0.0029  spread 0.0024  CI width 0.0086
+v2/dark_s0       human           trained   solidity   -0.0049 -0.0098 -0.0069 -0.0067 -0.0089  spread 0.0048  CI width 0.0129  interval-excludes-0 differs between layouts
+v2/dark_s0       human           trained   causality  +0.0016 +0.0072 +0.0041 +0.0044 +0.0045  spread 0.0057  CI width 0.0680
+v2/dark_s0       human           untrained permanence +0.0004 +0.0007 +0.0012 +0.0011 +0.0009  spread 0.0008  CI width 0.0032
+v2/dark_s0       human           untrained solidity   +0.0024 +0.0024 +0.0022 +0.0020 +0.0019  spread 0.0005  CI width 0.0045  interval-excludes-0 differs between layouts
+v2/dark_s0       human           untrained causality  -0.0005 -0.0006 -0.0018 -0.0011 -0.0016  spread 0.0013  CI width 0.0041
+v2/dark_s0       memoryless      trained   permanence +0.0045 +0.0021 +0.0035 +0.0025 +0.0030  spread 0.0024  CI width 0.0063  interval-excludes-0 differs between layouts
+v2/dark_s0       memoryless      trained   solidity   +0.0010 -0.0030 +0.0005 +0.0002 -0.0022  spread 0.0040  CI width 0.0143
+v2/dark_s0       memoryless      trained   causality  -0.0027 +0.0005 +0.0037 +0.0018 -0.0006  spread 0.0063  CI width 0.0694
+v2/dark_s0       memoryless      untrained permanence +0.0005 +0.0002 +0.0007 +0.0000 +0.0007  spread 0.0007  CI width 0.0029
+v2/dark_s0       memoryless      untrained solidity   +0.0017 +0.0025 +0.0021 +0.0019 +0.0018  spread 0.0008  CI width 0.0051  interval-excludes-0 differs between layouts
+v2/dark_s0       memoryless      untrained causality  +0.0031 +0.0022 +0.0026 +0.0021 +0.0031  spread 0.0010  CI width 0.0035  interval-excludes-0 differs between layouts
+v2/dark_s0       oracle          trained   permanence +0.9186 +0.9229 +0.8997 +0.9208 +0.9231  spread 0.0234  CI width 0.3936
+v2/dark_s0       oracle          trained   solidity   +0.0050 +0.0051 +0.0054 +0.0062 +0.0062  spread 0.0012  CI width 0.0113
+v2/dark_s0       oracle          trained   causality  -0.0100 -0.0073 -0.0066 -0.0096 -0.0054  spread 0.0046  CI width 0.0123
+v2/dark_s0       oracle          untrained permanence -0.0247 -0.0244 -0.0250 -0.0251 -0.0253  spread 0.0008  CI width 0.0029
+v2/dark_s0       oracle          untrained solidity   +0.0013 +0.0010 +0.0013 +0.0016 +0.0012  spread 0.0005  CI width 0.0045
+v2/dark_s0       oracle          untrained causality  -0.0024 -0.0018 -0.0018 -0.0024 -0.0019  spread 0.0006  CI width 0.0031
+v2/dark_s0       passive         trained   permanence -0.0008 -0.0007 -0.0000 -0.0001 -0.0014  spread 0.0014  CI width 0.0106
+v2/dark_s0       passive         trained   solidity   -0.0068 -0.0113 -0.0082 -0.0078 -0.0109  spread 0.0045  CI width 0.0106
+v2/dark_s0       passive         trained   causality  -0.0020 +0.0031 +0.0031 -0.0009 +0.0011  spread 0.0051  CI width 0.0721
+v2/dark_s0       passive         untrained permanence +0.0003 +0.0010 +0.0012 +0.0013 +0.0014  spread 0.0010  CI width 0.0028  interval-excludes-0 differs between layouts
+v2/dark_s0       passive         untrained solidity   +0.0025 +0.0022 +0.0019 +0.0022 +0.0018  spread 0.0007  CI width 0.0040
+v2/dark_s0       passive         untrained causality  -0.0004 -0.0005 -0.0015 -0.0010 -0.0005  spread 0.0011  CI width 0.0034
+v2/dark_s0       passive_novest  trained   permanence -0.0041 -0.0041 -0.0033 -0.0051 -0.0049  spread 0.0017  CI width 0.0096  interval-excludes-0 differs between layouts
+v2/dark_s0       passive_novest  trained   solidity   +0.0018 +0.0003 +0.0023 +0.0011 +0.0006  spread 0.0020  CI width 0.0112
+v2/dark_s0       passive_novest  trained   causality  -0.0066 +0.0007 -0.0014 -0.0035 -0.0050  spread 0.0073  CI width 0.0665
+v2/dark_s0       passive_novest  untrained permanence -0.0011 -0.0016 -0.0010 -0.0014 -0.0017  spread 0.0007  CI width 0.0038  interval-excludes-0 differs between layouts
+v2/dark_s0       passive_novest  untrained solidity   +0.0027 +0.0032 +0.0027 +0.0030 +0.0022  spread 0.0010  CI width 0.0033
+v2/dark_s0       passive_novest  untrained causality  -0.0016 -0.0022 -0.0018 -0.0009 -0.0015  spread 0.0013  CI width 0.0034  interval-excludes-0 differs between layouts
+v2/dark_s0       smell_only      trained   permanence +0.0326 +0.0326 +0.0326 +0.0326 +0.0326  spread 0.0000  CI width 0.0810
+v2/dark_s0       smell_only      trained   solidity   -0.0083 -0.0083 -0.0083 -0.0083 -0.0083  spread 0.0000  CI width 0.0581
+v2/dark_s0       smell_only      trained   causality  +0.0035 +0.0035 +0.0035 +0.0035 +0.0035  spread 0.0000  CI width 0.0780
+v2/dark_s0       smell_only      untrained permanence -0.0005 -0.0005 -0.0005 -0.0005 -0.0005  spread 0.0000  CI width 0.0020
+v2/dark_s0       smell_only      untrained solidity   +0.0012 +0.0012 +0.0012 +0.0012 +0.0012  spread 0.0000  CI width 0.0017
+v2/dark_s0       smell_only      untrained causality  +0.0009 +0.0009 +0.0009 +0.0009 +0.0009  spread 0.0000  CI width 0.0025
+v2/dark_s0       touch_only      trained   permanence -0.0042 -0.0042 -0.0042 -0.0042 -0.0042  spread 0.0000  CI width 0.0566
+v2/dark_s0       touch_only      trained   solidity   -0.0177 -0.0177 -0.0177 -0.0177 -0.0177  spread 0.0000  CI width 0.0733
+v2/dark_s0       touch_only      trained   causality  -0.0150 -0.0150 -0.0150 -0.0150 -0.0150  spread 0.0000  CI width 0.0670
+v2/dark_s0       touch_only      untrained permanence +0.0015 +0.0015 +0.0015 +0.0015 +0.0015  spread 0.0000  CI width 0.0120
+v2/dark_s0       touch_only      untrained solidity   -0.0044 -0.0044 -0.0044 -0.0044 -0.0044  spread 0.0000  CI width 0.0119
+v2/dark_s0       touch_only      untrained causality  +0.0005 +0.0005 +0.0005 +0.0005 +0.0005  spread 0.0000  CI width 0.0110
+v2/dark_s0       vision_only     trained   permanence +0.0009 +0.0010 +0.0003 +0.0015 +0.0020  spread 0.0017  CI width 0.0042
+v2/dark_s0       vision_only     trained   solidity   +0.0036 +0.0029 +0.0029 +0.0005 +0.0020  spread 0.0032  CI width 0.0112
+v2/dark_s0       vision_only     trained   causality  +0.0043 +0.0046 +0.0041 +0.0029 +0.0021  spread 0.0025  CI width 0.0860
+v2/dark_s0       vision_only     untrained permanence -0.0002 -0.0005 -0.0006 -0.0002 -0.0002  spread 0.0004  CI width 0.0021
+v2/dark_s0       vision_only     untrained solidity   +0.0022 +0.0023 +0.0022 +0.0025 +0.0021  spread 0.0004  CI width 0.0038
+v2/dark_s0       vision_only     untrained causality  +0.0004 -0.0001 +0.0010 +0.0002 -0.0000  spread 0.0011  CI width 0.0037
+
+largest spread / CI width per test and net (all minds):
+  trained   permanence median spread/CI 0.15, largest 0.41 (v2/dark_s0 vision_only: spread 0.0017, CI width 0.0042)
+  trained   solidity   median spread/CI 0.21, largest 0.47 (main/lawful_s0 passive: spread 0.0050, CI width 0.0107)
+  trained   causality  median spread/CI 0.09, largest 0.68 (main/lawful_s0 dog: spread 0.0100, CI width 0.0147)
+  untrained permanence median spread/CI 0.16, largest 0.44 (main/lawful_s0 dog: spread 0.0023, CI width 0.0053)
+  untrained solidity   median spread/CI 0.11, largest 0.37 (main/lawful_s0 passive_novest: spread 0.0010, CI width 0.0028)
+  untrained causality  median spread/CI 0.19, largest 0.68 (main/lawful_s0 human: spread 0.0026, CI width 0.0038)
+wrote /Users/henryvu/personal/umwelt/results/checks/2026-11-05_battery/layouts.json (174 s)
