@@ -4,7 +4,10 @@
 # seed 0, learner seed 0, default sizes. The run records its own world, as a real GPU run would. One
 # configuration per job, so no job holds the shared GPU for long:
 #
-#   experiments/gpu/remote.sh run e7-f32det bash experiments/gpu/e7.sh f32det
+#   experiments/gpu/remote.sh run --record e7-f32det bash experiments/gpu/e7.sh f32det
+#
+# (--record: the configurations that record their own world need it since jobs may not record by default;
+# f32det-macdata does not.)
 #
 #   f32det        full float32 and deterministic GPU operations (the candidate standard for real work)
 #   f32det-rerun  the same again: does a whole run repeat bit for bit?

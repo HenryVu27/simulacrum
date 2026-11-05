@@ -5,8 +5,12 @@
 #   remote.sh setup                          one-time install (runs setup_wsl.sh)
 #   remote.sh sh 'CMD'                       run a command in ~/umwelt now and wait for it (no lock: keep
 #                                            it off the GPU, or small)
-#   remote.sh run [--allow-cpu] NAME CMD...  start CMD as a background job; it waits for a free GPU
-#   remote.sh status [NAME]                  GPU use, lock holder, pause switch, last lines of NAME's log
+#   remote.sh run [--allow-cpu] [--record] NAME CMD...
+#                                            start CMD as a background job; it waits for a free GPU. A job
+#                                            may not record a world unless --record (pooled results share
+#                                            recordings: push them); --allow-cpu lets it run without a GPU
+#   remote.sh status [NAME]                  GPU use, lock holder, pause switch, last lines of NAME's log,
+#                                            and whether NAME finished, is queued or running, or died
 #   remote.sh stop NAME                      stop a queued or running job (its lock, if any, is released)
 #   remote.sh pause | resume [--force]       create or delete C:\gpu-pause: while it exists no job starts
 #                                            and running jobs are frozen. resume removes only a pause that
@@ -17,7 +21,8 @@
 #
 # A job survives the SSH connection closing: it is started through Windows' Win32_Process.Create,
 # outside the SSH session. Each push writes .umwelt_push (code hash, git commit, uncommitted changes),
-# removes files the previous push sent that are gone here, and has the PC rehash what arrived;
+# removes files the previous push sent that are gone here, and has the PC rehash what arrived (the code,
+# and any PATHs given, file by file: a stray or altered data file fails the push);
 # a job keeps a copy, records it in its log and refuses to start on different code. A push that would
 # change the code while an umwelt job is queued or running is refused. Job names are used once.
 set -euo pipefail
@@ -34,7 +39,7 @@ ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "
 wsl_sh() { ssh_pc "$WSL bash -s"; }  # runs the bash script on stdin inside WSL
 # For WSL-side scripts: is PID still job NAME's job.sh? A bare kill -0 is fooled by a reused process id.
 IS_JOB='is_job() { [ -n "$1" ] && ps -p "$1" -o args= 2>/dev/null | grep -q "job.sh $2\$"; }'
-usage() { sed -n '2,22p' "$self"; exit 2; }
+usage() { sed -n '2,26p' "$self"; exit 2; }
 valid_name() { [[ "$1" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "job name: letters, digits, . _ - only" >&2; exit 2; }; }
 code_files() {  # tracked and new files outside results/, skipping deleted ones
   git ls-files -co --exclude-standard | grep -v '^results/' | while IFS= read -r f; do
@@ -85,6 +90,16 @@ EOF
       echo "push failed verification: the PC has '$there', the Mac sent '$(echo "$m" | grep '^code ')'" >&2
       exit 1
     fi
+    if [ $# -gt 0 ]; then  # the data pushed with it, file by file: a stray, missing or altered file fails
+      sums='LC_ALL=C sort | tr "\n" "\0" | xargs -0 SUM | SUM | cut -c1-16'
+      here=$(find "$@" -type f | eval "${sums//SUM/shasum -a 256}")
+      there=$({ echo 'cd umwelt'; printf 'find '; printf '%q ' "$@"; echo "-type f | ${sums//SUM/sha256sum}"; } | wsl_sh | tr -d '\r')
+      if [ "$here" != "$there" ]; then
+        echo "push failed verification for $*: the PC's files differ (an extra, missing or altered file). Compare:" >&2
+        echo "  find $* -type f | LC_ALL=C sort | xargs shasum -a 256   (here and, with sha256sum, there)" >&2
+        exit 1
+      fi
+    fi
     echo "pushed the working tree${*:+ and $*} to $PC:~/umwelt ($DISTRO): $(echo "$m" | head -3 | tr '\n' ' ')"
     ;;
   setup)
@@ -97,17 +112,22 @@ EOF
     ;;
   run)
     allow=0
-    if [ "${1:-}" = --allow-cpu ]; then allow=1; shift; fi
+    record=0
+    while [ "${1:-}" = --allow-cpu ] || [ "${1:-}" = --record ]; do
+      if [ "$1" = --allow-cpu ]; then allow=1; else record=1; fi
+      shift
+    done
     [ $# -ge 2 ] || usage
     name=$1; shift
     valid_name "$name"
     "$self" push
-    made=$({ echo "name=$name allow=$allow"
+    made=$({ echo "name=$name allow=$allow record=$record"
              cat <<'EOF'
 cd umwelt && mkdir -p results/remote
 if [ -e "results/remote/$name.cmd" ]; then echo exists; exit 0; fi
 cp .umwelt_push "results/remote/$name.push"
 if [ "$allow" = 1 ]; then touch "results/remote/$name.allow_cpu"; fi
+if [ "$record" = 1 ]; then touch "results/remote/$name.allow_record"; fi
 cat > "results/remote/$name.cmd" <<'UMWELT_CMD_END'
 EOF
              printf '%q ' "$@"; echo
@@ -122,7 +142,7 @@ EOF
     if [ -n "${1:-}" ]; then valid_name "$1"; fi
     ssh_pc "nvidia-smi --query-gpu=memory.used,memory.total,utilization.gpu --format=csv,noheader" | tr -d '\r' \
       | sed 's/^/GPU (used, total, busy): /'
-    { echo "name=${1:-}"
+    { echo "name=${1:-}"; echo "$IS_JOB"
       cat <<'EOF'
 lock=${UMWELT_LOCK:-/mnt/c/gpu-lock}
 if [ -f "$lock/owner" ]; then sed -n '1s/^/lock: /p' "$lock/owner"; else echo "lock: free"; fi
@@ -130,7 +150,12 @@ if [ -e "${UMWELT_PAUSE:-/mnt/c/gpu-pause}" ]; then echo "pause: on (remote.sh r
 if [ -n "$name" ]; then
   f=umwelt/results/remote/$name
   tail -n 15 "$f.log" 2>/dev/null
-  if [ -f "$f.exit" ]; then echo "finished, exit code $(cat "$f.exit")"; else echo "not finished"; fi
+  if [ -f "$f.exit" ]; then echo "finished, exit code $(cat "$f.exit")"
+  elif [ -f "$f.pid" ] && is_job "$(cat "$f.pid")" "$name"; then echo "not finished: queued or running"
+  elif [ ! -e "$f.cmd" ]; then echo "no such job"
+  elif [ -n "$(find "$f.cmd" -mmin -2)" ]; then echo "not finished: starting"
+  else echo "dead: no exit code and no job.sh (a restart or a kill); its lock, if any, goes when the next job waits"
+  fi
 fi
 EOF
     } | wsl_sh

@@ -1,5 +1,6 @@
 """Roll out the shared world once and record every sense, so every mind sees the same history."""
 
+import hashlib
 import os
 import time
 from functools import partial
@@ -102,6 +103,19 @@ def save(world: str, n_episodes: int, T: int = 256, seed: int = 0):
     return out
 
 
+def recording_hash(world: str, n_episodes: int, T: int = 256, seed: int = 0) -> str:
+    """Content hash of a recording: each file's SHA-256 in name order, hashed again. The same 16 hex digits
+    as `sha256sum ./*.npy | LC_ALL=C sort -k2 | sha256sum` in its folder, so any machine can check it."""
+    lines = []
+    for f in sorted(_dir(world, n_episodes, T, seed).glob("*.npy"), key=lambda q: q.name):
+        h = hashlib.sha256()
+        with open(f, "rb") as fh:
+            for block in iter(lambda: fh.read(1 << 24), b""):
+                h.update(block)
+        lines.append(f"{h.hexdigest()}  ./{f.name}\n")
+    return hashlib.sha256("".join(lines).encode()).hexdigest()[:16]
+
+
 def load(world: str, n_episodes: int, T: int = 256, seed: int = 0):
     out = _dir(world, n_episodes, T, seed)
     legacy = out.with_suffix(".npz")
@@ -112,5 +126,10 @@ def load(world: str, n_episodes: int, T: int = 256, seed: int = 0):
                 np.save(out / f"{k}.npy", f[k])
         legacy.unlink()
     if not out.exists():
+        if os.environ.get("UMWELT_NO_RECORD"):
+            # A data seed does not name the same episodes on another machine (docs/gpu.md, E7): results that will
+            # be pooled must share one recording, so a job that should have been given one refuses to make its own.
+            raise FileNotFoundError(f"{out.name} is not here and UMWELT_NO_RECORD is set: record it once and copy it "
+                                    "(remote.sh push results/data/...), or allow this job to record (remote.sh run --record)")
         save(world, n_episodes, T, seed)
     return {f.stem: np.load(f, mmap_mode="r") for f in sorted(out.glob("*.npy"))}

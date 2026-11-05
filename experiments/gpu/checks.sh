@@ -3,7 +3,10 @@
 # JAX upgrade, with new tags if the old results should be kept. From the Mac:
 #
 #   experiments/gpu/remote.sh push results/hardware/mac-cpu/data_dark.npz
-#   experiments/gpu/remote.sh run gpu-checks bash experiments/gpu/checks.sh     # or name sections: repro precfix bench stage3 cpu
+#   experiments/gpu/remote.sh run --record gpu-checks bash experiments/gpu/checks.sh   # or name sections: repro precfix bench stage3 cpu
+#
+# (--record: stage 3 records its own episodes.) After an upgrade also rerun E7b, the full-results check on
+# a shared recording: push results/data/lawful_s0_e1280_t256, then e7.sh f32det-macdata, then compare_e7.py.
 #   experiments/gpu/remote.sh status gpu-checks
 #   experiments/gpu/remote.sh pull results/hardware
 #

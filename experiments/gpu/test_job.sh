@@ -113,10 +113,30 @@ new stray "sleep 34 & echo \$! > $T/stray; echo started"
 limit bash "$job" stray
 check "stops what the command left running before releasing the lock" '[ "$(cat $R/stray.exit)" = 0 ] && ! kill -0 $(cat $T/stray) 2>/dev/null && [ ! -e $UMWELT_LOCK ]'
 
-new plat 'echo "platforms=$JAX_PLATFORMS cache=$JAX_COMPILATION_CACHE_DIR"'
+new plat 'echo "platforms=$JAX_PLATFORMS cache=$JAX_COMPILATION_CACHE_DIR"; echo "norecord=${UMWELT_NO_RECORD:-} fraction=$XLA_PYTHON_CLIENT_MEM_FRACTION code=$UMWELT_CODE"'
 limit bash "$job" plat
 check "a GPU job makes a missing GPU an error, not a CPU fallback" 'grep -q "^platforms=cuda,cpu " $R/plat.log'
 check "a job uses the persistent compile cache" 'grep -q "cache=$UMWELT_ROOT/results/jax_cache$" $R/plat.log'
+check "a job may not record a world, takes at most half the GPU, and knows its code" 'grep -q "^norecord=1 fraction=0.5 code=code $(codehash) git 1234567" $R/plat.log'
+new rec 'echo "norecord=${UMWELT_NO_RECORD:-}"'
+touch "$R/rec.allow_record"
+limit bash "$job" rec
+check "a job started with --record may record" 'grep -q "^norecord=$" $R/rec.log'
+
+mkdir "$UMWELT_LOCK" && echo "project=umwelt job=gone host=h pid=999999 started=x" > "$UMWELT_LOCK/owner"
+new heir 'echo ran'
+limit bash "$job" heir
+check "removes a lock whose umwelt job is gone, then runs" '[ "$(cat $R/heir.exit)" = 0 ] && grep -q "removed a lock whose umwelt job is gone" $R/heir.log'
+mkdir "$UMWELT_LOCK"
+bash -c 'sleep 30; :' umwelt/experiments/gpu/job.sh alive & live=$!  # looks like job alive's job.sh to ps
+echo "project=umwelt job=alive host=h pid=$live started=x" > "$UMWELT_LOCK/owner"
+new heir2 'echo ran'
+bash "$job" heir2 & pid=$!
+sleep 1
+check "never removes a running umwelt job's lock" 'grep -q "waiting:.*job=alive" $R/heir2.log && ! grep -q "^ran" $R/heir2.log && [ -d $UMWELT_LOCK ]'
+kill $live
+limit_wait $pid
+check "takes over once that job is gone" '[ "$(cat $R/heir2.exit)" = 0 ] && grep -q "removed a lock whose umwelt job is gone" $R/heir2.log'
 
 new cpu 'echo ran'
 limit env FAKE_BACKEND=cpu bash "$job" cpu

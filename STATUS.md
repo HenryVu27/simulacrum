@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-11-04, night (GPU machine). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-05, early morning (GPU machine). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
@@ -76,7 +76,7 @@ none is surprised by a vanishing object. The world lever is spent. The next leve
   held-out error), `experiments/world_stats.py` (how often objects leave and return), `experiments/sweep_v2.sh`,
   `umwelt report-v2`. Tests: 9 passing.
 
-## GPU machine (2026-11-04, night)
+## GPU machine (2026-11-04 night to 2026-11-05 morning)
 
 umwelt now runs on Henry's Windows PC with an RTX 5080, from this Mac, for the learner work in next step 1.
 JAX publishes GPU builds for Linux only, so it runs inside WSL2 (Ubuntu 26.04, as the distribution's root
@@ -85,24 +85,35 @@ jobs that wait for a shared GPU lock (`C:\gpu-lock`, also used by the other proj
 back. Henry can pause umwelt jobs while he uses the PC (`mkdir C:\gpu-pause`). Everything is in
 `docs/gpu.md`: the setup log, a protocol written before any run (E1 to E7), and the results.
 
-What is known (all in `docs/gpu.md`; checked by two independent verifiers, a third check pending):
-- GPU arithmetic is not a source of error. Given the same recorded episodes, a full GPU run (14 minds,
-  probes, controls, surprise tests, translation) matches the Mac's to about six decimal places (E7b), and
-  stage 3 M matches the CPU's within 0.00008 (E4).
-- A data seed is not portable across machines; a recording is. Episodes regenerated on another chip part
-  within a few steps, and rare-event concepts (`cause`) then move as much as a learner seed moves them
-  (E7, which failed for that reason). Rule: record each world once and copy the recording to the other
-  machine before pooling results.
-- With full float32 and deterministic operations a whole GPU run repeats bit for bit. Use those settings
-  for anything reported (recipe in `docs/gpu.md`, How to run); they cost 3 to 16 percent per update.
-- Bug found and fixed: TF32 was changing the simulated world (which object a ray hits). Every matrix
-  product in the senses names full precision, a test enforces it, and the Mac's output is unchanged.
-- Speed at like precision: one update 11 times the Mac, the largest learner tested 40 times, 32 minds at
-  once 30 times; the training loop as experiments run it 3 times (batches are built on the CPU, most of
-  the loop: moving that to the GPU is the next speedup); one full mind 3 times with the compile cache that
-  every job now has. WSL limits one compiled step to under about 3.5 GiB with the default allocator (32
-  minds at once); `cuda_async` lifts that but has no memory ceiling and can spill past the card.
-- Scope: the current learner. Rerun E4 on a shared recording for any new learner family before pooling.
+What is known (all in `docs/gpu.md`; every result recomputed by three independent checks):
+- Given the same recorded episodes, the GPU at full float32 with deterministic operations matches the
+  Mac's full run (14 minds, probes, controls, surprise tests, translation) to about the sixth decimal for
+  nearly every score (E7b), and a whole GPU run repeats bit for bit.
+- A data seed is not portable across machines; a recording is. Re-recorded episodes part within a few
+  steps, and that moved `cause` scores by a learner seed's worth (E7, which failed for that reason).
+- Rules for pooling GPU and Mac results: share recordings (copy, never regenerate); run at full float32
+  with deterministic operations (at the GPU's default precision one `cause` score moved a seed's worth on
+  identical data); do not pool the dog's surprise scores yet (next steps). The tooling enforces the first
+  rule (a GPU job refuses to record unless `run --record`) and every result file carries a `provenance`
+  block (machine, backend, precision, XLA flags, code, recording hash).
+- Speed at full float32: one update 11 times the Mac, the largest learner tested 40 times, 32 minds at
+  once 30 times; the training loop as experiments run it about 3 times (batches are built on the CPU, most
+  of the loop). A compile cache, now in every job, cut a full mind from 150 to 91 s with identical results.
+  WSL limits one compiled step to under about 3.5 GiB with the default allocator (32 minds at once).
+- Bugs found and fixed: TF32 changed the simulated world (every matrix product in the senses now names
+  full precision, enforced by a test); several job-tooling risks on the shared PC.
+- Scope: the current learner. A new learner family needs an E7b-style full run on a shared recording.
+
+Open, from the GPU work (decisions for Henry first):
+- The surprise-test movies place a hidden wall exactly on the boundary wall (`voe.HIDDEN_WALL`), so 3 to 5
+  of the dog's rays see two walls at the same distance and the colour depends on last-bit rounding. That
+  makes the dog's permanence surprise device-dependent (29 percent of its seed difference). Moving the wall
+  off the boundary fixes it but changes the dog's stored v1 and v2 surprise scores on the Mac too.
+- The `cause` probe is hypersensitive: 6 changed labels among 7,873 moved a score by 0.038, more than a
+  learner seed. Every cause result so far should be read with that in mind; a more robust cause target or
+  more probe data would help.
+- Next speedup: gather training batches on the GPU instead of the CPU (the loop is about 10.6 ms per
+  update, of which the update itself is about 3).
 
 ## Next steps, in order
 

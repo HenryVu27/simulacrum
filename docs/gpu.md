@@ -128,8 +128,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-04. 128 minds at once under `cuda_async` run but take 457 ms per update (three repeats, 423 to
   466 ms), 12 times the 64-mind step for twice the work. Not explained; one guess, untested, is that
   Windows (WDDM) starts paging GPU memory when one process holds that much. In practice: at most 64
-  minds per compiled step. (Evidence for the guess on 2026-11-05: under `cuda_async` one process held
-  16 GiB on this 15.9 GiB card, so allocations do spill past the card into system memory.)
+  minds per compiled step. (2026-11-05: under `cuda_async` one process held 16 GiB on this 15.9 GiB card,
+  so spilling past the card is possible; whether the 128-mind step spilled was not measured.)
 - 2026-11-04. Finding: on the GPU the matmul precision changed the recorded world, not only learning.
   The ray caster tests which object each ray hits with `u @ f.T` (`src/umwelt/senses.py:52`); at TF32
   its inputs keep about three significant digits, so hits at an object's edge flip. Against the Mac,
@@ -221,7 +221,9 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
     (`--force` overrides); `remote.sh sh` no longer lets JAX reserve 75 percent of the GPU; `setup` runs
     outside the lock, so its GPU check is now a small product run only when the card is nearly idle, and
     the tests run on the CPU.
-  - Tests: `job.sh` 26 of 26 (the previous version fails the 4 new ones); `remote.sh` 36 of 36.
+  - Tests: `job.sh` 26 of 26 (the previous version fails the 4 new ones); `remote.sh` 36 of 36. (Corrected
+    by the third check: the push-guard and `sh` fixes had no test that failed on the previous version, and
+    `series.sh` had none at all. Added 2026-11-05, entry below.)
   - Not changed: jobs take the lock whenever it is free and do not read the schedule's times; the
     schedule is a courtesy between sessions, the lock is the rule.
 - 2026-11-05 01:00. `series.sh` started E7 and the speed check, one job at a time (`e7-f32det`,
@@ -234,13 +236,15 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-05. Saved memory probes (`results/hardware/memprobe_default.txt`, `memprobe_cuda_async.txt`):
   - Default allocator: one array of 3.5 GiB works, 3.99 GiB fails. Ten 1 GiB arrays held at once work,
     then the ceiling (JAX's 75 percent, 11.9 GiB).
-  - `cuda_async`: every single size up to 12 GiB works, and sixteen 1 GiB arrays were held at once:
-    16 GiB on a card with 15.9 GiB. Its memory ceiling is 0, which means none, so allocations spill past
-    the card into shared system memory.
+  - `cuda_async`: every single size up to 12 GiB works, and sixteen 1 GiB arrays were held at once
+    (sixteen is the probe's own loop bound, not a limit it found): 16 GiB on a card with 15.9 GiB, past
+    the 11.9 GiB ceiling the default allocator keeps. With the desktop's share on top, the card was
+    oversubscribed, which is consistent with Windows placing GPU memory in system memory; residency was
+    not measured.
   - Hazard: a `cuda_async` job can grow past the card unnoticed, slowing itself, and anything else on the
     GPU, without an error. It stays opt-in, for steps that need more than 3.5 GiB, and such a job should
     keep its working set well under the card's free memory.
-- 2026-11-05 03:15. Pushing the Mac's lawful recording for E7b found the PC's copy of that folder holding
+- 2026-11-05 03:11. Pushing the Mac's lawful recording for E7b found the PC's copy of that folder holding
   a 19th array (`gt_light.npy`) left from an earlier GPU recording: `push` adds and replaces files but
   does not remove extras inside a pushed data folder. The stray array was all lit (no effect in the lawful
   world) and was removed; the 18 arrays matched the Mac's file by file. Recording hashes are now taken in
@@ -248,12 +252,35 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   push a recording only into a folder that does not exist on the PC yet, or compare file lists after.
 - 2026-11-05 03:27. E7b passed (results below). `job.sh` now gives every job a persistent compile cache
   (`results/jax_cache`); 27 of 27 job tests.
+- 2026-11-05 about 03:40. Third independent check (outside-judge agent; it recomputed E7, E7b and E6 from
+  the raw files, decomposed one `cause` score by swapping recordings, and read hashes on the PC). Every
+  number held. It corrected wording and margins (marked in place), found the dog's wall tie in the
+  surprise-test movies and the `cause` probe's hypersensitivity (both under E7 and E7b), showed that
+  nothing enforced the pooling rule or recorded how a result was made, and listed tooling risks. What
+  was done:
+  - `data.load` refuses to record when `UMWELT_NO_RECORD` is set, which `job.sh` sets unless the job was
+    started with `run --record`; `data.recording_hash` gives the same 16 hex digits as the shell.
+  - Every result file of `umwelt run` gets a `provenance` block, and a tag refuses minds made with other
+    settings or another recording (`tests/test_provenance.py`, which fails on the previous code).
+  - `push PATH` verifies the pushed data file by file on the PC (extra, missing or altered fails).
+  - `job.sh`: removes a dead umwelt job's lock while waiting (never another project's, never a running
+    job's); caps JAX at half the card; caps the compile cache at 2 GB; passes the code version on.
+  - `status` reports a dead job; `series.sh` stops on one, passes `--record`, and runs from a function, so
+    editing it mid-run is safe (editing it mid-run broke its last line once, after the cache check's job
+    had finished).
+  - Tests: `job.sh` 34 of 34, `remote.sh` 47 of 47 (now including `series.sh`), project 14 of 14. The
+    previous `job.sh` fails the new record and dead-lock tests; the previous `remote.sh` fails the record,
+    dead-job and data-verification tests; the version before the second check fails the `sh` test. The
+    push guard's process check was shown in isolation (the old guard refuses a push because of an
+    unrelated process holding a reused id; the new one does not).
+  - The dog's wall tie is not fixed: moving the hidden wall changes the dog's stored results on the Mac,
+    so it is Henry's call.
 
 ## How to run on the GPU
 
 Status: working against the real PC since 2026-11-04 (setup, push with verification, jobs, pause,
 pull; see the setup log). Both scripts also have tests on the Mac against stand-ins
-(`experiments/gpu/test_job.sh`, 27 cases; `experiments/gpu/test_remote.sh`, 36 cases, with a fake ssh
+(`experiments/gpu/test_job.sh`, 34 cases; `experiments/gpu/test_remote.sh`, 47 cases, with a fake ssh
 that plays the PC).
 
     experiments/gpu/remote.sh setup                       # once: copy code, install uv and CUDA JAX, run tests
@@ -266,9 +293,12 @@ that plays the PC).
 
 On the PC itself, `mkdir C:\gpu-pause` pauses and `rmdir C:\gpu-pause` resumes (a file works too).
 
-For example, one learner seed of the dark-world sweep:
+For example, one learner seed of the dark-world sweep, on the Mac's own recording of data seed 1:
 
-    experiments/gpu/remote.sh run dark-s2 uv run umwelt run --world dark --seed 2 --tag v3 --data-seed 1 --n-train 8192
+    experiments/gpu/remote.sh push results/data/dark_s1_e8448_t256      # verified file by file on the PC
+    experiments/gpu/remote.sh run dark-s2 env JAX_DEFAULT_MATMUL_PRECISION=highest \
+        XLA_FLAGS=--xla_gpu_deterministic_ops=true \
+        uv run umwelt run --world dark --seed 2 --tag v3-gpu --data-seed 1 --n-train 8192
 
 What a job guarantees (`experiments/gpu/job.sh`):
 
@@ -289,9 +319,27 @@ What a job guarantees (`experiments/gpu/job.sh`):
 - Every job uses a persistent compile cache (`results/jax_cache` on the PC), which halved a mind's time
   and changed no result.
 
-For numbers that will be reported or pooled with the Mac's, run at full float32 with deterministic
-operations: a whole run then repeats bit for bit, and training matches the Mac to about five digits (E3,
-E5, E7). They cost 3 to 16 percent per update; full float32 costs up to 50 percent on the largest learner.
+- A job may not record a world: it must be given its recordings (`UMWELT_NO_RECORD=1`; `data.load` then
+  refuses to record). `run --record` allows it, for checks that record on purpose. JAX may use at most
+  half the card (`XLA_PYTHON_CLIENT_MEM_FRACTION=0.5`, 8 GB); the compile cache is capped at 2 GB.
+- Every result file of `umwelt run` carries a `provenance` block: machine, backend, device, JAX version,
+  matmul precision, XLA flags, code version and the recording's content hash. Rerunning a tag with other
+  settings or another recording stops with an error instead of keeping the earlier minds.
+- While waiting, a job removes a lock left by an umwelt job that is no longer running (a restart or a
+  kill), so a dead umwelt job cannot block the other project for long. `status NAME` says whether a job
+  finished, is queued or running, or died without an exit code; `series.sh` stops on a dead job.
+
+For numbers that will be reported or pooled with the Mac's (E7b):
+1. Use a recording made once and copied, never one regenerated from the same seed on the other machine.
+2. Run at full float32 with deterministic operations. A whole run then repeats bit for bit, and on the
+   same recording matches the Mac's to the sixth decimal for nearly every score. At the GPU's default
+   precision one cause score moved by a seed's worth on identical episodes (E7, blind, linear probe).
+   Full float32 costs 10 to 50 percent per update on the update alone and was faster in the training
+   loop; deterministic operations cost 3 to 16 percent, within the noise between jobs; the two together
+   were not timed separately (a full 14-mind run took about 15 minutes either way).
+3. The surprise-test movies are rendered on each machine, not copied, and contain a geometric tie that
+   makes the dog's permanence score device-dependent (see E7b). Until that is fixed, treat the dog's
+   surprise scores from the two machines as not poolable.
 
     experiments/gpu/remote.sh run NAME env JAX_DEFAULT_MATMUL_PRECISION=highest \
         XLA_FLAGS=--xla_gpu_deterministic_ops=true uv run umwelt run ...
@@ -299,18 +347,21 @@ E5, E7). They cost 3 to 16 percent per update; full float32 costs up to 50 perce
 Several jobs go through `series.sh`, not several `run`s at once: it queues the next job only after the
 last has finished and 90 s have passed, so another project's job already waiting on the lock gets the GPU first.
 
-Limits inside WSL: a compiled step whose working memory reaches 4 GiB fails with the default allocator
-(for the current learner, 64 minds at once); add `env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` to such a
-job, which slows the ordinary training loop by a quarter. Keep to 64 minds per compiled step.
+Limits inside WSL: with the default allocator one block of 3.99 GiB already fails (3.5 works), so a
+compiled step whose working memory is near 4 GiB fails (for the current learner, 64 minds at once; 32
+work). `env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` lifts that, slows the ordinary training loop by 9
+percent, and has no memory ceiling at all (it held 16 GiB on the 15.9 GiB card): watch such a job's memory.
+Keep to 64 minds per compiled step.
 
 Code goes to the PC with `push`: every tracked or new file outside `results/` (deleted files skipped,
 no macOS metadata), plus `.umwelt_push`, the manifest a job checks against. The PC rehashes what
 arrived; a mismatch fails the push. A push that would change
 the code while an umwelt job is queued or running is refused. Results stay on the PC until pulled;
 `pull` never overwrites a local file that differs unless given `--overwrite` (it reports the file and
-leaves the PC's version in a temporary folder). Recorded data is not pushed: a run regenerates it
-there, which gives nearly but not exactly the same episodes (E1). To reuse the Mac's exact episodes,
-push the recording too: `remote.sh push results/data/<recording>`.
+leaves the PC's version in a temporary folder). Recordings go to the PC only when pushed:
+`remote.sh push results/data/<recording>`. The PC rehashes them file by file, and an extra, missing or
+altered file fails the push. A job that lacks a recording stops instead of regenerating it, since a
+regenerated recording is not the same data (E1, E7).
 
 All hardware checks in one job, to rerun after a driver, CUDA or JAX upgrade: `experiments/gpu/checks.sh`
 (its header has the commands to start it and to compare its results).
@@ -357,7 +408,8 @@ Added 2026-11-05, after the second independent check and before running it:
   full float32 with deterministic operations (`f32det`, the candidate standard for real GPU work), the
   same again (`f32det-rerun`), and the GPU's defaults (`default`: TF32 products, nondeterministic
   operations). The reference is the Mac's stored run (`results/runs/main/lawful_s0`). Today's code
-  reproduces it exactly: all 72 non-timing numbers of the human mind are identical. The yardstick is
+  reproduces it exactly: every non-timing number of the human mind is identical
+  (`results/hardware/cache_and_reproduction_check.txt`). The yardstick is
   each score's own learner-seed difference on the Mac (`results/runs/main/lawful_s1` against `lawful_s0`).
   Comparison: `experiments/gpu/compare_e7.py`. Families: test error (14 scores), MLP probes (168),
   linear probes (168), surprise S (42), translation CKA (182), translation R squared (182). A family passes
@@ -370,9 +422,10 @@ Added 2026-11-05, after the second independent check and before running it:
   - for `f32det` against `f32det-rerun`, whether every number is identical.
   The comparison was tried on the Mac first: the Mac against itself passes with every difference zero; seed
   1 posing as another machine fails every family; a run with only one mind fails as incomplete.
-- E7b, added 2026-11-05 03:15 after E7 failed and before running this: E7's `f32det` configuration on
-  the Mac's own recording (`results/data/lawful_s0_e1280_t256`, pushed and copied in; hash checked on
-  both machines), so the only difference from the Mac's run is GPU arithmetic. Same comparison, same rule.
+- E7b, added 2026-11-05 03:10 (commit e9966c7) after E7 failed and before running it: E7's `f32det`
+  configuration on the Mac's own recording (`results/data/lawful_s0_e1280_t256`, pushed and copied in;
+  hash checked on both machines), so the only difference from the Mac's run is GPU arithmetic (not quite:
+  the surprise-test movies are rendered on each machine, see the result). Same comparison, same rule.
   Prediction, from the exploratory diagnostics under E7's result: it passes, which would make recording
   differences, not GPU arithmetic, the cause of E7's failure.
 - Standing rule, from E4, E7 and E7b together (see "What E4, E7 and E7b establish together"): pooled
@@ -555,8 +608,11 @@ its 95th percentile are at most a quarter of the seed difference's.
 | translation R squared | 182 | 0.00011 / 0.00066 | 0.00011 / 0.00062 | 0.00384 / 0.02516 | pass |
 | controls (reported only) | 336 | 0.00015 / 0.00839 | 0.00015 / 0.00811 | none | |
 
-Both configurations fail on the tail of the linear probes; every other family passes, most by a factor
-of 5 to 40. The repeat (`f32det-rerun`) is identical to `f32det` in every non-timing number: a whole run
+Both configurations fail on the tail of the linear probes. Every other family passes, but not all by much.
+Against the bar, the 95th percentiles pass by 1.17 times for MLP probes (0.00442 against 0.00515; 10 of
+their 12 largest differences are also `cause`) and 1.57 times for test error, and by 7 to 10 times for
+the rest; the medians pass by 5 to 19 times. (This line first said "most by a factor of 5 to 40", which
+compared with the seed statistic, not the bar.) The repeat (`f32det-rerun`) is identical to `f32det` in every non-timing number: a whole run
 on the GPU (14 minds, probes, controls, surprise tests, translation) repeats bit for bit with full float32
 and deterministic operations. `S_copy`: the compare script reports a largest difference of 2.88, but that
 is one value, the oracle's permanence `S_copy` (5027.84 on the Mac, 5030.72 on the GPU, 0.06 percent);
@@ -564,21 +620,31 @@ every other `S_copy` is within 0.00004 of the Mac's. Before the source-level pre
 mind's differed by 8 percent, so the surprise-test movies now match.
 
 Exploratory diagnostics, after the verdict (not part of the preregistered test):
-- GPU default against GPU full float32 is far inside the seed noise in every family (95th percentiles
-  0.00003 to 0.00044), so precision is not what fails.
+- The three GPU runs recorded byte-identical worlds (hash `306a35611bc61e58`, checked by the third
+  independent check), so GPU default against GPU full float32 isolates the learner's arithmetic. It is
+  far inside the seed noise for every family (95th percentiles 0.00003 to 0.00044), so precision is not
+  what fails the family. Single scores are another matter: blind's linear `cause` probe moved 0.0127,
+  more than its own learner-seed difference (0.0088), from TF32 alone.
 - The failing tail is one concept. Of the 12 largest linear-probe differences, 9 are `cause` (the 95th
   percentile by concept: cause 0.0195, relations 0.0077, every other concept 0.0032 or less). Without
   `cause` the linear probes pass (0.0016 against a bar of 0.0035).
 - The raw-senses control, which involves no learner, shows the same pattern (95th percentile for cause
-  0.0289, every other concept 0.0035 or less). So the cause is not the learner's arithmetic but the
-  data: each GPU run recorded its own world, its episodes part from the Mac's within the first steps
-  (E1), and `cause` labels rare collision events, so a few changed collisions move cause scores. E1 saw
-  the cause label differ in 2 of 64 episodes.
-- E7b tests this directly.
+  0.0289, every other concept 0.0035 or less). So the cause is not the arithmetic of training and probing
+  but the data: each GPU run simulated its own world on the GPU, its episodes part from the Mac's within
+  the first steps (E1), and `cause` labels rare collision events.
+- The third independent check decomposed one case (touch_only, raw senses, cause: 0.1405 on the Mac,
+  0.1793 on the GPU) by swapping observations and labels between the two recordings: about 97 percent of
+  the change comes from the probe's training labels, 6 fewer positives among 7,873, and the observations
+  contribute about 0.001. Across the 1,280 episodes the cause label differs in 124 entries (9 training
+  episodes, no test episode).
+- Finding for the project's science, not only the hardware: the `cause` probe is hypersensitive to a
+  handful of labels. Any change of data, on any machine, moves cause scores by about a learner seed's
+  worth. Cause results so far should be read with that in mind.
+- E7b tests the recording explanation directly.
 
 ### E7b: the same run on the Mac's recording (2026-11-05): PASS
 
-Job `e7b-macdata` (03:09 to 03:27), configuration `f32det` (full float32, deterministic operations) on
+Job `e7b-macdata` (03:12 to 03:26), configuration `f32det` (full float32, deterministic operations) on
 the Mac's own lawful recording, pushed and copied in (hash `e9b74db4218d7e27` on both machines, file by
 file). Full output `results/hardware/compare_e7b.log`.
 
@@ -593,26 +659,47 @@ file). Full output `results/hardware/compare_e7b.log`.
 | translation R squared | 182 | 0.0000001 | 0.0000029 | 0 | 4.5e-6 |
 
 `S_copy` matches to 2e-7. Given the same recorded episodes, the GPU at full float32 with deterministic
-operations reproduces the Mac's entire run to about six decimal places. The one outlier (a surprise score
-at a fifth of its seed difference) is still inside the bar. The prediction held: E7's failure came from the
-recordings, not from GPU arithmetic.
+operations reproduces the Mac's run to about the sixth decimal for nearly every score: medians at most
+1e-7, 95th percentiles at most 3e-6. Three exceptions:
+- hearing_only's MLP `number` probe, 8.3e-5: exactly one flipped prediction among 15,872 test rows.
+- The dog's permanence surprise, 8.7e-4 (a fifth of its seed difference), and the untrained dog's, 2.4e-4.
+  The comparison script leaves the untrained surprise scores out of the judged family (seed 1 has none),
+  so that one is not in the table. The independent check found the cause: the surprise-test movies are
+  not part of the recording but rendered on each machine, and in them a hidden wall
+  (`voe.HIDDEN_WALL`) lies exactly on the boundary wall at y = 0. 3 to 5 of the dog's 240-degree rays,
+  97 to 108 degrees off its axis, meet both walls at the same distance (0 or 1 unit in the last place),
+  so whether a ray shows the boundary's colour or internal grey depends on last-bit rounding, which
+  differs by device. Human eyes stop at 90 degrees, and echolocation sees the same depth for both walls,
+  so only the dog moves. On the Mac, forcing either colour brackets the GPU's value (trained 0.00509 and
+  0.00586 around the GPU's 0.00560). Strongly supported, not proven: proof needs a GPU render. That spread
+  (0.0011) is 29 percent of the dog's permanence seed difference, above the quarter bar for that score.
+  The fix is to move the hidden wall off the boundary, which changes the dog's stored results on the Mac
+  too; it is Henry's call (STATUS).
+So E7b isolates GPU arithmetic for everything but the surprise-test movies. The prediction held: E7's
+failure came from the recordings.
 
 ### What E4, E7 and E7b establish together
 
-- GPU arithmetic is not a source of error for this project. Same episodes in: stage 3 M within 0.00008
-  of the CPU (E4), and every score of a full run within about 1e-6 of the Mac (E7b).
+- At full float32 with deterministic operations, GPU arithmetic is not a source of error for this
+  project. Same episodes in: stage 3 M within 0.00008 of the CPU (E4), and nearly every score of a full
+  run within about 1e-6 of the Mac (E7b), the exceptions being the dog's surprise scores (a geometric tie
+  in the surprise-test movies) and one flipped probe prediction. At the GPU's default precision, single
+  `cause` scores can move by a seed's worth.
 - A data seed is not portable across machines; a recording is. The world simulator rounds slightly
   differently on each chip, so episodes regenerated from the same seed part within a few steps (E1).
   M barely notices (E4), but rare-event concepts do: `cause` probe scores moved by up to 0.02 (E7), as
   much as a learner seed moves them.
 - Rule for pooling GPU and Mac results: record each world once, on one machine, and copy that recording
-  to the other (`remote.sh push results/data/<recording>` into a folder that does not exist there yet,
-  then compare hashes). Do not regenerate a data seed on another machine and call it the same data.
+  to the other (`remote.sh push results/data/<recording>`, verified file by file); run at full float32
+  with deterministic operations; and do not pool the dog's surprise scores until the hidden-wall tie is
+  fixed. Do not regenerate a data seed on another machine and call it the same data. Since 2026-11-05 the
+  tooling enforces the first part (a GPU job refuses to record) and every result says how it was made
+  (`provenance`).
 - Repeatability: with full float32 and deterministic operations a whole GPU run repeats bit for bit
   (E7, `f32det-rerun`). At the GPU's defaults it does not (E5), though the differences are far inside the
   seed noise (E7, default against f32det).
-- Scope: the current learner (hidden 128). A new learner family gets E4 again, on a shared recording,
-  before its GPU results are pooled.
+- Scope: the current learner (hidden 128). E4 passed while E7 failed, so E4 alone is not enough: a new
+  learner family needs an E7b-style full run on a shared recording before its GPU results are pooled.
 
 ### E6 on the GPU (2026-11-05)
 
@@ -654,7 +741,7 @@ comparison (`alloc_check.sh`). Each on-device setting is the median of three tim
 
 ### E6 follow-up: training loop, deterministic operations, compile cache (2026-11-05)
 
-`speed_check.sh` as `speed-check-3` (02:31 to 02:52). Training loop as experiments run it
+`speed_check.sh` as `speed-check-3` (02:33 to 02:51). Training loop as experiments run it
 (`learner.train`, host batches), timed at 200 and 1,200 updates three times each, so compiling is
 separated from the cost of an update:
 
@@ -675,10 +762,11 @@ separated from the cost of an update:
 - `cuda_async` costs 9 percent per update and 0.6 s more compiling per call. The earlier "25 percent"
   included compiling. Keeping the default allocator still holds, on this smaller margin.
 
-What deterministic operations cost (`pc-gpu-det`, update alone, median of three): 1 mind 2.9 against 2.7
-ms (8 percent), largest learner 25.9 against 25.1 (3 percent), 32 minds 26.5 against 22.8 (16 percent),
-and 8 minds 14.2 against 28.1: the deterministic plan avoids the slow one. Small enough to make them the
-default for any work whose numbers will be reported.
+What deterministic operations cost (`pc-gpu-det`, update alone, median of three): 1 mind 2.91 against 2.67
+ms (9 percent), largest learner 25.9 against 25.1 (3 percent), 32 minds 26.5 against 22.8 (16 percent),
+and 8 minds 14.2 against 28.1: the deterministic plan avoids the slow one. These compare two jobs, and
+differences between jobs run up to 7 to 11 percent, so the 3 and 9 percent are within noise; within one job
+the training loop was faster with them (11.5 against 13.4 ms). Cheap enough for any reported work.
 
 One full mind three times, the same job (human, lawful world, default precision):
 
@@ -690,8 +778,18 @@ One full mind three times, the same job (human, lawful world, default precision)
 | Mac | 295 s | 131 s | 0.7 s | 38.7 s | 39 s | 0.227244 |
 
 Compiling was nearly half of a mind's time on the GPU. With a full cache a mind takes 98 s, 3 times faster
-than the Mac, and the result is unchanged (identical test error). The cache took 20 MB (2,940 entries).
-Recommendation: a persistent compile cache for every GPU job (`JAX_COMPILATION_CACHE_DIR`).
+than the Mac (at default precision). The cache took 20 MB (2,940 entries). Training time also fell, from
+65 to 54 s, more than its 0.8 s of compiling explains; one run per setting, so not explained.
+
+Does the cache change results? (`cache_and_reproduction_check.txt`, `cache_check.sh`.) Test error was
+identical above, but 36 of the mind's 74 other numbers (probes, up to 0.003) differed between the no-cache
+run and the cached ones, while the empty-cache and full-cache runs were identical to each other. A second
+check, `cache-check` (04:00 to 04:10), ran the same mind at full float32 with deterministic operations:
+no cache, cache empty and cache full gave identical results in all 74 numbers, and 150, 122 and 91 s. So
+for reported work the cache is safe, and `job.sh` uses it for every job. At the default settings the
+question is not settled: the second no-cache run there used a different recording (the PC's copy had been
+replaced by the Mac's at 03:12 for E7b), a design mistake in that check, so its 61 differing numbers mix
+two causes.
 
 ### E6 on the Mac (2026-11-04, Mac otherwise idle)
 

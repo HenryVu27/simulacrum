@@ -1,0 +1,32 @@
+[2026-11-05T04:00:06-0600] lock taken: project=umwelt job=cache-check host=HenrysPC pid=477 started=2026-11-05T04:00:06-0600
+[2026-11-05T04:00:06-0600] code: code 3b8544e6cc88b4c7 git 8763570 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:00:03-0600 
+[2026-11-05T04:00:08-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T04:00:08-0600] start: bash -c bash\ experiments/gpu/cache_check.sh 
+== 1. default settings, no cache, a second time
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 115s {'train': 64.4, 'latents': 4.0, 'probes_mlp': 11.3, 'probes_linear': 6.8, 'voe': 15.8, 'untrained': 1.4, 'raw': 8.7} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 3.1 min
+e2e: {'seconds_total': 186.06556515900002, 'timing': {'train': 64.4, 'latents': 4.0, 'probes_mlp': 11.3, 'probes_linear': 6.8, 'voe': 15.8, 'untrained': 1.4, 'raw': 8.7}, 'test_error': 0.22724755108356476}
+wrote results/hardware/pc-gpu-nocache2/bench.json
+== 2. full float32, deterministic operations: no cache, cache empty, cache full
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '--xla_gpu_deterministic_ops=true', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 66s {'train': 46.0, 'latents': 0.7, 'probes_mlp': 5.4, 'probes_linear': 3.0, 'voe': 0.8, 'untrained': 1.9, 'raw': 5.8} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 2.5 min
+e2e: {'seconds_total': 150.433852023, 'timing': {'train': 46.0, 'latents': 0.7, 'probes_mlp': 5.4, 'probes_linear': 3.0, 'voe': 0.8, 'untrained': 1.9, 'raw': 5.8}, 'test_error': 0.22724440693855286}
+wrote results/hardware/pc-gpu-f32det-nocache/bench.json
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '--xla_gpu_deterministic_ops=true', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 67s {'train': 46.7, 'latents': 0.7, 'probes_mlp': 5.4, 'probes_linear': 3.1, 'voe': 0.8, 'untrained': 1.9, 'raw': 5.9} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 2.0 min
+e2e: {'seconds_total': 121.50875025400006, 'timing': {'train': 46.7, 'latents': 0.7, 'probes_mlp': 5.4, 'probes_linear': 3.1, 'voe': 0.8, 'untrained': 1.9, 'raw': 5.9}, 'test_error': 0.22724440693855286}
+wrote results/hardware/pc-gpu-f32det-cache-cold/bench.json
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '--xla_gpu_deterministic_ops=true', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 55s {'train': 44.4, 'latents': 0.6, 'probes_mlp': 1.8, 'probes_linear': 0.9, 'voe': 0.2, 'untrained': 1.8, 'raw': 2.3} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 1.5 min
+e2e: {'seconds_total': 90.51862877399992, 'timing': {'train': 44.4, 'latents': 0.6, 'probes_mlp': 1.8, 'probes_linear': 0.9, 'voe': 0.2, 'untrained': 1.8, 'raw': 2.3}, 'test_error': 0.22724440693855286}
+wrote results/hardware/pc-gpu-f32det-cache-warm/bench.json
+== cache check done
+[2026-11-05T04:09:28-0600] exit 0

@@ -13,7 +13,7 @@ tmpcode=$repo/experiments/gpu/_test_remote_tmp.txt  # a new file, to change the 
 tag=trtest$$
 cleanup() {
   pkill -f "$T" 2>/dev/null
-  rm -rf "$T" "$tmpcode" "$repo/results/remote/$tag"*
+  rm -rf "$T" "$tmpcode" "$repo/results/remote/$tag"* "$repo/results/data/${tag}_rec"
   rmdir "$repo/results/remote" 2>/dev/null
 }
 trap cleanup EXIT
@@ -32,6 +32,7 @@ case "$c" in
     HOME=$FAKE_PC bash -c "${c#* -- }"; r=$?
     # FAKE_CORRUPT: alter a file after it arrives, as a faulty pipe would
     if [ -n "${FAKE_CORRUPT:-}" ] && [[ "$c" == *"tar -xf"* ]]; then echo "# altered" >> umwelt/pyproject.toml; fi
+    if [ -n "${FAKE_CORRUPT_DATA:-}" ] && [[ "$c" == *"tar -xf"* ]]; then echo "altered" >> "umwelt/$FAKE_CORRUPT_DATA"; fi
     exit $r ;;
   nvidia-smi*) echo "$(cat "$UMWELT_SMI.mem") MiB, 16303 MiB, 5 %" ;;
   powershell*Win32_Process*)
@@ -151,6 +152,50 @@ out=$(bash "$remote" resume 2>&1)
 check "resume leaves a pause Henry made" 'echo "$out" | grep -q "refused" && [ -d $UMWELT_PAUSE ]'
 out=$(bash "$remote" resume --force 2>&1)
 check "resume --force removes it" '[ ! -e $UMWELT_PAUSE ]'
+
+out=$(bash "$remote" sh 'echo "prealloc=$XLA_PYTHON_CLIENT_PREALLOCATE"' 2>&1)
+check "sh never lets JAX reserve most of the GPU" 'echo "$out" | grep -q "^prealloc=false$"'
+
+bash "$remote" run "${tag}n" bash -c 'echo "norecord=${UMWELT_NO_RECORD:-}"' >/dev/null 2>&1
+bash "$remote" run --record "${tag}r" bash -c 'echo "norecord=${UMWELT_NO_RECORD:-}"' >/dev/null 2>&1
+wait_for '[ -f $P/results/remote/${tag}n.exit ] && [ -f $P/results/remote/${tag}r.exit ]'
+check "a job may not record a world unless run --record" 'grep -q "^norecord=1$" $P/results/remote/${tag}n.log && grep -q "^norecord=$" $P/results/remote/${tag}r.log'
+
+echo "sleep 30" > "$P/results/remote/${tag}x.cmd"
+touch -t 202601010000 "$P/results/remote/${tag}x.cmd"
+out=$(bash "$remote" status "${tag}x" 2>&1)
+check "status reports a job that died without an exit code" 'echo "$out" | grep -q "^dead:"'
+touch "$P/results/remote/${tag}x.cmd"
+out=$(bash "$remote" status "${tag}x" 2>&1)
+check "status does not call a job just started dead" 'echo "$out" | grep -q "^not finished: starting"'
+
+sleep 30 & other=$!
+echo "$other" > "$P/results/remote/${tag}g.pid"  # a stale pid file whose number another program now has
+echo "changed again $$ $RANDOM" > "$tmpcode"  # content no earlier push sent, so the code really differs
+out=$(bash "$remote" push 2>&1)
+check "a reused process id does not block a push" 'echo "$out" | grep -q "^pushed"'
+kill $other
+rm -f "$tmpcode" "$P/results/remote/${tag}g.pid"
+
+mkdir -p "$repo/results/data/${tag}_rec"
+echo one > "$repo/results/data/${tag}_rec/a.npy"; echo two > "$repo/results/data/${tag}_rec/b.npy"
+out=$(bash "$remote" push "results/data/${tag}_rec" 2>&1)
+check "push verifies the data it sends" 'echo "$out" | grep -q "^pushed" && cmp -s "$repo/results/data/${tag}_rec/a.npy" "$P/results/data/${tag}_rec/a.npy"'
+out=$(FAKE_CORRUPT_DATA="results/data/${tag}_rec/b.npy" bash "$remote" push "results/data/${tag}_rec" 2>&1)
+check "push catches a data file altered on the way" 'echo "$out" | grep -q "push failed verification for results/data/${tag}_rec"'
+bash "$remote" push "results/data/${tag}_rec" >/dev/null 2>&1
+echo stray > "$P/results/data/${tag}_rec/c.npy"
+out=$(bash "$remote" push "results/data/${tag}_rec" 2>&1)
+check "push catches an extra file already on the PC in a pushed folder" 'echo "$out" | grep -q "push failed verification"'
+rm -f "$P/results/data/${tag}_rec/c.npy"
+
+series=$(dirname "$remote")/series.sh
+out=$(GAP_S=0 POLL_S=0.2 bash "$series" "${tag}s1" 'echo one' "${tag}s2" 'echo two' 2>&1)
+check "series runs jobs one after another" 'echo "$out" | grep -q "${tag}s1 finished, exit code 0" && echo "$out" | grep -q "${tag}s2 finished, exit code 0"'
+GAP_S=0 POLL_S=0.2 bash "$series" "${tag}s3" 'exit 3' "${tag}s4" 'echo four' >/dev/null 2>&1; code=$?
+check "series stops at a failed job" '[ "$code" = 1 ] && [ ! -e $P/results/remote/${tag}s4.cmd ]'
+out=$(GAP_S=0 POLL_S=0.2 bash "$series" --record "${tag}s5" 'echo "norecord=${UMWELT_NO_RECORD:-}"' 2>&1)
+check "series passes --record to its jobs" 'grep -q "^norecord=$" $P/results/remote/${tag}s5.log'
 
 git clone -q "$repo" "$T/clone"
 cp "$remote" "$T/clone/experiments/gpu/remote.sh"  # the version under test, which may be uncommitted

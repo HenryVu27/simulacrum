@@ -6,3 +6,13 @@
 2. Today's code on the Mac reproduces the stored v1 run (human, lawful, seed 0)
    stored run (results/runs/main/lawful_s0/human.json) against today's rerun (results/runs/bench_mac-cpu/lawful_s0/human.json):
    85 non-timing numbers in both, 0 differ []
+
+3. cache_check.sh (2026-11-05 04:10): every non-timing number of one full mind
+   nocache            vs nocache2          :  61 of 74 differ; largest 2.36e-02 (probes_raw/cause)
+   nocache2           vs cache-cold        :  61 of 74 differ; largest 2.36e-02 (probes_raw/cause)
+   f32det-nocache     vs f32det-cache-cold :   0 of 74 differ; largest 0.00e+00 (voe_untrained/solidity/S_copy)
+   f32det-nocache     vs f32det-cache-warm :   0 of 74 differ; largest 0.00e+00 (voe_untrained/solidity/S_copy)
+   f32det-cache-cold  vs f32det-cache-warm :   0 of 74 differ; largest 0.00e+00 (voe_untrained/solidity/S_copy)
+   f32det-nocache     total 150 s, outside stages 87 s, training 46 s
+   f32det-cache-cold  total 122 s, outside stages 57 s, training 47 s
+   f32det-cache-warm  total 91 s, outside stages 39 s, training 44 s

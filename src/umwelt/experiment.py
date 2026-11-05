@@ -3,6 +3,8 @@
 import json
 import os
 import pickle
+import platform
+import subprocess
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -11,7 +13,7 @@ import jax
 import numpy as np
 
 from umwelt import learner, learner_jepa, presets, probes, translate, voe
-from umwelt.data import load
+from umwelt.data import load, recording_hash
 
 RESULTS = Path(os.environ.get("UMWELT_RESULTS", Path(__file__).resolve().parents[2] / "results"))
 
@@ -37,6 +39,42 @@ def _voe_scores(params, suite, preset, mu, sd, L=learner):
     return out
 
 
+# Settings that change the numbers: every mind under one tag must share them (docs/gpu.md, E7 and E7b).
+SETTINGS = ("backend", "matmul_precision", "xla_flags", "recording_hash")
+
+
+def _code_version():
+    if os.environ.get("UMWELT_CODE"):  # set by the GPU job runner from the pushed manifest
+        return os.environ["UMWELT_CODE"]
+    try:
+        repo = Path(__file__).resolve().parents[2]
+        head = subprocess.run(["git", "-C", repo, "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=False).stdout.strip()
+        dirty = subprocess.run(["git", "-C", repo, "status", "--porcelain", "--", "src"], capture_output=True, text=True, check=False).stdout
+        return head + (" with uncommitted changes in src" if dirty.strip() else "")
+    except OSError:
+        return ""
+
+
+def provenance(world, n_episodes, data_seed, T=256):
+    """Where and how a result was computed, so a result file says whether it can be pooled with another."""
+    return {"machine": platform.node(), "platform": platform.platform(), "backend": jax.default_backend(),
+            "device": jax.devices()[0].device_kind, "jax": jax.__version__,
+            "matmul_precision": str(jax.config.jax_default_matmul_precision), "xla_flags": os.environ.get("XLA_FLAGS", ""),
+            "code": _code_version(), "recording": f"{world}_s{data_seed}_e{n_episodes}_t{T}",
+            "recording_hash": recording_hash(world, n_episodes, T, data_seed)}
+
+
+def check_same_settings(path, prov):
+    """A mind already done under this tag is reused only if it was made with the same settings."""
+    old = json.loads(Path(path).read_text()).get("provenance")
+    if old is None:
+        print(f"warning: {path} predates provenance records; reusing it unchecked", flush=True)
+        return
+    changed = {k: (old.get(k), prov[k]) for k in SETTINGS if old.get(k) != prov[k]}
+    if changed:
+        raise RuntimeError(f"{path} was made with other settings {changed}; use a new tag, or delete that run folder")
+
+
 def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=1024, n_test=256, n_probe=1024,
               n_keep=128, controls=True, tag="main", data_seed=0):
     if (RESULTS / "skip" / f"{world}_s{seed}").exists():
@@ -46,6 +84,7 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
     out_dir.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
     d = load(world, n_train + n_test, 256, seed=data_seed)
+    prov = provenance(world, n_train + n_test, data_seed)
     tr = slice(0, n_train)  # slices, not index arrays, so memory-mapped data is viewed rather than copied
     te = slice(n_train, n_train + n_test)
     pr = slice(0, n_probe)
@@ -58,6 +97,7 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
     for name in preset_names:
         path = out_dir / f"{name}.json"
         if path.exists():
+            check_same_settings(path, prov)
             print(f"[{world} s{seed}] {name}: done already, loading latents", flush=True)
             with open(out_dir / f"{name}_latents.pkl", "rb") as f:
                 keep_tr[name], keep_te[name] = pickle.load(f)
@@ -89,7 +129,7 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         test_err = float(step_err[:, 16:].mean())
         tick("latents")
         rec = {"world": world, "seed": seed, "data_seed": data_seed, "n_train": n_train, "preset": name, "obs_dim": int(o.shape[-1]),
-               "config": asdict(cfg), "train_log": log, "test_error": test_err}
+               "config": asdict(cfg), "provenance": prov, "train_log": log, "test_error": test_err}
         rec["probes"] = probes.run_battery(H_pr, T_tr, H_te, T_te, seed)
         tick("probes_mlp")
         rec["probes_linear"] = probes.run_battery(H_pr, T_tr, H_te, T_te, seed, hidden=0)
@@ -126,5 +166,5 @@ def run_world(world, seed, preset_names, cfg: learner.LearnerConfig, n_train=102
         {k: v.astype(np.float32) for k, v in keep_tr.items()}, {k: v.astype(np.float32) for k, v in keep_te.items()}
     )
     with open(out_dir / "translation.json", "w") as f:
-        json.dump({"names": names, "cka": cka.tolist(), "translation_r2": trans.tolist()}, f)
+        json.dump({"names": names, "cka": cka.tolist(), "translation_r2": trans.tolist(), "provenance": prov}, f)
     print(f"[{world} s{seed}] all minds done in {(time.time() - t_start) / 60:.1f} min", flush=True)

@@ -39,7 +39,7 @@ def scores(run):
             t = json.loads(f.read_text())
             names = t["names"]
             for key, mat in t.items():
-                if key == "names":
+                if key in ("names", "provenance"):
                     continue
                 m = np.asarray(mat, float)
                 for i, a in enumerate(names):

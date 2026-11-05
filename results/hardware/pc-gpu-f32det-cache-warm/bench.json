@@ -1,0 +1,24 @@
+{
+ "env": {
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "backend": "gpu",
+  "device": "NVIDIA GeForce RTX 5080",
+  "jax": "0.12.0.1",
+  "matmul_precision": "default",
+  "xla_flags": "--xla_gpu_deterministic_ops=true",
+  "allocator": "default"
+ },
+ "e2e": {
+  "seconds_total": 90.51862877399992,
+  "timing": {
+   "train": 44.4,
+   "latents": 0.6,
+   "probes_mlp": 1.8,
+   "probes_linear": 0.9,
+   "voe": 0.2,
+   "untrained": 1.8,
+   "raw": 2.3
+  },
+  "test_error": 0.22724440693855286
+ }
+}

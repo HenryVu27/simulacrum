@@ -13,7 +13,13 @@
 #    stops that whole group first; anything the command leaves running is stopped too; only then is the
 #    lock released. A SIGKILL leaves the lock in place (held too long, never released early); remote.sh
 #    unlock clears it.
-# 5. Pause switch, for when Henry wants the PC: while C:\gpu-pause exists (a file or a folder), a job
+# 5. Results that will be pooled with the Mac's must share recordings (docs/gpu.md, E7b), so a job may not
+#    record a world (UMWELT_NO_RECORD=1) unless started with remote.sh run --record. It caps JAX at half the
+#    card (8 GB) so a job cannot crowd Henry or the other project, and passes the pushed code version on to the
+#    results' provenance (UMWELT_CODE).
+# 6. While waiting, it removes a lock left by an umwelt job that is no longer running (a restart or a kill),
+#    so a dead umwelt job cannot block the other project's jobs for long. Never another project's lock.
+# 7. Pause switch, for when Henry wants the PC: while C:\gpu-pause exists (a file or a folder), a job
 #    does not start, and a running job's processes are stopped (SIGSTOP) until it is deleted, then
 #    continued (SIGCONT). A paused job keeps the lock and the GPU memory it holds, but uses no GPU time.
 #    remote.sh pause and remote.sh resume do the same from the Mac.
@@ -38,10 +44,21 @@ export XLA_PYTHON_CLIENT_PREALLOCATE=false  # take GPU memory as needed, not 75%
 # no result (docs/gpu.md, E6 follow-up). Keys include the program, precision and XLA flags.
 export JAX_COMPILATION_CACHE_DIR=${JAX_COMPILATION_CACHE_DIR:-$root/results/jax_cache}
 export JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS=0 JAX_PERSISTENT_CACHE_MIN_ENTRY_SIZE_BYTES=0
+export JAX_COMPILATION_CACHE_MAX_SIZE=${JAX_COMPILATION_CACHE_MAX_SIZE:-2000000000}  # oldest entries go past 2 GB
+export XLA_PYTHON_CLIENT_MEM_FRACTION=${XLA_PYTHON_CLIENT_MEM_FRACTION:-0.5}  # at most half the card (cuda_async ignores it)
 have_lock=0
 child=
 
 say() { echo "[$(now)] $*" >> "$log"; }
+is_job() { [ -n "$1" ] && ps -p "$1" -o args= 2>/dev/null | grep -q "job.sh $2\$"; }  # a process id can be reused
+dead_umwelt_lock() {  # the lock is an umwelt job's, and that job's job.sh is not running
+  local o p j
+  o=$(head -n 1 "$lock/owner" 2>/dev/null) || return 1
+  case "$o" in project=umwelt*) ;; *) return 1 ;; esac
+  p=$(echo "$o" | sed -n 's/.* pid=\([0-9]*\) .*/\1/p')
+  j=$(echo "$o" | sed -n 's/.* job=\([^ ]*\) .*/\1/p')
+  ! is_job "$p" "$j"
+}
 finish() {
   if [ "$have_lock" = 1 ]; then
     owner=$(head -n 1 "$lock/owner" 2>/dev/null || true)
@@ -79,6 +96,10 @@ echo $$ > "$dir/$name.pid"
 tries=0
 while true; do
   used=$("$smi" --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | head -n 1 | tr -d ' \r')
+  if [ -d "$lock" ] && dead_umwelt_lock; then
+    say "removed a lock whose umwelt job is gone: $(head -n 1 "$lock/owner")"
+    rm -rf "$lock"
+  fi
   if [ -e "$pause" ]; then
     say "waiting: paused ($pause exists)"
   elif ! [[ "$used" =~ ^[0-9]+$ ]]; then
@@ -102,6 +123,9 @@ files="code $(tr '\n' '\0' < .umwelt_files 2>/dev/null | xargs -0 sha256sum 2>/d
 [ -n "$pushed" ] && [ "$pushed" = "$current" ] && [ "$pushed" = "$files" ] \
   || end 3 "refused: code changed since this job was queued (job: '$pushed', manifest now: '$current', files now: '$files')"
 say "code: $(tr '\n' ' ' < "$dir/$name.push")"
+UMWELT_CODE=$(tr '\n' ' ' < "$dir/$name.push")
+export UMWELT_CODE
+[ -f "$dir/$name.allow_record" ] || export UMWELT_NO_RECORD=1  # give it its recordings, or run --record
 uv sync --frozen --extra gpu --quiet >> "$log" 2>&1 || end 4 "refused: uv sync failed"
 export UV_NO_SYNC=1  # from here on uv run never changes the environment (a plain sync would drop the CUDA plugin)
 [ -f "$dir/$name.allow_cpu" ] || export JAX_PLATFORMS=cuda,cpu  # no GPU is then an error, not a CPU fallback
