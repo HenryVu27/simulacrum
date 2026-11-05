@@ -1,0 +1,5 @@
+device cuda:0 preallocate false allocator cuda_async
+memory_stats {"num_allocs": 0, "bytes_in_use": 0, "peak_bytes_in_use": 0, "largest_alloc_size": 0, "bytes_limit": 0, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 0}
+one array of N GiB: {"2": true, "3.5": true, "3.99": true, "4.0": true, "4.01": true, "6": true, "8.2": true, "10": true, "12": true}
+held 16 x 1 GiB at once
+memory_stats {"num_allocs": 75, "bytes_in_use": 17179869184, "peak_bytes_in_use": 17179869188, "largest_alloc_size": 12884901888, "bytes_limit": 0, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 0}

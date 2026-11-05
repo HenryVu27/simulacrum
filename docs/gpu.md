@@ -339,6 +339,11 @@ Added 2026-11-05, after the second independent check and before running it:
   - for `f32det` against `f32det-rerun`, whether every number is identical.
   The comparison was tried on the Mac first: the Mac against itself passes with every difference zero; seed
   1 posing as another machine fails every family; a run with only one mind fails as incomplete.
+- E7b, added 2026-11-05 03:15 after E7 failed and before running this: E7's `f32det` configuration on
+  the Mac's own recording (`results/data/lawful_s0_e1280_t256`, pushed and copied in; hash checked on
+  both machines), so the only difference from the Mac's run is GPU arithmetic. Same comparison, same rule.
+  Prediction, from the exploratory diagnostics under E7's result: it passes, which would make recording
+  differences, not GPU arithmetic, the cause of E7's failure.
 - Standing rule, from E4 and E7 together: a result is validated for the learner it was run with. Before a
   new learner family (larger cores, attention) is pooled across machines, rerun E4 for it, or run its
   confirmatory work at full float32 with deterministic operations.
@@ -500,6 +505,44 @@ that went beyond the evidence.)
 Speed on the way: recording the 8,448 episodes took 14 s on the GPU (41 s on the PC's CPU under Windows,
 at idle priority beside another project's GPU job, so not a clean comparison);
 training took 68 s for human and 22 s for memoryless (idle Mac 134 s and 58 s).
+
+### E7 on the GPU (2026-11-05): FAIL by the preregistered rule
+
+Three runs (`series.sh`, 01:00 to 03:08; logs in `results/hardware/jobs/`), compared with
+`experiments/gpu/compare_e7.py`; full output `results/hardware/compare_e7.log`. Hardware difference is
+|GPU - Mac seed 0|; seed difference is |Mac seed 1 - Mac seed 0|; a family passes when both its median and
+its 95th percentile are at most a quarter of the seed difference's.
+
+| family | n | GPU f32det: median / p95 | GPU default: median / p95 | seed difference: median / p95 | verdict |
+|---|---|---|---|---|---|
+| test error | 14 | 0.00002 / 0.00063 | 0.00001 / 0.00060 | 0.00066 / 0.00396 | pass |
+| MLP probes | 168 | 0.00019 / 0.00442 | 0.00020 / 0.00446 | 0.00463 / 0.02059 | pass |
+| linear probes | 168 | 0.00017 / 0.00647 | 0.00016 / 0.00660 | 0.00333 / 0.01975 | **fail** (p95 bar 0.00494) |
+| surprise S | 42 | 0.00003 / 0.00033 | 0.00003 / 0.00030 | 0.00200 / 0.01123 | pass |
+| translation CKA | 182 | 0.00020 / 0.00142 | 0.00021 / 0.00153 | 0.00811 / 0.03951 | pass |
+| translation R squared | 182 | 0.00011 / 0.00066 | 0.00011 / 0.00062 | 0.00384 / 0.02516 | pass |
+| controls (reported only) | 336 | 0.00015 / 0.00839 | 0.00015 / 0.00811 | none | |
+
+Both configurations fail on the tail of the linear probes; every other family passes, most by a factor
+of 5 to 40. The repeat (`f32det-rerun`) is identical to `f32det` in every non-timing number: a whole run
+on the GPU (14 minds, probes, controls, surprise tests, translation) repeats bit for bit with full float32
+and deterministic operations. `S_copy`: the compare script reports a largest difference of 2.88, but that
+is one value, the oracle's permanence `S_copy` (5027.84 on the Mac, 5030.72 on the GPU, 0.06 percent);
+every other `S_copy` is within 0.00004 of the Mac's. Before the source-level precision fix the human
+mind's differed by 8 percent, so the surprise-test movies now match.
+
+Exploratory diagnostics, after the verdict (not part of the preregistered test):
+- GPU default against GPU full float32 is far inside the seed noise in every family (95th percentiles
+  0.00003 to 0.00044), so precision is not what fails.
+- The failing tail is one concept. Of the 12 largest linear-probe differences, 9 are `cause` (the 95th
+  percentile by concept: cause 0.0195, relations 0.0077, every other concept 0.0032 or less). Without
+  `cause` the linear probes pass (0.0016 against a bar of 0.0035).
+- The raw-senses control, which involves no learner, shows the same pattern (95th percentile for cause
+  0.0289, every other concept 0.0035 or less). So the cause is not the learner's arithmetic but the
+  data: each GPU run recorded its own world, its episodes part from the Mac's within the first steps
+  (E1), and `cause` labels rare collision events, so a few changed collisions move cause scores. E1 saw
+  the cause label differ in 2 of 64 episodes.
+- E7b tests this directly.
 
 ### E6 on the GPU (2026-11-05)
 

@@ -1,0 +1,113 @@
+{
+ "ref": "results/runs/main/lawful_s0",
+ "other": "results/hardware/e7/default/lawful_s0",
+ "seed1": "results/runs/main/lawful_s1",
+ "bar": 0.25,
+ "families": {
+  "test error": {
+   "n": 14,
+   "missing": [],
+   "hw_median": 1.2412667274475098e-05,
+   "seed_median": 0.0006579682230949402,
+   "hw_p95": 0.0005999535322189326,
+   "seed_p95": 0.003957168757915495,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only/test_error",
+    "hw": 0.0013644695281982422,
+    "seed": 0.007188200950622559
+   },
+   "identical": 0
+  },
+  "probes (MLP)": {
+   "n": 168,
+   "missing": [],
+   "hw_median": 0.0001995872324662036,
+   "seed_median": 0.004628037003711796,
+   "hw_p95": 0.004456277242520966,
+   "seed_p95": 0.02059445459141096,
+   "pass": true,
+   "worst": {
+    "score": "dog/cause",
+    "hw": 0.013713754318840254,
+    "seed": 0.004202953633654083
+   },
+   "identical": 0
+  },
+  "probes (linear)": {
+   "n": 168,
+   "missing": [],
+   "hw_median": 0.0001606530451899778,
+   "seed_median": 0.0033330114933069234,
+   "hw_p95": 0.006602444672454649,
+   "seed_p95": 0.01974672778115691,
+   "pass": false,
+   "worst": {
+    "score": "passive/cause",
+    "hw": 0.023244242541947124,
+    "seed": 0.029434988473699852
+   },
+   "identical": 0
+  },
+  "controls (untrained, raw)": {
+   "n": 336,
+   "missing": [],
+   "hw_median": 0.00014755455138649315,
+   "hw_p95": 0.008106903182807185,
+   "pass": null,
+   "worst": {
+    "score": "touch_only/raw/cause",
+    "hw": 0.0397300846738913
+   },
+   "identical": 3
+  },
+  "surprise S": {
+   "n": 42,
+   "missing": [],
+   "hw_median": 2.6643421733751893e-05,
+   "seed_median": 0.00200402140035294,
+   "hw_p95": 0.00029910672456026074,
+   "seed_p95": 0.01123232953250408,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only/permanence",
+    "hw": 0.0019651297479867935,
+    "seed": 0.009478628184297122
+   },
+   "identical": 0
+  },
+  "translation (cka)": {
+   "n": 182,
+   "missing": [],
+   "hw_median": 0.00020578503608703613,
+   "seed_median": 0.008108317852020264,
+   "hw_p95": 0.0015275478363037099,
+   "seed_p95": 0.039513090252876276,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only->touch_only",
+    "hw": 0.0026924610137939453,
+    "seed": 0.02486509084701538
+   },
+   "identical": 0
+  },
+  "translation (translation_r2)": {
+   "n": 182,
+   "missing": [],
+   "hw_median": 0.00011448699980493027,
+   "seed_median": 0.0038383842964965775,
+   "hw_p95": 0.0006205298504296964,
+   "seed_p95": 0.025162763111059,
+   "pass": true,
+   "worst": {
+    "score": "human->oracle",
+    "hw": 0.0049514451302985485,
+    "seed": 0.006383814101102114
+   },
+   "identical": 0
+  }
+ },
+ "s_copy_max_diff": 2.88037109375,
+ "complete": true,
+ "pass": false
+}

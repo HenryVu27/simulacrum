@@ -1,0 +1,122 @@
+[2026-11-05T02:33:09-0600] lock taken: project=umwelt job=speed-check-3 host=HenrysPC pid=477 started=2026-11-05T02:33:09-0600
+[2026-11-05T02:33:09-0600] code: code d66aa14f8a3629c2 git 3447602 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T02:33:04-0600 
+[2026-11-05T02:33:11-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T02:33:11-0600] start: bash -c bash\ experiments/gpu/speed_check.sh 
+== training loop, default precision, then full float32
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+train: {'ms_per_update': 13.422506822000003, 'fixed_seconds_per_call': 0.8179437435999959, 'seconds': {'200': [3.4694131729999995, 3.5024451079999963, 4.002389198000003], '1200': [16.92495193, 16.828578987, 17.386619921999994]}, 'minutes_per_4000_updates': 0.9084661838600001}
+wrote results/hardware/pc-gpu/bench.json
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'highest', 'xla_flags': '', 'allocator': 'default'}
+train: {'ms_per_update': 10.572918569999985, 'fixed_seconds_per_call': 0.8873174230000074, 'seconds': {'200': [3.003425498999988, 3.0019011370000044, 2.980678605999998], '1200': [13.318037712000006, 14.397719458000012, 13.574819706999989]}, 'minutes_per_4000_updates': 0.7196498617166658}
+wrote results/hardware/pc-gpu-highest/bench.json
+== the allocator decision again, on the training loop timed the new way
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'cuda_async'}
+train: {'ms_per_update': 14.567627320000014, 'fixed_seconds_per_call': 1.4501850169999955, 'seconds': {'200': [4.066953761999997, 4.429431585999993, 4.363710480999998], '1200': [19.055828182, 18.931337801000012, 18.553880877999973]}, 'minutes_per_4000_updates': 0.9953449049500008}
+wrote results/hardware/pc-gpu-async/bench.json
+== GPU memory limits inside WSL, saved this time
+device cuda:0 preallocate false allocator default
+memory_stats {"num_allocs": 0, "bytes_in_use": 0, "peak_bytes_in_use": 0, "largest_alloc_size": 0, "bytes_limit": 12801015808, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 0, "pool_bytes": 0, "peak_pool_bytes": 0}
+one array of N GiB: {"2": true, "3.5": true, "3.99": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 3.99GiB with allocator GPU_0_bfc on device 0. [executable_nam", "4.0": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 4.00GiB with allocator GPU_0_bfc on device 0. [tf-allocator-a", "4.01": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 4.01GiB with allocator GPU_0_bfc on device 0. [tf-allocator-a", "6": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 6.00GiB with allocator GPU_0_bfc on device 0. [tf-allocator-a", "8.2": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.20GiB with allocator GPU_0_bfc on device 0. [executable_nam", "10": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 10.00GiB with allocator GPU_0_bfc on device 0. [executable_na", "12": "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 12.00GiB with allocator GPU_0_bfc on device 0. [tf-allocator-"}
+held arrays stopped: JaxRuntimeError RESOURCE_EXHAUSTED: Out of memory while trying to allocate 1.00GiB with allocator GPU_0_bfc on device 0. [tf-allocator-a
+held 10 x 1 GiB at once
+memory_stats {"num_allocs": 52, "bytes_in_use": 10737418240, "peak_bytes_in_use": 10737418752, "largest_alloc_size": 3867148288, "bytes_limit": 12801015808, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 786432000, "pool_bytes": 12801015808, "peak_pool_bytes": 12801015808}
+device cuda:0 preallocate false allocator cuda_async
+memory_stats {"num_allocs": 0, "bytes_in_use": 0, "peak_bytes_in_use": 0, "largest_alloc_size": 0, "bytes_limit": 0, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 0}
+one array of N GiB: {"2": true, "3.5": true, "3.99": true, "4.0": true, "4.01": true, "6": true, "8.2": true, "10": true, "12": true}
+held 16 x 1 GiB at once
+memory_stats {"num_allocs": 75, "bytes_in_use": 17179869184, "peak_bytes_in_use": 17179869188, "largest_alloc_size": 12884901888, "bytes_limit": 0, "bytes_reserved": 0, "peak_bytes_reserved": 0, "largest_free_block_bytes": 0}
+== what repeatable runs cost: deterministic operations, update and training loop
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '--xla_gpu_deterministic_ops=true', 'allocator': 'default'}
+{'minds': 1, 'hidden': 128, 'batch': 32, 'ms_per_update': 2.908774189062502, 'ms_runs': [2.906117158593746, 2.9152227742187176, 2.908774189062502], 'mind_updates_per_s': 343.78742900022087, 'minutes_per_4000_updates_all_minds': 0.19391827927083347}
+{'minds': 1, 'hidden': 128, 'batch': 256, 'ms_per_update': 6.533829985937523, 'ms_runs': [6.533829985937523, 6.539528640625036, 6.5150334640624585], 'mind_updates_per_s': 153.04958992692747, 'minutes_per_4000_updates_all_minds': 0.43558866572916816}
+{'minds': 1, 'hidden': 512, 'batch': 32, 'ms_per_update': 4.495801892187501, 'ms_runs': [4.481845985937483, 4.495801892187501, 4.499904097656282], 'mind_updates_per_s': 222.4297297747332, 'minutes_per_4000_updates_all_minds': 0.2997201261458334}
+{'minds': 1, 'hidden': 512, 'batch': 256, 'ms_per_update': 13.655633456249916, 'ms_runs': [13.655633456249916, 13.696883668749926, 13.629816075], 'mind_updates_per_s': 73.22985075747765, 'minutes_per_4000_updates_all_minds': 0.9103755637499944}
+{'minds': 1, 'hidden': 1024, 'batch': 256, 'ms_per_update': 25.903964599999796, 'ms_runs': [25.903964599999796, 25.87467394999976, 25.944726681250074], 'mind_updates_per_s': 38.60412934628578, 'minutes_per_4000_updates_all_minds': 1.7269309733333198}
+{'minds': 8, 'hidden': 128, 'batch': 32, 'ms_per_update': 14.24400315937504, 'ms_runs': [14.098711906250116, 14.481756437499982, 14.24400315937504], 'mind_updates_per_s': 561.6398641932766, 'minutes_per_4000_updates_all_minds': 0.9496002106250027}
+{'minds': 16, 'hidden': 128, 'batch': 32, 'ms_per_update': 18.565691981249977, 'ms_runs': [18.52784977499997, 18.565691981249977, 18.802253818750003], 'mind_updates_per_s': 861.804667240998, 'minutes_per_4000_updates_all_minds': 1.2377127987499985}
+{'minds': 32, 'hidden': 128, 'batch': 32, 'ms_per_update': 26.461620581250145, 'ms_runs': [26.461620581250145, 26.38797791249985, 26.794058762499873], 'mind_updates_per_s': 1209.298572691129, 'minutes_per_4000_updates_all_minds': 1.7641080387500097}
+E1105 02:42:23.200903    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:23.201533    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:33.204660    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:33.206164    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+W1105 02:42:33.206193    2373 bfc_allocator.cc:743] Allocator (GPU_0_bfc) ran out of memory trying to allocate 4.00GiB (rounded to 4291230208) from the lower end requested by op 
+If this is caused by memory fragmentation, the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' may improve the situation.
+Current allocation summary follows.
+W1105 02:42:33.206461    2373 bfc_allocator.cc:754] ***************xx*********__________________________________________________________________________
+{'minds': 64, 'hidden': 128, 'batch': 32, 'error': "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 4.00GiB with allocator GPU_0_bfc on device 0. [executable_name='jit_update'] [tf-allocator-allocation-error='']"}
+E1105 02:42:36.119348    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 8.27GiB (8877244416 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:36.119940    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 8.27GiB (8877244416 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:46.123742    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 8.27GiB (8877244416 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1105 02:42:46.125512    2373 cuda_executor.cc:1439] [0] Failed to allocate device memory of 8.27GiB (8877244416 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+W1105 02:42:46.125517    2373 bfc_allocator.cc:743] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.03GiB (rounded to 8627010048) from the lower end requested by op 
+If this is caused by memory fragmentation, the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' may improve the situation.
+Current allocation summary follows.
+W1105 02:42:46.125762    2373 bfc_allocator.cc:754] ***************************************************_________________________________________________
+{'minds': 128, 'hidden': 128, 'batch': 32, 'error': "JaxRuntimeError: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.03GiB with allocator GPU_0_bfc on device 0. [executable_name='jit_update'] [tf-allocator-allocation-error='']"}
+train: {'ms_per_update': 11.459753234000004, 'fixed_seconds_per_call': 0.8386385561999985, 'seconds': {'200': [3.197683285000039, 3.001230347999922, 3.1305892029999995], '1200': [14.590342437000004, 14.438359598000034, 14.611476651000089]}, 'minutes_per_4000_updates': 0.7779608582033336}
+wrote results/hardware/pc-gpu-det/bench.json
+== one full mind: no cache
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 116s {'train': 65.1, 'latents': 3.9, 'probes_mlp': 11.6, 'probes_linear': 6.9, 'voe': 15.7, 'untrained': 1.4, 'raw': 8.6} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.87 self_location=0.49 cause=0.54 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 3.1 min
+e2e: {'seconds_total': 186.447025617, 'timing': {'train': 65.1, 'latents': 3.9, 'probes_mlp': 11.6, 'probes_linear': 6.9, 'voe': 15.7, 'untrained': 1.4, 'raw': 8.6}, 'test_error': 0.22723807394504547}
+wrote results/hardware/pc-gpu-nocache/bench.json
+cache dir /root/umwelt/results/jax_cache min seconds 0.0
+== one full mind: cache empty
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 116s {'train': 64.4, 'latents': 4.0, 'probes_mlp': 11.6, 'probes_linear': 6.9, 'voe': 15.9, 'untrained': 1.4, 'raw': 8.7} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.87 self_location=0.49 cause=0.54 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 2.9 min
+e2e: {'seconds_total': 171.09035875899997, 'timing': {'train': 64.4, 'latents': 4.0, 'probes_mlp': 11.6, 'probes_linear': 6.9, 'voe': 15.9, 'untrained': 1.4, 'raw': 8.7}, 'test_error': 0.22723807394504547}
+wrote results/hardware/pc-gpu-cache-cold/bench.json
+== one full mind: cache full
+{'platform': 'Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43', 'backend': 'gpu', 'device': 'NVIDIA GeForce RTX 5080', 'jax': '0.12.0.1', 'matmul_precision': 'default', 'xla_flags': '', 'allocator': 'default'}
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 63s {'train': 53.8, 'latents': 0.5, 'probes_mlp': 1.4, 'probes_linear': 0.8, 'voe': 0.2, 'untrained': 1.4, 'raw': 1.8} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.87 self_location=0.49 cause=0.54 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.07
+[lawful s0] all minds done in 1.6 min
+e2e: {'seconds_total': 97.79853316000003, 'timing': {'train': 53.8, 'latents': 0.5, 'probes_mlp': 1.4, 'probes_linear': 0.8, 'voe': 0.2, 'untrained': 1.4, 'raw': 1.8}, 'test_error': 0.22723807394504547}
+wrote results/hardware/pc-gpu-cache-warm/bench.json
+cache: 20M, 2940 entries
+== speed check done
+[2026-11-05T02:51:27-0600] exit 0
