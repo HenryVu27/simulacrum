@@ -1,0 +1,17 @@
+################ E7b f32det-macdata
+configuration f32det-macdata
+JAX_DEFAULT_MATMUL_PRECISION=highest
+XLA_FLAGS=--xla_gpu_deterministic_ops=true
+jax 0.12.0.1 gpu NVIDIA GeForce RTX 5080
+recording lawful_s0_e1280_t256 hash e9b74db4218d7e27
+family                          n  hw median  seed median   hw p95  seed p95  verdict  (worst score)
+test error                     14    0.00000      0.00066  0.00000   0.00396  PASS     (hearing_only/test_error: 0.0000 vs seed 0.0072)
+probes (MLP)                  168    0.00000      0.00463  0.00000   0.02059  PASS     (hearing_only/number: 0.0001 vs seed 0.0062)
+probes (linear)               168    0.00000      0.00333  0.00000   0.01975  PASS     (hearing_only/self_motion: 0.0000 vs seed 0.0092)
+controls (untrained, raw)     336    0.00000            -  0.00000         -  report   (passive_novest/untrained/self_location: 0.0000; no seed yardstick)
+surprise S                     42    0.00000      0.00200  0.00000   0.01123  PASS     (dog/permanence: 0.0009 vs seed 0.0039)
+translation (cka)             182    0.00000      0.00811  0.00000   0.03951  PASS     (human->blind: 0.0000 vs seed 0.0005)
+translation (translation_r2)  182    0.00000      0.00384  0.00000   0.02516  PASS     (smell_only->touch_only: 0.0000 vs seed 0.0049)
+S_copy (stimuli only), largest difference from the reference: 2.07e-07
+E7: PASS
+wrote results/hardware/e7/f32det-macdata/lawful_s0/compare_e7_vs_main_lawful_s0.json

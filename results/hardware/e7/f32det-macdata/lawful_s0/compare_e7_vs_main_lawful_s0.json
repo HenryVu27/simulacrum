@@ -1,0 +1,113 @@
+{
+ "ref": "results/runs/main/lawful_s0",
+ "other": "results/hardware/e7/f32det-macdata/lawful_s0",
+ "seed1": "results/runs/main/lawful_s1",
+ "bar": 0.25,
+ "families": {
+  "test error": {
+   "n": 14,
+   "missing": [],
+   "hw_median": 2.2351741790771484e-08,
+   "seed_median": 0.0006579682230949402,
+   "hw_p95": 4.991888999938964e-08,
+   "seed_p95": 0.003957168757915495,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only/test_error",
+    "hw": 5.960464477539063e-08,
+    "seed": 0.007188200950622559
+   },
+   "identical": 5
+  },
+  "probes (MLP)": {
+   "n": 168,
+   "missing": [],
+   "hw_median": 1.9451826305943998e-08,
+   "seed_median": 0.004628037003711796,
+   "hw_p95": 3.317615870163105e-07,
+   "seed_p95": 0.02059445459141096,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only/number",
+    "hw": 8.313934153641317e-05,
+    "seed": 0.006235450615231172
+   },
+   "identical": 27
+  },
+  "probes (linear)": {
+   "n": 168,
+   "missing": [],
+   "hw_median": 1.2364775181170073e-08,
+   "seed_median": 0.0033330114933069234,
+   "hw_p95": 1.0013048802257064e-07,
+   "seed_p95": 0.01974672778115691,
+   "pass": true,
+   "worst": {
+    "score": "hearing_only/self_motion",
+    "hw": 1.983797640603413e-07,
+    "seed": 0.009172850937023025
+   },
+   "identical": 28
+  },
+  "controls (untrained, raw)": {
+   "n": 336,
+   "missing": [],
+   "hw_median": 1.8919884547941024e-09,
+   "hw_p95": 1.3641171614162118e-08,
+   "pass": null,
+   "worst": {
+    "score": "passive_novest/untrained/self_location",
+    "hw": 1.4758697319816605e-07
+   },
+   "identical": 56
+  },
+  "surprise S": {
+   "n": 42,
+   "missing": [],
+   "hw_median": 8.870847523212433e-08,
+   "seed_median": 0.00200402140035294,
+   "hw_p95": 5.118548870086662e-07,
+   "seed_p95": 0.01123232953250408,
+   "pass": true,
+   "worst": {
+    "score": "dog/permanence",
+    "hw": 0.0008716657757759094,
+    "seed": 0.003940201655495912
+   },
+   "identical": 6
+  },
+  "translation (cka)": {
+   "n": 182,
+   "missing": [],
+   "hw_median": 1.1920928955078125e-07,
+   "seed_median": 0.008108317852020264,
+   "hw_p95": 3.5762786865234375e-07,
+   "seed_p95": 0.039513090252876276,
+   "pass": true,
+   "worst": {
+    "score": "human->blind",
+    "hw": 7.152557373046875e-07,
+    "seed": 0.0005465149879455566
+   },
+   "identical": 12
+  },
+  "translation (translation_r2)": {
+   "n": 182,
+   "missing": [],
+   "hw_median": 1.362403310722904e-07,
+   "seed_median": 0.0038383842964965775,
+   "hw_p95": 2.862670264386355e-06,
+   "seed_p95": 0.025162763111059,
+   "pass": true,
+   "worst": {
+    "score": "smell_only->touch_only",
+    "hw": 4.493982766140547e-06,
+    "seed": 0.004866004463994988
+   },
+   "identical": 0
+  }
+ },
+ "s_copy_max_diff": 2.0721927285194397e-07,
+ "complete": true,
+ "pass": true
+}

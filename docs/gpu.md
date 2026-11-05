@@ -246,6 +246,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   world) and was removed; the 18 arrays matched the Mac's file by file. Recording hashes are now taken in
   C-locale file order (`e7.sh`), since the two shells list underscored names in different orders. Rule:
   push a recording only into a folder that does not exist on the PC yet, or compare file lists after.
+- 2026-11-05 03:27. E7b passed (results below). `job.sh` now gives every job a persistent compile cache
+  (`results/jax_cache`); 27 of 27 job tests.
 
 ## How to run on the GPU
 
@@ -373,7 +375,8 @@ Added 2026-11-05, after the second independent check and before running it:
   both machines), so the only difference from the Mac's run is GPU arithmetic. Same comparison, same rule.
   Prediction, from the exploratory diagnostics under E7's result: it passes, which would make recording
   differences, not GPU arithmetic, the cause of E7's failure.
-- Standing rule, from E4 and E7 together: a result is validated for the learner it was run with. Before a
+- Standing rule, from E4, E7 and E7b together (see "What E4, E7 and E7b establish together"): pooled
+  results share recordings, and a result is validated for the learner it was run with. Before a
   new learner family (larger cores, attention) is pooled across machines, rerun E4 for it, or run its
   confirmatory work at full float32 with deterministic operations.
 
@@ -572,6 +575,44 @@ Exploratory diagnostics, after the verdict (not part of the preregistered test):
   (E1), and `cause` labels rare collision events, so a few changed collisions move cause scores. E1 saw
   the cause label differ in 2 of 64 episodes.
 - E7b tests this directly.
+
+### E7b: the same run on the Mac's recording (2026-11-05): PASS
+
+Job `e7b-macdata` (03:09 to 03:27), configuration `f32det` (full float32, deterministic operations) on
+the Mac's own lawful recording, pushed and copied in (hash `e9b74db4218d7e27` on both machines, file by
+file). Full output `results/hardware/compare_e7b.log`.
+
+| family | n | median difference | 95th percentile | identical | largest (score: GPU, seed) |
+|---|---|---|---|---|---|
+| test error | 14 | 0.0000000 | 0.0000000 | 5 | hearing_only: 6e-8, seed 0.0072 |
+| MLP probes | 168 | 0.0000000 | 0.0000003 | 27 | hearing_only/number: 0.00008, seed 0.0062 |
+| linear probes | 168 | 0.0000000 | 0.0000001 | 28 | 2e-7 |
+| controls (reported) | 336 | 0.0000000 | 0.0000000 | 56 | 1.5e-7 |
+| surprise S | 42 | 0.0000001 | 0.0000005 | 6 | dog/permanence: 0.00087, seed 0.0039 |
+| translation CKA | 182 | 0.0000001 | 0.0000004 | 12 | 7e-7 |
+| translation R squared | 182 | 0.0000001 | 0.0000029 | 0 | 4.5e-6 |
+
+`S_copy` matches to 2e-7. Given the same recorded episodes, the GPU at full float32 with deterministic
+operations reproduces the Mac's entire run to about six decimal places. The one outlier (a surprise score
+at a fifth of its seed difference) is still inside the bar. The prediction held: E7's failure came from the
+recordings, not from GPU arithmetic.
+
+### What E4, E7 and E7b establish together
+
+- GPU arithmetic is not a source of error for this project. Same episodes in: stage 3 M within 0.00008
+  of the CPU (E4), and every score of a full run within about 1e-6 of the Mac (E7b).
+- A data seed is not portable across machines; a recording is. The world simulator rounds slightly
+  differently on each chip, so episodes regenerated from the same seed part within a few steps (E1).
+  M barely notices (E4), but rare-event concepts do: `cause` probe scores moved by up to 0.02 (E7), as
+  much as a learner seed moves them.
+- Rule for pooling GPU and Mac results: record each world once, on one machine, and copy that recording
+  to the other (`remote.sh push results/data/<recording>` into a folder that does not exist there yet,
+  then compare hashes). Do not regenerate a data seed on another machine and call it the same data.
+- Repeatability: with full float32 and deterministic operations a whole GPU run repeats bit for bit
+  (E7, `f32det-rerun`). At the GPU's defaults it does not (E5), though the differences are far inside the
+  seed noise (E7, default against f32det).
+- Scope: the current learner (hidden 128). A new learner family gets E4 again, on a shared recording,
+  before its GPU results are pooled.
 
 ### E6 on the GPU (2026-11-05)
 
