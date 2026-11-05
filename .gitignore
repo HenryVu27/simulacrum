@@ -15,3 +15,4 @@ results/runs/**/*_test_errors.npy
 results/hardware/**/*.npz
 results/hardware/**/*.npy
 results/runs/bench_*/
+.umwelt_push
