@@ -3,7 +3,7 @@
 # JAX upgrade, with new tags if the old results should be kept. From the Mac:
 #
 #   experiments/gpu/remote.sh push results/hardware/mac-cpu/data_dark.npz
-#   experiments/gpu/remote.sh run gpu-checks bash experiments/gpu/checks.sh     # or name sections: repro bench stage3
+#   experiments/gpu/remote.sh run gpu-checks bash experiments/gpu/checks.sh     # or name sections: repro precfix bench stage3 cpu
 #   experiments/gpu/remote.sh status gpu-checks
 #   experiments/gpu/remote.sh pull results/hardware
 #
@@ -50,7 +50,13 @@ echo "== E6: speed"
 for _ in 1 2 3 4 5; do /usr/lib/wsl/lib/nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader; sleep 1; done
 py experiments/gpu/bench.py pc-gpu
 py experiments/gpu/bench.py pc-gpu-highest --precision highest --parts update train
-JAX_PLATFORMS=cpu py experiments/gpu/bench.py pc-wsl-cpu --parts update train  # the PC's CPU under Linux
+fi
+
+# The PC's CPU under Linux. Not in the default set: it uses no GPU but a job holds the shared GPU lock
+# for its whole run (15 to 20 minutes here), which the other project would wait on for nothing.
+if want cpu; then
+echo "== E6: the PC's CPU under Linux"
+JAX_PLATFORMS=cpu py experiments/gpu/bench.py pc-wsl-cpu --parts update train
 fi
 
 want stage3 || { echo "== done: $parts"; exit 0; }
