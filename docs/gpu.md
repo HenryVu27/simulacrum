@@ -222,6 +222,10 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   - Tests: `job.sh` 26 of 26 (the previous version fails the 4 new ones); `remote.sh` 36 of 36.
   - Not changed: jobs take the lock whenever it is free and do not read the schedule's times; the
     schedule is a courtesy between sessions, the lock is the rule.
+- 2026-11-05 01:00. `series.sh` started E7 and the speed check, one job at a time (`e7-f32det`,
+  `e7-default`, `speed-check-3`, `e7-f32det-rerun`), behind the other project's second generation chunk and its
+  queued training run; the schedule line was updated. The first push with the new deletion step went
+  through on the real PC (verified, nothing to delete). Log: `results/hardware/jobs/series-2026-11-05.log`.
 
 ## How to run on the GPU
 
@@ -236,6 +240,7 @@ that plays the PC).
     experiments/gpu/remote.sh pull results/runs/v3        # copy results back to the Mac
     experiments/gpu/remote.sh pause                       # freeze umwelt GPU work; resume undoes it
     experiments/gpu/remote.sh stop NAME                   # end a queued or running job
+    experiments/gpu/series.sh NAME 'CMD' NAME 'CMD' ...   # several jobs, one at a time, a gap after each
 
 On the PC itself, `mkdir C:\gpu-pause` pauses and `rmdir C:\gpu-pause` resumes (a file works too).
 
@@ -259,6 +264,9 @@ What a job guarantees (`experiments/gpu/job.sh`):
   dead (`--force` overrides).
 - Job names are used once, so a log never mixes two runs. JAX takes GPU memory as needed
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
+
+Several jobs go through `series.sh`, not several `run`s at once: it queues the next job only after the
+last has finished and 90 s have passed, so another project's job already waiting on the lock gets the GPU first.
 
 Limits inside WSL: a compiled step whose working memory reaches 4 GiB fails with the default allocator
 (for the current learner, 64 minds at once); add `env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` to such a
