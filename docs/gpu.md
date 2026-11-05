@@ -93,8 +93,8 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   one (`XLA_PYTHON_CLIENT_ALLOCATOR=platform`). Total memory is not capped there: ten 1 GiB arrays held
   together worked (10.8 GB), stopping only at JAX's own ceiling of 75 percent of the card (11.9 GiB).
   This is why JAX's default up-front reservation (11.9 GiB) failed and retried smaller; jobs do not
-  reserve up front anyway. Consequence: no single array on the GPU may reach 4 GiB (the largest umwelt
-  array today, one mind's float16 observations for 8,448 episodes, is about 1.4 GB). `experiments/gpu/memprobe.py`.
+  reserve up front anyway. `experiments/gpu/memprobe.py`. (Corrected below: the limit binds on a
+  compiled step's whole working memory, not only on single arrays.)
 - 2026-11-04. Every push is now checked on the PC: it rehashes the files that arrived and must match
   the Mac's code hash (a test alters a file in transit and the push fails; `remote.sh` 29 of 29). The
   first real push matched. The Mac's reference episodes (`data_dark.npz`) also arrived byte-identical.
@@ -109,6 +109,37 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   counters put it on Henry's desktop: an animated wallpaper (`wallpaper64`, 12 percent), the window
   compositor (`dwm`, 9 percent) and Chrome. Speed numbers below are measured with that load present;
   `checks.sh` records it just before E6.
+- 2026-11-04 23:03. First checks job (`gpu-checks`, log `results/hardware/jobs/gpu-checks-1.log`): E1 to
+  E3 and E5 finished; E6 stopped at 128 minds at once, `RESOURCE_EXHAUSTED ... allocate 8.12GiB`. XLA
+  packs all of a compiled step's temporary buffers into one allocation, so the 4 GiB limit applies to a
+  step's whole working memory: 64 minds at once (just over 4 GiB) fails as well. Correction to the
+  memory entry above: the binding limit is per compiled step, not per array.
+- 2026-11-04 23:05. JAX's `cuda_async` allocator (`XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async`) gets blocks
+  of 4, 6 and 8.2 GiB. Compared with the default in one job (`experiments/gpu/alloc_check.sh`): training
+  with deterministic operations gives byte-identical weights (hash `69122ab38190b194`); on-device
+  updates for 1 to 32 minds take the same time (within 3 percent, three repeats each); 64 minds run
+  (37 ms per update) where the default fails; but the host-batch training loop that experiments use is
+  25 percent slower (19.2 against 15.3 ms per update; the pause runs agree, 41 s against 37 s). Decision:
+  jobs keep the default allocator; a job that needs a step of 4 GiB or more sets `cuda_async` itself:
+  `remote.sh run NAME env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async CMD...`.
+- 2026-11-04. 128 minds at once under `cuda_async` run but take 457 ms per update (three repeats, 423 to
+  466 ms), 12 times the 64-mind step for twice the work. Not explained; one guess, untested, is that
+  Windows (WDDM) starts paging GPU memory when one process holds that much. In practice: at most 64
+  minds per compiled step.
+- 2026-11-04. Finding: on the GPU the matmul precision changed the recorded world, not only learning.
+  The ray caster tests which object each ray hits with `u @ f.T` (`src/umwelt/senses.py:52`); at TF32
+  its inputs keep about three significant digits, so hits at an object's edge flip. Against the Mac,
+  object visibility differed at 130 of 98,304 entries (47 of 64 episodes) at the default precision, 4
+  at full float32, 2 on the PC's CPU; vision values differed in 3.0, 0.6 and 0.3 percent of entries.
+  Physics, actions and every other sense were byte-identical between the two GPU precisions. Fix:
+  `data.chunks` now rolls the world out under `jax.default_matmul_precision("highest")`, so a recording
+  no longer depends on the device's default. On the Mac the output is byte-identical with the fix (world
+  19 of 19 arrays, senses 14 of 14, training identical; tests 9 of 9). The check on the GPU is
+  `checks.sh precfix` (a default-precision recording must equal the full-precision one).
+- 2026-11-04 23:19. The other project started a 13B training run (12.8 GB, 99 percent
+  busy) and took the lock between two umwelt jobs; the next umwelt job waited, as designed. It was
+  stopped with the new `remote.sh stop` (the other project's lock untouched) so the precision fix could go
+  in first, and `gpu-checks-3` (`checks.sh precfix bench stage3`) was queued behind the other project run.
 
 ## How to run on the GPU
 
@@ -122,6 +153,7 @@ that plays the PC).
     experiments/gpu/remote.sh status NAME                 # GPU use, lock, last log lines, exit code
     experiments/gpu/remote.sh pull results/runs/v3        # copy results back to the Mac
     experiments/gpu/remote.sh pause                       # freeze umwelt GPU work; resume undoes it
+    experiments/gpu/remote.sh stop NAME                   # end a queued or running job
 
 On the PC itself, `mkdir C:\gpu-pause` pauses and `rmdir C:\gpu-pause` resumes (a file works too).
 
@@ -145,6 +177,10 @@ What a job guarantees (`experiments/gpu/job.sh`):
   dead (`--force` overrides).
 - Job names are used once, so a log never mixes two runs. JAX takes GPU memory as needed
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
+
+Limits inside WSL: a compiled step whose working memory reaches 4 GiB fails with the default allocator
+(for the current learner, 64 minds at once); add `env XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` to such a
+job, which slows the ordinary training loop by a quarter. Keep to 64 minds per compiled step.
 
 Code goes to the PC with `push`: every tracked or new file outside `results/` (deleted files skipped,
 no macOS metadata), plus `.umwelt_push`, the manifest a job checks against. The PC rehashes what
@@ -265,6 +301,47 @@ with the Mac's.
 The PC's CPU was slower than the Mac here: human 331 s and memoryless 254 s, against 134 s and 58 s.
 That run was at idle priority beside the other project GPU job, so this is not a clean timing; the 300-update
 E3 run, alone on the PC, was also slower (28 s against 11 s, compile included).
+
+### E1 to E3 and E5 on the GPU (2026-11-04)
+
+`experiments/gpu/checks.sh` section `repro`, on the RTX 5080 inside WSL (code 2a972b5, before the
+world precision fix). Comparisons in `results/hardware/compare_gpu.log` and `compare_*_vs_pc-gpu*.json`.
+
+- E1 World data, GPU against Mac. The world simulator is JAX code, so a GPU job also simulates on the
+  GPU, whose math functions (sine, cosine, square root, exponential) round differently from either CPU.
+  Episodes therefore part from the Mac's sooner than the PC CPU's did: actions differ in all 64
+  episodes (14 of them from the first step, median first difference at step 2; PC CPU: 61 episodes,
+  median step 50), by at most 0.031 (PC CPU 0.010). Agent position differs by at most 0.035 and heading
+  by 0.014 radians; object positions by more than 0.0001 in 9 episodes and by more than 0.1 in 2 (PC
+  CPU: 3 and 1). Physics and every sense but vision were byte-identical between the two GPU
+  precisions. Vision and the object-visibility labels were not: at the default precision (TF32) the
+  ray caster flipped visibility at 130 of 98,304 entries, against 4 at full float32 and 2 on the PC's
+  CPU. That was fixed (setup log); `checks.sh precfix` checks the fix on the GPU.
+- E2 Senses, on the Mac's episodes: the sense presets are NumPy code and run on the CPU in a GPU job
+  too. Same pattern as the PC CPU: the same 5 presets are identical, the 9 with smell differ, by at most
+  7.5e-9 here (Linux's math library against the Mac's; Windows' against the Mac's gave 1.2e-7).
+- E3 Training, on the Mac's episodes, 300 updates:
+
+| GPU setting | loss, largest relative difference from the Mac | weights, largest relative difference | held-out error (Mac 0.394354) |
+|---|---|---|---|
+| full float32 (`highest`) | 8.1e-6 | 5.8e-6 | 0.394354 |
+| default (TF32) | 1.2e-2 | 1.4e-2 | 0.397407 |
+| default, deterministic operations | 1.3e-2 | 1.5e-2 | 0.398745 |
+
+  At full float32 the GPU reproduces the Mac's training to about five significant digits, as closely as
+  the PC's CPU did. TF32 matrix multiplies (inputs rounded to about three digits) move the trajectory
+  by about one percent within 300 updates.
+- E5 Run-to-run, on the GPU. At the default settings two identical runs record identical worlds and
+  senses (19 of 19 arrays, 14 of 14 presets) but train differently: the loss differs by up to 0.3
+  percent and held-out error is 0.397407 against 0.398281. With `--xla_gpu_deterministic_ops=true` two
+  runs are identical to the last bit (every loss, every weight, held-out error 0.398745 both times). A
+  run paused for 40 s mid-training is also bit-identical to an unpaused one under that flag (setup log).
+  Timing note: the 300-update runs took 16.6 s at the default and 7.3 s with deterministic operations;
+  both include compiling, and E6 times the update itself.
+
+What this means so far: the GPU is not a source of error in itself. At full float32 it trains like the
+CPUs; the open question is whether TF32's one-percent drift, and run-to-run variation, matter at the
+level of the project's numbers. E4 answers that, with the GPU at both precisions.
 
 ### E6 on the Mac (2026-11-04, Mac otherwise idle)
 
