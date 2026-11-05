@@ -269,16 +269,17 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   - `status` reports a dead job; `series.sh` stops on one, passes `--record`, and runs from a function, so
     editing it mid-run is safe (editing it mid-run broke its last line once, after the cache check's job
     had finished).
-  - Tests: `job.sh` 34 of 34, `remote.sh` 47 of 47 (now including `series.sh`), project 14 of 14. The
-    previous `job.sh` fails the new record and dead-lock tests; the previous `remote.sh` fails the record,
-    dead-job and data-verification tests; the version before the second check fails the `sh` test. The
-    push guard's process check was shown in isolation (the old guard refuses a push because of an
-    unrelated process holding a reused id; the new one does not).
+  - Tests: `job.sh` 34 of 34 [correction: 32 of 32, see 2026-11-05 13:05], `remote.sh` 47 of 47 (now
+    including `series.sh`), project 14 of 14. The previous `job.sh` fails the new record and dead-lock
+    tests; the previous `remote.sh` fails the record, dead-job and data-verification tests; the version
+    before the second check fails the `sh` test. The push guard's process check was shown in isolation (the
+    old guard refuses a push because of an unrelated process holding a reused id; the new one does not).
   - The dog's wall tie is not fixed: moving the hidden wall changes the dog's stored results on the Mac,
     so it is Henry's call.
 - 2026-11-05 04:21. The new tooling on the real PC (`smoke-final`, log in `results/hardware/jobs/`): the
   Mac's lawful recording pushed and verified file by file; the job ran with the recording guard on, half
-  the card, the 2 GB cache cap and its code version (ecf3527); `experiment.provenance` on the GPU gave the
+  the card, the 2 GB cache cap (correction: that cap switched the cache off, see 12:45 below) and its code
+  version (ecf3527); `experiment.provenance` on the GPU gave the
   recording hash `e9b74db4218d7e27`, the same as the Mac's; asking for a recording that is not there was
   refused and nothing was recorded.
 - 2026-11-05 about 04:45 to 10:05. Henry chose to fix the surprise-test geometry. `voe.HIDDEN_WALL` now lies
@@ -291,12 +292,60 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   the old E7b output, compared with the corrected Mac values, still prints PASS, because the per-family rule
   absorbs one oracle score and `S_copy` cannot see a static wall. The test is the dog's and the oracle's
   permanence surprise directly: GPU against corrected Mac, expected within about 1e-6.
+- 2026-11-05 12:28 to 12:42. `e7b-wallfix` ran (the other project's server released the lock at 12:28). Result:
+  the dog's mismatch is gone, everything else repeats bit for bit (section "E7b after the stimulus fix").
+  Fourth independent check (outside-judge agent, its own code on the raw files, the code fingerprint
+  rebuilt from `git archive cf27e28`): confirmed, with three corrections, all applied.
+  - My comparison skipped the interval ends: the largest difference among the dog's and oracle's 48
+    surprise numbers is 5.0e-7 (an oracle solidity interval end, 5.1e-7 apart before the fix too), not the
+    2.5e-7 I first wrote. `compare_wallfix.py` now compares all 48.
+  - `compare_wallfix.py` failed when rerun, on `compare_e7.py`'s summary file in the same folder. It now
+    reads only the minds' files.
+  - Nothing could tell a result scored on the old surprise-test movies from one scored on the new:
+    `compare_e7.py` passes the pre-fix GPU run against the corrected Mac, `S_copy` cannot see a static
+    wall, and provenance had no stimulus field. Now `voe.suite_hash` names the rendered movies, every
+    result's provenance records it as `stimuli`, and a tag refuses to reuse a mind scored on other or
+    unknown movies (c63b23e; two new tests, which the previous code fails). The same tiny run on the
+    commits before and after gave the same 59 numbers. `e7.sh` writes the code version into `env.txt`,
+    since the two E7b runs' `env.txt` files were byte-identical.
+- 2026-11-05 about 12:45 to 13:05. Finding, from a warning in `e7b-wallfix`'s log: the compile cache had
+  not worked since ecf3527 (04:20). JAX keeps the cache's size cap (`JAX_COMPILATION_CACHE_MAX_SIZE`, set
+  by `job.sh` since ecf3527) only with the `filelock` package, which the environment lacked. Without it
+  the first cache read raises, JAX prints one warning ("Please install the `filelock` package") and
+  compiles everything itself, and nothing is written: on the PC no cache entry was newer than 02:49.
+  Speed only: no result depends on the cache (`cache-check` above), and both E7b runs compiled from
+  scratch. Fix (a30fb0b): `filelock` joins the `gpu` extra; `job.sh` drops the cap rather than the cache
+  if it is ever missing, and ends each log with the cache's entry count before and after and its number
+  of cache errors (three new job tests, which the previous `job.sh` fails). On the PC's CPU, two
+  processes building the surprise-test movies with the cap set: the first wrote 1,351 entries in 65 s,
+  the second read them in 24 s, no errors, no new entries.
+- 2026-11-05 13:00 to 13:25. Finding: the surprise-test movies are bit-identical on the Mac's CPU and the
+  PC's CPU (`voe.suite_hash` `e8b112a5e2a11879` on both, different processor families), but not on the GPU.
+  `stimuli-check` (log in `results/hardware/jobs/`) hashed them on the GPU: `ceb701ed0ddd1c3a` at full
+  float32 with deterministic operations, `3776a5c3ffed017d` at the GPU's defaults. `stimuli-diff`
+  (`experiments/gpu/stimuli_diff.py`, both devices in one process) located the difference: 8 of the solidity
+  movies' 2,211,840 vision values, by at most 0.000244, in 8 of 72 movies, frames 51 to 59;
+  every other array identical, at both settings. Plausibly the same kind of last-bit tie as the hidden wall,
+  here from the solidity wall seen edge-on (not shown). Too small to move a score (E7b after the fix agrees
+  within 2.5e-7 with these movies), but it made the movies, and so the `stimuli` hash, machine-dependent.
+  Fix (7651cea): `voe.build_suite` renders on the CPU on every machine, the way a recording is shared rather
+  than regenerated; nothing changes on the Mac, which renders on its CPU already (a new test, which the
+  previous code fails). The cache check in the same job: the first process wrote 1,351 entries in 109 s, the
+  second read them in 42 s, no errors. Confirmation of the fix on the GPU: `stimuli-check-2`, below.
+- 2026-11-05 13:20 to 13:21. `stimuli-check-2` (code 845d1e4, CPU rendering): all three processes on the PC,
+  at full float32 with deterministic operations twice and at the GPU's defaults, give `e8b112a5e2a11879`,
+  the Mac's hash. So a GPU job now scores on exactly the Mac's movies, and `stimuli` in provenance can be
+  compared across machines. 20 s each, from the compile cache (5,480 entries before and after, no errors;
+  the CPU compiles were cached by `stimuli-diff`).
+- 2026-11-05 13:05. Correction to the test counts: `test_job.sh` had 32 cases, not 34 (the 03:40 entry and
+  "How to run"; counted from the file and from a run of it against the `job.sh` of that time). It now has
+  35; a30fb0b's message says 37, which is wrong.
 
 ## How to run on the GPU
 
 Status: working against the real PC since 2026-11-04 (setup, push with verification, jobs, pause,
 pull; see the setup log). Both scripts also have tests on the Mac against stand-ins
-(`experiments/gpu/test_job.sh`, 34 cases; `experiments/gpu/test_remote.sh`, 47 cases, with a fake ssh
+(`experiments/gpu/test_job.sh`, 35 cases; `experiments/gpu/test_remote.sh`, 47 cases, with a fake ssh
 that plays the PC).
 
     experiments/gpu/remote.sh setup                       # once: copy code, install uv and CUDA JAX, run tests
@@ -333,14 +382,23 @@ What a job guarantees (`experiments/gpu/job.sh`):
 - Job names are used once, so a log never mixes two runs. JAX takes GPU memory as needed
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
 - Every job uses a persistent compile cache (`results/jax_cache` on the PC), which halved a mind's time
-  and changed no result.
+  and changed no result. (Correction: from ecf3527 to a30fb0b the size cap below switched it off; see the
+  setup log, 2026-11-05 12:45.) The last lines of a job's log give the cache's entries before and after
+  and its errors, so a job that did not use it shows.
 
 - A job may not record a world: it must be given its recordings (`UMWELT_NO_RECORD=1`; `data.load` then
   refuses to record). `run --record` allows it, for checks that record on purpose. JAX may use at most
-  half the card (`XLA_PYTHON_CLIENT_MEM_FRACTION=0.5`, 8 GB); the compile cache is capped at 2 GB.
+  half the card (`XLA_PYTHON_CLIENT_MEM_FRACTION=0.5`, 8 GB); the compile cache is capped at 2 GB (the cap
+  needs the `filelock` package, in the `gpu` extra).
 - Every result file of `umwelt run` carries a `provenance` block: machine, backend, device, JAX version,
-  matmul precision, XLA flags, code version and the recording's content hash. Rerunning a tag with other
-  settings or another recording stops with an error instead of keeping the earlier minds.
+  matmul precision, XLA flags, code version, the recording's content hash and, since c63b23e, the
+  surprise-test movies' hash (`stimuli`). Rerunning a tag with other settings, another recording or other
+  movies stops with an error instead of keeping the earlier minds. Before pooling a GPU result with a Mac
+  result, compare `recording_hash` and `stimuli` (the movies are rendered on the CPU everywhere since
+  7651cea, so the hash is the same on every machine). The Mac's stored runs predate provenance, but all their
+  surprise scores are those of the movies with hash `e8b112a5e2a11879`: every stored dog and oracle file
+  (17) carries the 2026-11-05 correction, and every other mind's inputs are the same under the old and
+  new movies.
 - While waiting, a job removes a lock left by an umwelt job that is no longer running (a restart or a
   kill), so a dead umwelt job cannot block the other project for long. `status NAME` says whether a job
   finished, is queued or running, or died without an exit code; `series.sh` stops on a dead job.
@@ -694,12 +752,49 @@ operations reproduces the Mac's run to about the sixth decimal for nearly every 
 So E7b isolates GPU arithmetic for everything but the surprise-test movies. The prediction held: E7's
 failure came from the recordings.
 
+### E7b after the stimulus fix (2026-11-05): the dog's mismatch is gone
+
+Job `e7b-wallfix` (queued 10:05, waited behind the other project's servers, held the GPU 12:28 to
+12:42), configuration `f32det-macdata` again: the Mac's lawful recording (hash `e9b74db4218d7e27`), full
+float32, deterministic operations, code cf27e28 with no uncommitted files. cf27e28 is E7b's code plus the
+moved hidden wall (the job log's code fingerprint, rebuilt independently from `git archive cf27e28`;
+settings and recording hash from `env.txt` and every file's provenance). Later commits changed no
+computation (the provenance field, the cache fix and new scripts; the same tiny run before and after gave
+identical numbers). Judged as the setup log entry of 10:05 says: score by score, not by `compare_e7.py`'s
+PASS line. `experiments/gpu/compare_wallfix.py`, output `results/hardware/compare_e7b_wallfix.log`:
+
+- The dog's and the oracle's surprise numbers, GPU against the Mac's corrected values: all 48 (`S`, both
+  interval ends and `S_copy`, for the trained and untrained network, three tests each) agree within
+  5.0e-7, the largest an oracle solidity interval end that was 5.1e-7 apart before the fix too; the 12
+  `S` values within 2.5e-7. The dog's permanence surprise is 0.0050933 on both (difference 1.2e-8); before the fix the Mac had 0.0047262 and
+  the GPU 0.0055979. The untrained dog's is -0.0001687 on both (before: -0.0002376 and +0.0000046). The
+  oracle's permanence surprise is 0.38558 on both (0.48394 before the fix, on both).
+- Against the GPU's own E7b run from before the fix: every number of the other 12 minds and of the
+  translation file is bit-identical. Of the dog's 123 numbers exactly 6 differ, the ones the new movies
+  reach (permanence `S` and its interval ends, trained and untrained); of the oracle's, exactly 18 (`S`
+  and interval ends of all three tests, trained and untrained). No `S_copy` changed. So the fix changed
+  what it was meant to and nothing else, and a GPU run at these settings still repeats bit for bit.
+- Against the Mac's stored run, every number: largest difference 8.3e-5, hearing_only's MLP `number` probe
+  (the one flipped prediction above); every other mind's file at most 2.2e-6, translation 4.5e-6.
+- `compare_e7.py` (appended to `results/hardware/compare_e7b.log`): PASS, every family's median and 95th
+  percentile 0.00000 to five decimals.
+
+The cause given in E7b above (strongly supported, not proven) now has its GPU test: with the hidden wall
+off the boundary, the dog's difference fell from 8.7e-4 to 1.2e-8. Given the same recording, at full
+float32 with deterministic operations, the GPU now reproduces the Mac's full run within 2.5e-7 on every
+surprise score, 5e-7 on their intervals and 5e-6 on everything else but that one probe prediction. An
+independent check reproduced every number above with its own code (setup log, 12:28 entry). The GPU job
+also compiled everything from scratch (the cache was off, setup log 12:45), so it says nothing about the
+cache either way. It rendered the surprise-test movies on the GPU, where 8 solidity vision values differ
+from the Mac's by at most 0.000244 (setup log 13:00); runs from 7651cea on render them on the CPU.
+
 ### What E4, E7 and E7b establish together
 
 - At full float32 with deterministic operations, GPU arithmetic is not a source of error for this
   project. Same episodes in: stage 3 M within 0.00008 of the CPU (E4), and nearly every score of a full
   run within about 1e-6 of the Mac (E7b), the exceptions being the dog's surprise scores (a geometric tie
-  in the surprise-test movies) and one flipped probe prediction. At the GPU's default precision, single
+  in the surprise-test movies, fixed: after the fix they agree within 1.2e-8) and one flipped probe
+  prediction. At the GPU's default precision, single
   `cause` scores can move by a seed's worth.
 - A data seed is not portable across machines; a recording is. The world simulator rounds slightly
   differently on each chip, so episodes regenerated from the same seed part within a few steps (E1).

@@ -1,0 +1,14 @@
+[2026-11-05T13:20:16-0600] lock taken: project=umwelt job=stimuli-check-2 host=HenrysPC pid=525 started=2026-11-05T13:20:16-0600
+[2026-11-05T13:20:16-0600] code: code 569e4978bd304410 git 845d1e4 uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:20:14-0600 
+[2026-11-05T13:20:18-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T13:20:18-0600] start: bash -c bash\ experiments/gpu/stimuli_check.sh 
+== full float32, deterministic operations: once, then again from the cache
+suite_hash e8b112a5e2a11879 gpu
+  20 s, cache entries 5480
+suite_hash e8b112a5e2a11879 gpu
+  20 s, cache entries 5480
+== the GPU's defaults (TF32 products where a call does not name its precision, nondeterministic operations)
+suite_hash e8b112a5e2a11879 gpu
+  21 s, cache entries 5480
+[2026-11-05T13:21:23-0600] compile cache: 5480 entries before, 5480 after; 0 cache errors
+[2026-11-05T13:21:23-0600] exit 0

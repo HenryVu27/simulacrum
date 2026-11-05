@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-11-05, early morning (GPU machine). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-05, afternoon (GPU machine: E7b after the stimulus fix). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
@@ -88,18 +88,23 @@ back. Henry can pause umwelt jobs while he uses the PC (`mkdir C:\gpu-pause`). E
 What is known (all in `docs/gpu.md`; every result recomputed by three independent checks):
 - Given the same recorded episodes, the GPU at full float32 with deterministic operations matches the
   Mac's full run (14 minds, probes, controls, surprise tests, translation) to about the sixth decimal for
-  nearly every score (E7b), and a whole GPU run repeats bit for bit.
+  nearly every score (E7b), and a whole GPU run repeats bit for bit. Rerun after the stimulus fix: every
+  surprise score within 2.5e-7 of the Mac's corrected values; the dog's old mismatch (8.7e-4) is gone.
 - A data seed is not portable across machines; a recording is. Re-recorded episodes part within a few
   steps, and that moved `cause` scores by a learner seed's worth (E7, which failed for that reason).
 - Rules for pooling GPU and Mac results: share recordings (copy, never regenerate); run at full float32
   with deterministic operations (at the GPU's default precision one `cause` score moved a seed's worth on
   identical data). The surprise-test geometry that made the dog's scores device-dependent is fixed
-  (2026-11-05 correction); E7b is being rerun to confirm. The tooling enforces the first
+  (2026-11-05 correction) and the GPU rerun confirms it. The movies are now rendered on the CPU on every
+  machine (GPU-rendered ones differed in 8 of 2.2 million values), so every result's `stimuli` hash can be
+  compared across machines; compare it and `recording_hash` before pooling. The tooling enforces the first
   rule (a GPU job refuses to record unless `run --record`) and every result file carries a `provenance`
   block (machine, backend, precision, XLA flags, code, recording hash).
 - Speed at full float32: one update 11 times the Mac, the largest learner tested 40 times, 32 minds at
   once 30 times; the training loop as experiments run it about 3 times (batches are built on the CPU, most
-  of the loop). A compile cache, now in every job, cut a full mind from 150 to 91 s with identical results.
+  of the loop). A compile cache cut a full mind from 150 to 91 s with identical results. It was off in
+  every job from 04:20 to 13:00 on 2026-11-05 (its size cap needs the `filelock` package); fixed, and each
+  job's log now shows whether the cache was used.
   WSL limits one compiled step to under about 3.5 GiB with the default allocator (32 minds at once).
 - Bugs found and fixed: TF32 changed the simulated world (every matrix product in the senses now names
   full precision, enforced by a test); several job-tooling risks on the shared PC.

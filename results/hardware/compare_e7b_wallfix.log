@@ -1,0 +1,85 @@
+1. surprise scores of the two minds whose movies changed, GPU rerun against the Mac's corrected values
+  dog     voe/permanence/S                 Mac +0.0050933  GPU +0.0050933  diff +1.2e-08   (GPU before the fix +0.0055979, Mac before +0.0047262)
+  dog     voe/permanence/ci/0              Mac -0.0026115  GPU -0.0026116  diff -1.2e-07   (GPU before the fix -0.0013017, Mac before -0.0028305)
+  dog     voe/permanence/ci/1              Mac +0.0131549  GPU +0.0131549  diff -1.2e-08   (GPU before the fix +0.0129459, Mac before +0.0126813)
+  dog     voe/permanence/S_copy            Mac +0.0116996  GPU +0.0116996  diff +0.0e+00   (GPU before the fix +0.0116996, Mac before +0.0116996)
+  dog     voe/solidity/S                   Mac +0.0003094  GPU +0.0003091  diff -2.5e-07   (GPU before the fix +0.0003091, Mac before +0.0003094)
+  dog     voe/solidity/ci/0                Mac -0.0094491  GPU -0.0094491  diff +9.3e-10   (GPU before the fix -0.0094491, Mac before -0.0094491)
+  dog     voe/solidity/ci/1                Mac +0.0092042  GPU +0.0092040  diff -2.1e-07   (GPU before the fix +0.0092040, Mac before +0.0092042)
+  dog     voe/solidity/S_copy              Mac +0.0061897  GPU +0.0061897  diff +0.0e+00   (GPU before the fix +0.0061897, Mac before +0.0061897)
+  dog     voe/causality/S                  Mac +0.0281083  GPU +0.0281082  diff -7.8e-08   (GPU before the fix +0.0281082, Mac before +0.0281083)
+  dog     voe/causality/ci/0               Mac +0.0156770  GPU +0.0156769  diff -8.1e-08   (GPU before the fix +0.0156769, Mac before +0.0156770)
+  dog     voe/causality/ci/1               Mac +0.0407296  GPU +0.0407296  diff -3.0e-08   (GPU before the fix +0.0407296, Mac before +0.0407296)
+  dog     voe/causality/S_copy             Mac -0.0005287  GPU -0.0005287  diff +0.0e+00   (GPU before the fix -0.0005287, Mac before -0.0005287)
+  dog     voe_untrained/permanence/S       Mac -0.0001687  GPU -0.0001687  diff +0.0e+00   (GPU before the fix +0.0000046, Mac before -0.0002376)
+  dog     voe_untrained/permanence/ci/0    Mac -0.0020796  GPU -0.0020796  diff -3.1e-09   (GPU before the fix -0.0018459, Mac before -0.0022106)
+  dog     voe_untrained/permanence/ci/1    Mac +0.0018556  GPU +0.0018556  diff -2.9e-08   (GPU before the fix +0.0018650, Mac before +0.0017927)
+  dog     voe_untrained/permanence/S_copy  Mac +0.0116996  GPU +0.0116996  diff +0.0e+00   (GPU before the fix +0.0116996, Mac before +0.0116996)
+  dog     voe_untrained/solidity/S         Mac -0.0012353  GPU -0.0012354  diff -1.1e-07   (GPU before the fix -0.0012354, Mac before -0.0012353)
+  dog     voe_untrained/solidity/ci/0      Mac -0.0038071  GPU -0.0038071  diff +4.2e-09   (GPU before the fix -0.0038071, Mac before -0.0038071)
+  dog     voe_untrained/solidity/ci/1      Mac +0.0012375  GPU +0.0012376  diff +1.1e-07   (GPU before the fix +0.0012376, Mac before +0.0012375)
+  dog     voe_untrained/solidity/S_copy    Mac +0.0061897  GPU +0.0061897  diff +0.0e+00   (GPU before the fix +0.0061897, Mac before +0.0061897)
+  dog     voe_untrained/causality/S        Mac +0.0118123  GPU +0.0118124  diff +1.3e-07   (GPU before the fix +0.0118124, Mac before +0.0118123)
+  dog     voe_untrained/causality/ci/0     Mac +0.0045514  GPU +0.0045514  diff -3.0e-08   (GPU before the fix +0.0045514, Mac before +0.0045514)
+  dog     voe_untrained/causality/ci/1     Mac +0.0198254  GPU +0.0198254  diff -6.5e-08   (GPU before the fix +0.0198254, Mac before +0.0198254)
+  dog     voe_untrained/causality/S_copy   Mac -0.0005287  GPU -0.0005287  diff +0.0e+00   (GPU before the fix -0.0005287, Mac before -0.0005287)
+  oracle  voe/permanence/S                 Mac +0.3855801  GPU +0.3855802  diff +1.8e-07   (GPU before the fix +0.4839401, Mac before +0.4839399)
+  oracle  voe/permanence/ci/0              Mac +0.3532709  GPU +0.3532710  diff +1.7e-07   (GPU before the fix +0.4377427, Mac before +0.4377427)
+  oracle  voe/permanence/ci/1              Mac +0.4232897  GPU +0.4232897  diff -2.5e-08   (GPU before the fix +0.5403355, Mac before +0.5403353)
+  oracle  voe/permanence/S_copy            Mac +5027.8432617  GPU +5027.8432617  diff +0.0e+00   (GPU before the fix +5027.8432617, Mac before +5027.8432617)
+  oracle  voe/solidity/S                   Mac -0.0614566  GPU -0.0614564  diff +1.8e-07   (GPU before the fix -0.0626353, Mac before -0.0626354)
+  oracle  voe/solidity/ci/0                Mac -0.0971431  GPU -0.0971428  diff +2.8e-07   (GPU before the fix -0.0958195, Mac before -0.0958198)
+  oracle  voe/solidity/ci/1                Mac -0.0178509  GPU -0.0178504  diff +5.0e-07   (GPU before the fix -0.0205508, Mac before -0.0205514)
+  oracle  voe/solidity/S_copy              Mac +0.0000000  GPU +0.0000000  diff +0.0e+00   (GPU before the fix +0.0000000, Mac before +0.0000000)
+  oracle  voe/causality/S                  Mac -0.0132599  GPU -0.0132598  diff +7.5e-08   (GPU before the fix -0.0171560, Mac before -0.0171562)
+  oracle  voe/causality/ci/0               Mac -0.0199537  GPU -0.0199537  diff +7.0e-08   (GPU before the fix -0.0254603, Mac before -0.0254606)
+  oracle  voe/causality/ci/1               Mac -0.0055799  GPU -0.0055799  diff +6.1e-09   (GPU before the fix -0.0070662, Mac before -0.0070663)
+  oracle  voe/causality/S_copy             Mac +0.0000000  GPU +0.0000000  diff +0.0e+00   (GPU before the fix +0.0000000, Mac before +0.0000000)
+  oracle  voe_untrained/permanence/S       Mac -0.0148200  GPU -0.0148199  diff +7.8e-08   (GPU before the fix -0.0166131, Mac before -0.0166131)
+  oracle  voe_untrained/permanence/ci/0    Mac -0.0162964  GPU -0.0162964  diff +7.2e-08   (GPU before the fix -0.0180559, Mac before -0.0180559)
+  oracle  voe_untrained/permanence/ci/1    Mac -0.0133985  GPU -0.0133985  diff +4.3e-08   (GPU before the fix -0.0151401, Mac before -0.0151401)
+  oracle  voe_untrained/permanence/S_copy  Mac +5027.8432617  GPU +5027.8432617  diff +0.0e+00   (GPU before the fix +5027.8432617, Mac before +5027.8432617)
+  oracle  voe_untrained/solidity/S         Mac +0.0028633  GPU +0.0028633  diff +0.0e+00   (GPU before the fix +0.0027919, Mac before +0.0027919)
+  oracle  voe_untrained/solidity/ci/0      Mac -0.0056033  GPU -0.0056032  diff +3.3e-08   (GPU before the fix -0.0062579, Mac before -0.0062579)
+  oracle  voe_untrained/solidity/ci/1      Mac +0.0120503  GPU +0.0120502  diff -3.2e-08   (GPU before the fix +0.0121388, Mac before +0.0121388)
+  oracle  voe_untrained/solidity/S_copy    Mac +0.0000000  GPU +0.0000000  diff +0.0e+00   (GPU before the fix +0.0000000, Mac before +0.0000000)
+  oracle  voe_untrained/causality/S        Mac -0.0006263  GPU -0.0006262  diff +8.9e-08   (GPU before the fix -0.0007938, Mac before -0.0007938)
+  oracle  voe_untrained/causality/ci/0     Mac -0.0012027  GPU -0.0012026  diff +9.2e-08   (GPU before the fix -0.0013900, Mac before -0.0013900)
+  oracle  voe_untrained/causality/ci/1     Mac -0.0001192  GPU -0.0001192  diff +0.0e+00   (GPU before the fix -0.0002362, Mac before -0.0002362)
+  oracle  voe_untrained/causality/S_copy   Mac +0.0000000  GPU +0.0000000  diff +0.0e+00   (GPU before the fix +0.0000000, Mac before +0.0000000)
+  largest difference: 5.0e-07
+
+2. every number against the GPU's earlier E7b run: only the changed movies' scores may differ
+  bat               123 numbers,   0 differ where the movies changed, 0 elsewhere
+  blind             123 numbers,   0 differ where the movies changed, 0 elsewhere
+  chimera           123 numbers,   0 differ where the movies changed, 0 elsewhere
+  deafblind         123 numbers,   0 differ where the movies changed, 0 elsewhere
+  dog               123 numbers,   6 differ where the movies changed, 0 elsewhere
+  hearing_only      123 numbers,   0 differ where the movies changed, 0 elsewhere
+  human             123 numbers,   0 differ where the movies changed, 0 elsewhere
+  memoryless        123 numbers,   0 differ where the movies changed, 0 elsewhere
+  oracle            123 numbers,  18 differ where the movies changed, 0 elsewhere
+  passive           123 numbers,   0 differ where the movies changed, 0 elsewhere
+  passive_novest    123 numbers,   0 differ where the movies changed, 0 elsewhere
+  smell_only        123 numbers,   0 differ where the movies changed, 0 elsewhere
+  touch_only        123 numbers,   0 differ where the movies changed, 0 elsewhere
+  translation       392 numbers,   0 differ where the movies changed, 0 elsewhere
+  vision_only       123 numbers,   0 differ where the movies changed, 0 elsewhere
+
+3. every number against the Mac's stored run
+  bat               121 numbers, largest difference 2.1e-07 (voe_untrained/solidity/S_copy)
+  blind             121 numbers, largest difference 1.9e-07 (probes/object_hidden)
+  chimera           121 numbers, largest difference 1.5e-07 (voe/permanence/ci/1)
+  deafblind         121 numbers, largest difference 1.8e-07 (train_log/8/3)
+  dog               121 numbers, largest difference 1.2e-06 (probes/object_hidden)
+  hearing_only      121 numbers, largest difference 8.3e-05 (probes/number)
+  human             121 numbers, largest difference 3.3e-07 (voe/causality/S)
+  memoryless        121 numbers, largest difference 2.1e-07 (voe_untrained/solidity/S_copy)
+  oracle            121 numbers, largest difference 5.0e-07 (voe/solidity/ci/1)
+  passive           121 numbers, largest difference 3.6e-07 (probes/self_location)
+  passive_novest    121 numbers, largest difference 1.6e-07 (voe/solidity/S)
+  smell_only        121 numbers, largest difference 2.2e-06 (voe/causality/ci/1)
+  touch_only        121 numbers, largest difference 1.3e-07 (voe/causality/ci/0)
+  translation       392 numbers, largest difference 4.5e-06 (translation_r2/6/8)
+  vision_only       121 numbers, largest difference 7.0e-07 (probes/elapsed)
+  largest difference over all minds: 8.3e-05
