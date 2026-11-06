@@ -694,3 +694,58 @@ the buffer criterion without object_seen, with intervals instead of a zero toler
 rerun the candidates on a fresh recording, since data seed 0's numbers are now known; build a surprise-test
 positive control whose permanence is built in and checked by a gate before it counts; or train a real tracker with
 a preregistered gate on its head.
+
+## Amendment 6 (2026-11-05, Stage 0 rerun; before any run under it)
+
+Written after Stage 0's stop and its independent check, at Henry's go-ahead, before the recording and every run
+below. The commit that adds this section is the timestamp. Two of Stage 0's checks did not test what they were
+for. The buffer criterion asked for no drop at all, on one probe seed's point estimate, on object_seen, where
+past frames add almost nothing: a criterion close to unmeetable, failed although nothing was lost. And the tracking
+mind did not track, so the surprise test was never checked on a mind with permanence. This amendment restates
+both, and reruns Stage 0 on a fresh recording, because data seed 0's numbers are now known: the new criteria could
+otherwise be fitted to them.
+
+### What changes
+
+1. Recording: the dark world, data seed 3, 8,448 episodes (8,192 for fitting, 256 held out), recorded on the Mac.
+   The fixtures (raw senses, the two buffers, the engineered states, the tracking mind retrained as before) are
+   rebuilt on it.
+2. MLP probes train with real early stopping: up to 50,000 steps, stopping once the held-out loss has not improved
+   for 3,000 steps; otherwise as the battery (hidden 256, batch 1,024, the same held-out split). Stage 0 showed that
+   at 4,096 and 8,192 fitting episodes the 1,500-step budget, not the held-out loss, stopped them.
+3. Candidates, in order, the first that meets every criterion being fixed for the rest of v3: the MLP with early
+   stopping at 1,024, 4,096 and 8,192 fitting episodes, then ridge at the same three sizes (the row cap stays at
+   60,000 per 1,024 episodes).
+4. Criteria (all must hold):
+   a. Memory loses nothing. For each buffer (2,4 and 3,6,9), and for each of object_now, object_hidden and
+      self_location (read by the battery's pooled probe) and object_seen (read by a probe fit on objects in view
+      only): the buffer's score minus raw's, each averaged over probe seeds 0, 1 and 2, has a paired bootstrap
+      interval (1,000 resamples of the 256 held-out episodes, 95 percent) whose upper end is at or above 0.
+   b. Last seen, updated beats raw senses by more than 0.30 at 1 to 5 and at 6 to 20 steps (probe seed 0).
+   c. Full scores above 0.80 at every delay.
+   d. The tracking mind beats raw senses by more than 0.10 at 1 to 5 steps.
+5. The surprise test is checked on a mind with permanence built in, the lawful mind: the human mind with one more
+   input, for every kind of object its egocentric position (x and y, scaled as the probe targets) and a flag,
+   as lawful physics has it. In recorded episodes that is the truth, in view or not, since the world is lawful. In
+   the surprise movies it is taken from the possible movie of the same pair (I1 receives P1's, I2 receives P2's),
+   so the input itself holds nothing impossible and is the same across possible and impossible sets; the lawful
+   mind is never shown an impossible movie's actual objects (the oracle was, and that is what unbalanced it). The
+   learner, training and data are the v2 human mind's (GRU of 128, 4,000 updates, 8,192 episodes of the new
+   recording, learner seed 0), and its twin is the same mind without the extra input.
+   - Gate, before its surprise counts: on the 256 held-out episodes, its one-step error at object-return steps (an
+     object back in view after at least 3 steps out of it, Amendment 4) is at least 10 percent below its twin's.
+   - Check: its permanence S (200 noise draws, bootstrap over quadruplets) has an interval above 0. Its solidity
+     and causality S are reported too.
+   - If the gate fails, the surprise test stays unchecked. If the gate holds and the interval is not above 0, the
+     surprise test is reported as unable to show permanence in a mind that has it.
+6. If a probe candidate passes, Stage 0 goes on as Amendment 5 says: every stored v1 and v2 mind is rescored with
+   it, without retraining. Where it needs more fitting episodes than a run's recording has, its probes are fit on a
+   new recording of the same world (data seed 3) and scored on the run's own held-out episodes. If none passes, v3
+   stops.
+
+### Known limits, stated in advance
+
+- The criteria were rewritten after seeing data seed 0's results; the fresh recording is the guard against fitting
+  them to those numbers, and the old criterion's result stays on the record.
+- The lawful mind is given its permanence, not left to learn it. It shows whether the surprise test can register
+  permanence carried by this learner's predictions, which is what the test must be able to do.
