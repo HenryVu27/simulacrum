@@ -172,8 +172,12 @@ Open, from the GPU work:
 1. v3, preregistered as Amendment 5 (`docs/preregistration.md`). Stage 0 ran on 2026-11-05 and stopped by its rule
    (`docs/preregistration.md`, Stage 0 result): every probe candidate failed one criterion (memory buffers
    lowered object_seen, a criterion that turned out close to unmeetable; nothing was lost), and the tracking
-   mind meant to test the surprise test turned out not to track at all, so that check has not been done. The
-   next amendment is Henry's decision. The plan as written: first fix the instrument: find a probe that
+   mind meant to test the surprise test turned out not to track at all, so that check has not been done.
+   Amendment 6 reran it on a fresh recording (2026-11-06): ridge at 1,024 episodes was fixed as the probe, and
+   rescoring every stored mind with it leaves H1 and P1 failing while confirming a brief memory trace in the dark
+   (+0.086 from memory alone at 1 to 5 steps, against a memory-cut copy of the same network). But its check found
+   that ridge reads memory only when stored as linear egocentric coordinates (it scores the oracle near 0), and
+   the surprise test is still unvalidated. The next amendment is Henry's decision. The plan as written: first fix the instrument: find a probe that
    registers memory on minds whose memory is known (engineered states, an explicit memory buffer, a learner
    trained to track hidden objects), check the surprise test registers it too, and rescore v1 and v2 with that
    probe. Then change the learner, not the world: five candidates screened in the dark world (residual-weighted

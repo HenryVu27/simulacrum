@@ -1,0 +1,55 @@
+{
+ "H1": {
+  "human": 0.18743646480194087,
+  "memoryless": 0.17704701675614182,
+  "human raw senses": 0.16559159602507995,
+  "passes": false,
+  "rule": "object_hidden(human) - object_hidden(memoryless) > 0.05 and |memoryless - raw| <= 0.05, mean of seeds 0 and 1"
+ },
+ "P1": {
+  "1-5 steps": {
+   "human": 0.031453970712370674,
+   "memoryless": 0.0027863882889264343,
+   "human raw senses": 0.03921207114991509,
+   "beats raw by 0.05": false,
+   "beats memoryless by 0.05": false
+  },
+  "6-20 steps": {
+   "human": 0.002291775516224227,
+   "memoryless": -0.002106115410177876,
+   "human raw senses": 0.032447105521960666,
+   "beats raw by 0.05": false,
+   "beats memoryless by 0.05": false
+  },
+  "1-5 steps, dark": {
+   "human": 0.09759151430183563,
+   "memoryless": -0.012516800273859995,
+   "human raw senses": 0.04477748805053781,
+   "beats raw by 0.05": true,
+   "beats memoryless by 0.05": true
+  },
+  "1-5 steps, lit": {
+   "human": 0.0013523402665565408,
+   "memoryless": 0.009751432676105329,
+   "human raw senses": 0.036679045069307706,
+   "beats raw by 0.05": false,
+   "beats memoryless by 0.05": false
+  },
+  "6-20 steps, dark": {
+   "human": -0.010760437908425624,
+   "memoryless": -0.03220921229839621,
+   "human raw senses": 0.003468816320900045,
+   "beats raw by 0.05": false,
+   "beats memoryless by 0.05": false
+  },
+  "6-20 steps, lit": {
+   "human": 0.011404215024646853,
+   "memoryless": 0.0189104463395722,
+   "human raw senses": 0.05267837962168844,
+   "beats raw by 0.05": false,
+   "beats memoryless by 0.05": false
+  },
+  "passes": false,
+  "rule": "the human's permanence skill at 1 to 5 and 6 to 20 steps exceeds its raw senses and the memoryless mind by more than 0.05 each, mean of seeds 0 and 1 (dark and lit split reported, not part of the rule)"
+ }
+}

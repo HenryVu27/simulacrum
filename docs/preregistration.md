@@ -749,3 +749,46 @@ otherwise be fitted to them.
   them to those numbers, and the old criterion's result stays on the record.
 - The lawful mind is given its permanence, not left to learn it. It shows whether the surprise test can register
   permanence carried by this learner's predictions, which is what the test must be able to do.
+
+### Stage 0 rerun result (2026-11-06, Amendment 6)
+
+Run as written on the fresh recording; the probe candidates and the rescoring ran on the GPU PC. Checked by an
+independent agent that reproduced every sampled number (`results/v3/stage0_rerun/independent_check`).
+
+**What happened.**
+- Probe: the early-stopped MLP probes fail criterion a at every size (copies of earlier frames lower object_seen
+  and self_location, intervals below 0: they lose information as their inputs widen). Ridge at 1,024 fitting
+  episodes meets all four criteria (buffers never significantly lower a score and raise the hidden, combined and
+  self-location scores; last seen, updated beats raw by 0.91 to 0.93; full at least 0.998; the tracking mind beats
+  raw by 0.21). It is the fixed probe.
+- Surprise test: the lawful mind fails its gate (error at object returns 0.871 against its twin's 0.878, ratio 0.992),
+  so the surprise test stays unchecked.
+- Rescoring of every stored v1 and v2 mind with the fixed probe (`results/v3/stage0_rescore`): H1 fails (human 0.187,
+  memoryless 0.177, raw senses 0.166) and P1 fails (1 to 5 steps: human 0.031, raw 0.039, memoryless 0.003; 6 to 20
+  steps: 0.002, 0.032, -0.002). In the first 1 to 5 steps of darkness the human knows more than its raw senses
+  (+0.038 and +0.068, seeds 0 and 1) and than the memoryless mind (+0.096 and +0.124), every interval above 0; lit and
+  out of view it is below its raw senses (-0.034 and -0.036).
+
+**What the independent check found, and what Stage 0 can therefore conclude.**
+- The fixed probe reads memory only when it is stored as linear egocentric coordinates. A fixture holding "last
+  seen, updated"'s information in room coordinates scores -0.001 under ridge and 0.94 under the MLP; the stored oracle,
+  which holds every position at every moment, scores -0.034 at 1 to 5 steps under ridge and 0.95 under the MLP.
+  Amendment 6's positive controls all stored memory as linear egocentric coordinates, so its criteria could not see
+  this. The rescored H1 and P1 failures are statements about linearly decodable egocentric memory only, and a learner
+  that stores memory another way would be scored as having none.
+- "Trained minus raw senses" mixes memory with how the trained network encodes the present moment. A memory-cut
+  control (the same network with its hidden state reset every step) separates them: for the dark-world human at 1 to
+  5 steps, memory alone adds +0.086 [0.067, 0.105] in the dark and +0.001 lit; the lit drop below raw senses is the
+  encoding, and about 78 percent of its object_hidden gain over raw senses is encoding too. Human minus memoryless
+  agrees with the memory cut within intervals.
+- The lawful mind's gate was close to unreachable: about 82 percent of the error at object-return steps falls on the
+  first lit step after a dark spell, which no object channel can predict. The lawful mind also ignores its channel.
+  Its failure says nothing about the surprise test, which remains unvalidated.
+- Minor: skill above a no-information mind is not zero without information (raw senses score 0.22 to 0.24 for
+  objects never seen or out of view for over 60 steps), so only differences against a control mean memory; the
+  rescore reused the fitting episodes' sensor-noise draw for the held-out ones (effect at most 0.0004).
+
+**Next.** Before Stage 1, a further amendment, Henry's decision: a probe that passes egocentric, room-coordinate and
+oracle controls (the MLP reads the latter two; ridge reads the first without losing information), the memory-cut
+network as the baseline for "memory adds" in place of raw senses, and a surprise-test control whose gate counts only
+lit re-entries and whose channel the learner demonstrably uses.
