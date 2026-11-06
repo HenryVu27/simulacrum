@@ -1,0 +1,39 @@
+[2026-11-05T18:36:15-0600] waiting: GPU memory in use 15348 MiB; lock: held by another project
+[2026-11-05T18:37:15-0600] waiting: GPU memory in use 15350 MiB; lock: held by another project
+[2026-11-05T18:38:15-0600] waiting: GPU memory in use 15354 MiB; lock: held by another project
+[2026-11-05T18:39:15-0600] lock taken: project=umwelt job=e7b-noise200 host=HenrysPC pid=515 started=2026-11-05T18:36:15-0600
+[2026-11-05T18:39:15-0600] code: code 611b5131620533e7 git 2787bc7 uncommitted 3 files, diff 525735b678bc695c pushed 2026-11-05T18:36:12-0600 
+[2026-11-05T18:39:17-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
+[2026-11-05T18:39:17-0600] start: bash experiments/gpu/e7.sh f32det-macdata f32det-macdata-noise200 
+[lawful s0] oracle: obs dim 58, training
+[lawful s0] oracle: 48s {'train': 41.0, 'latents': 0.5, 'probes_mlp': 1.9, 'probes_linear': 1.0, 'voe': 0.2, 'untrained': 1.8, 'raw': 1.5} test_err 0.075 | object_seen=0.96 object_hidden=0.95 object_now=0.95 object_past=0.95 object_allo_seen=0.98 object_allo_hidden=0.98 number=0.88 self_motion=0.53 self_location=0.99 cause=0.43 elapsed=-0.01 relations=0.21 | voe permanence=0.95 solidity=0.01 causality=-0.02
+[lawful s0] human: obs dim 311, training
+[lawful s0] human: 90s {'train': 45.5, 'latents': 0.6, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 17.4, 'untrained': 19.4, 'raw': 2.5} test_err 0.227 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.08 number=-0.01 self_motion=0.88 self_location=0.49 cause=0.53 elapsed=0.09 relations=-0.01 | voe permanence=-0.00 solidity=-0.00 causality=-0.02
+[lawful s0] dog: obs dim 103, training
+[lawful s0] dog: 70s {'train': 41.3, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 10.9, 'untrained': 12.4, 'raw': 1.7} test_err 0.210 | object_seen=0.55 object_hidden=0.22 object_now=0.35 object_past=0.34 object_allo_seen=-0.03 object_allo_hidden=-0.07 number=0.01 self_motion=0.88 self_location=0.26 cause=0.65 elapsed=0.15 relations=-0.00 | voe permanence=-0.00 solidity=-0.01 causality=0.02
+[lawful s0] blind: obs dim 55, training
+[lawful s0] blind: 57s {'train': 40.1, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 5.4, 'untrained': 7.0, 'raw': 1.5} test_err 0.312 | object_seen=0.40 object_hidden=-0.17 object_now=0.04 object_past=0.04 object_allo_seen=-0.04 object_allo_hidden=-0.05 number=0.02 self_motion=0.93 self_location=-0.03 cause=0.65 elapsed=0.12 relations=-0.01 | voe permanence=-0.00 solidity=-0.00 causality=-0.00
+[lawful s0] deafblind: obs dim 47, training
+[lawful s0] deafblind: 56s {'train': 40.0, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 5.1, 'untrained': 6.7, 'raw': 1.5} test_err 0.277 | object_seen=0.39 object_hidden=-0.17 object_now=0.04 object_past=0.04 object_allo_seen=-0.05 object_allo_hidden=-0.04 number=-0.01 self_motion=0.94 self_location=-0.04 cause=0.65 elapsed=0.11 relations=-0.03 | voe permanence=-0.00 solidity=0.00 causality=0.00
+[lawful s0] vision_only: obs dim 256, training
+[lawful s0] vision_only: 85s {'train': 44.5, 'latents': 0.6, 'probes_mlp': 1.4, 'probes_linear': 0.7, 'voe': 15.2, 'untrained': 17.5, 'raw': 2.4} test_err 0.180 | object_seen=0.59 object_hidden=0.19 object_now=0.34 object_past=0.33 object_allo_seen=0.00 object_allo_hidden=-0.06 number=0.01 self_motion=0.75 self_location=0.54 cause=0.47 elapsed=0.06 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.01
+[lawful s0] smell_only: obs dim 8, training
+[lawful s0] smell_only: 53s {'train': 39.3, 'latents': 0.4, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 3.9, 'untrained': 5.5, 'raw': 1.6} test_err 0.002 | object_seen=0.42 object_hidden=-0.17 object_now=0.05 object_past=0.05 object_allo_seen=-0.03 object_allo_hidden=-0.03 number=0.06 self_motion=0.72 self_location=-0.03 cause=0.74 elapsed=0.10 relations=0.09 | voe permanence=-0.00 solidity=0.00 causality=0.00
+[lawful s0] hearing_only: obs dim 8, training
+[lawful s0] hearing_only: 52s {'train': 39.0, 'latents': 0.4, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 3.7, 'untrained': 5.4, 'raw': 1.1} test_err 0.692 | object_seen=0.40 object_hidden=-0.12 object_now=0.08 object_past=0.08 object_allo_seen=-0.04 object_allo_hidden=-0.04 number=0.02 self_motion=0.88 self_location=-0.03 cause=0.55 elapsed=0.15 relations=-0.00 | voe permanence=0.00 solidity=-0.00 causality=0.00
+[lawful s0] touch_only: obs dim 39, training
+[lawful s0] touch_only: 55s {'train': 39.7, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 5.0, 'untrained': 6.5, 'raw': 1.6} test_err 0.264 | object_seen=0.39 object_hidden=-0.16 object_now=0.04 object_past=0.04 object_allo_seen=-0.03 object_allo_hidden=-0.04 number=-0.04 self_motion=0.95 self_location=-0.03 cause=0.42 elapsed=0.08 relations=-0.04 | voe permanence=0.00 solidity=-0.00 causality=0.00
+[lawful s0] bat: obs dim 111, training
+[lawful s0] bat: 63s {'train': 41.3, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 7.6, 'untrained': 9.2, 'raw': 1.8} test_err 0.312 | object_seen=0.49 object_hidden=0.14 object_now=0.27 object_past=0.27 object_allo_seen=-0.05 object_allo_hidden=-0.06 number=0.08 self_motion=0.91 self_location=-0.04 cause=0.45 elapsed=0.12 relations=0.01 | voe permanence=-0.00 solidity=0.01 causality=-0.07
+[lawful s0] chimera: obs dim 74, training
+[lawful s0] chimera: 59s {'train': 40.4, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 6.2, 'untrained': 7.9, 'raw': 1.6} test_err 0.225 | object_seen=0.52 object_hidden=0.17 object_now=0.30 object_past=0.30 object_allo_seen=0.05 object_allo_hidden=-0.09 number=0.07 self_motion=0.75 self_location=0.68 cause=0.65 elapsed=0.10 relations=0.03 | voe permanence=0.00 solidity=0.01 causality=-0.06
+[lawful s0] passive: obs dim 311, training
+[lawful s0] passive: 89s {'train': 45.1, 'latents': 0.5, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 17.1, 'untrained': 19.2, 'raw': 2.1} test_err 0.231 | object_seen=0.59 object_hidden=0.19 object_now=0.33 object_past=0.33 object_allo_seen=-0.00 object_allo_hidden=-0.06 number=-0.00 self_motion=0.91 self_location=0.47 cause=0.52 elapsed=0.09 relations=-0.01 | voe permanence=0.00 solidity=0.00 causality=-0.03
+[lawful s0] passive_novest: obs dim 308, training
+[lawful s0] passive_novest: 90s {'train': 46.0, 'latents': 0.6, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 17.0, 'untrained': 18.9, 'raw': 2.5} test_err 0.242 | object_seen=0.59 object_hidden=0.18 object_now=0.34 object_past=0.33 object_allo_seen=-0.00 object_allo_hidden=-0.08 number=0.01 self_motion=0.53 self_location=0.50 cause=0.55 elapsed=0.06 relations=-0.01 | voe permanence=-0.00 solidity=0.00 causality=-0.02
+[lawful s0] memoryless: obs dim 311, training
+[lawful s0] memoryless: 64s {'train': 21.7, 'latents': 0.4, 'probes_mlp': 1.3, 'probes_linear': 0.7, 'voe': 16.5, 'untrained': 18.3, 'raw': 2.1} test_err 0.232 | object_seen=0.59 object_hidden=0.18 object_now=0.33 object_past=0.33 object_allo_seen=-0.00 object_allo_hidden=-0.07 number=0.00 self_motion=0.81 self_location=0.50 cause=0.52 elapsed=0.07 relations=-0.01 | voe permanence=0.00 solidity=0.01 causality=-0.02
+[lawful s0] all minds done in 16.3 min
+== E7 f32det-macdata (f32det-macdata-noise200) done: results/hardware/e7/f32det-macdata-noise200/lawful_s0
+[2026-11-05T18:55:43-0600] compile cache: 5852 entries before, 5852 after; 0 cache errors
+[2026-11-05T18:55:43-0600] exit 0

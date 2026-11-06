@@ -1,0 +1,89 @@
+main/lawful_s0 bat: done
+main/lawful_s0 blind: done
+main/lawful_s0 chimera: done
+main/lawful_s0 deafblind: done
+main/lawful_s0 dog: done
+main/lawful_s0 hearing_only: done
+main/lawful_s0 human: done
+main/lawful_s0 memoryless: done
+main/lawful_s0 passive: done
+main/lawful_s0 passive_novest: done
+main/lawful_s0 smell_only: done
+main/lawful_s0 touch_only: done
+main/lawful_s0 vision_only: done
+v2/dark_s0 bat: done
+v2/dark_s0 blind: done
+v2/dark_s0 chimera: done
+v2/dark_s0 deafblind: done
+v2/dark_s0 dog: done
+v2/dark_s0 hearing_only: done
+v2/dark_s0 human: done
+v2/dark_s0 memoryless: done
+v2/dark_s0 passive: done
+v2/dark_s0 passive_novest: done
+v2/dark_s0 smell_only: done
+v2/dark_s0 touch_only: done
+v2/dark_s0 vision_only: done
+main/lawful_s1 bat: done
+main/lawful_s1 blind: done
+main/lawful_s1 chimera: done
+main/lawful_s1 deafblind: done
+main/lawful_s1 dog: done
+main/lawful_s1 hearing_only: done
+main/lawful_s1 human: done
+main/lawful_s1 memoryless: done
+main/lawful_s1 passive: done
+main/lawful_s1 passive_novest: done
+main/lawful_s1 smell_only: done
+main/lawful_s1 touch_only: done
+main/lawful_s1 vision_only: done
+main/impermanent_s0 bat: done
+main/impermanent_s0 blind: done
+main/impermanent_s0 chimera: done
+main/impermanent_s0 deafblind: done
+main/impermanent_s0 dog: done
+main/impermanent_s0 hearing_only: done
+main/impermanent_s0 human: done
+main/impermanent_s0 memoryless: done
+main/impermanent_s0 passive: done
+main/impermanent_s0 passive_novest: done
+main/impermanent_s0 smell_only: done
+main/impermanent_s0 touch_only: done
+main/impermanent_s0 vision_only: done
+v2/dark_s1 bat: done
+v2/dark_s1 blind: done
+v2/dark_s1 chimera: done
+v2/dark_s1 deafblind: done
+v2/dark_s1 dog: done
+v2/dark_s1 hearing_only: done
+v2/dark_s1 human: done
+v2/dark_s1 memoryless: done
+v2/dark_s1 passive: done
+v2/dark_s1 passive_novest: done
+v2/dark_s1 smell_only: done
+v2/dark_s1 touch_only: done
+v2/dark_s1 vision_only: done
+
+1. one draw, 156 scores of lawful seed 0 and dark seed 0 (minds with sensor noise, trained and untrained, three tests), draws 0 to 19
+   S varies between draws with sd 0.0024 (median), 0.0310 (largest): 0.47 of the interval's half-width (median), 0.71 (largest)
+   'interval excludes 0' differs from draw 0's in 17.2% of (score, draw) pairs
+   a one-draw interval contains the 200-draw S of set B 94.6% of the time: within a run the old interval did cover the noise; the point estimate carried it, and every run of a mind shared the draw
+
+2. the statistic over 200 draws, set A (draws 0 to 199) against set B (draws 200 to 399), same scores
+   S differs by 0.00020 (median), 0.00388 (largest): 0.216 of the half-width (median), 1.67 (largest)
+   'interval excludes 0' agrees in 94.2% of scores (9 disagree)
+   A's interval contains B's S in 85.9% of scores
+   disagree: main/lawful_s0 bat untrained permanence: A +0.00003 [-0.00014, 0.00019], B -0.00023 [-0.00043, -3e-05]
+   disagree: main/lawful_s0 chimera trained permanence: A +0.00019 [-0.00039, 0.00092], B +0.00103 [0.00043, 0.00171]
+   disagree: main/lawful_s0 smell_only untrained solidity: A -0.00002 [-7e-05, 3e-05], B -0.00010 [-0.00019, -1e-05]
+   disagree: main/lawful_s0 touch_only trained permanence: A +0.00196 [3e-05, 0.00405], B +0.00086 [-0.00091, 0.00251]
+   disagree: main/lawful_s0 vision_only untrained solidity: A -0.00097 [-0.00192, 4e-05], B -0.00105 [-0.002, -1e-05]
+   disagree: v2/dark_s0 bat untrained permanence: A +0.00004 [-0.00013, 0.0002], B -0.00024 [-0.00043, -3e-05]
+   disagree: v2/dark_s0 chimera trained permanence: A +0.00022 [-0.00036, 0.00095], B +0.00100 [0.0004, 0.00169]
+   disagree: v2/dark_s0 passive trained permanence: A +0.00038 [3e-05, 0.00076], B -0.00023 [-0.00065, 0.00016]
+   disagree: v2/dark_s0 smell_only untrained solidity: A -0.00002 [-7e-05, 3e-05], B -0.00010 [-0.00019, -1e-05]
+
+3. verdict parts that use permanence scores
+   set A: H6: intervals above 0 for none; memoryless null True; share of 13 minds less surprised after impermanent training 0.54 (the oracle, which has no sensor noise, is left out here and in the report). P4: human intervals above 0 False; memoryless null True; human mean S -0.00025 here against -0.00014 in v1, above False
+   set B: H6: intervals above 0 for none; memoryless null True; share of 13 minds less surprised after impermanent training 0.54 (the oracle, which has no sensor noise, is left out here and in the report). P4: human intervals above 0 False; memoryless null True; human mean S +0.00000 here against +0.00004 in v1, above False
+check exit 0

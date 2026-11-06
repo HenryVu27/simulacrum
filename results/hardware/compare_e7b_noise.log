@@ -1,0 +1,47 @@
+0. the movies each side scored on (provenance stimuli)
+  GPU 016fc3d72807e39d: 14 minds, Mac 016fc3d72807e39d: 14 minds
+
+1. every surprise number, GPU rerun against the Mac's recomputed values
+  largest voe/S                    difference 6.6e-07  (oracle permanence: Mac +0.9528986, GPU +0.9528992)
+  largest voe/S_copy               difference 0.0e+00  (vision_only causality: Mac +0.0015428, GPU +0.0015428)
+  largest voe/ci/0                 difference 6.4e-07  (oracle permanence: Mac +0.8339911, GPU +0.8339917)
+  largest voe/ci/1                 difference 1.2e-06  (oracle permanence: Mac +1.0830019, GPU +1.0830031)
+  largest voe_untrained/S          difference 2.2e-07  (touch_only solidity: Mac -0.0002917, GPU -0.0002915)
+  largest voe_untrained/S_copy     difference 0.0e+00  (vision_only causality: Mac +0.0015428, GPU +0.0015428)
+  largest voe_untrained/ci/0       difference 1.0e-07  (hearing_only causality: Mac -0.0028100, GPU -0.0028101)
+  largest voe_untrained/ci/1       difference 1.3e-07  (blind causality: Mac +0.0035690, GPU +0.0035689)
+
+2. every number against the GPU's previous E7b run: only surprise numbers may differ
+  bat               123 numbers,  24 surprise numbers differ, 0 others
+  blind             123 numbers,  24 surprise numbers differ, 0 others
+  chimera           123 numbers,  24 surprise numbers differ, 0 others
+  deafblind         123 numbers,  24 surprise numbers differ, 0 others
+  dog               123 numbers,  24 surprise numbers differ, 0 others
+  hearing_only      123 numbers,  24 surprise numbers differ, 0 others
+  human             123 numbers,  24 surprise numbers differ, 0 others
+  memoryless        123 numbers,  24 surprise numbers differ, 0 others
+  oracle            123 numbers,   0 surprise numbers differ, 0 others
+  passive           123 numbers,  24 surprise numbers differ, 0 others
+  passive_novest    123 numbers,  24 surprise numbers differ, 0 others
+  smell_only        123 numbers,  24 surprise numbers differ, 0 others
+  touch_only        123 numbers,  24 surprise numbers differ, 0 others
+  translation       392 numbers,   0 surprise numbers differ, 0 others
+  vision_only       123 numbers,  24 surprise numbers differ, 0 others
+
+3. every number against the Mac's stored run
+  bat               121 numbers, largest difference 1.2e-07 (voe/solidity/ci/1)
+  blind             121 numbers, largest difference 1.9e-07 (probes/object_hidden)
+  chimera           121 numbers, largest difference 1.2e-07 (train_log/0/1)
+  deafblind         121 numbers, largest difference 1.8e-07 (train_log/8/3)
+  dog               121 numbers, largest difference 1.2e-06 (probes/object_hidden)
+  hearing_only      121 numbers, largest difference 8.3e-05 (probes/number)
+  human             121 numbers, largest difference 4.1e-07 (voe/causality/ci/0)
+  memoryless        121 numbers, largest difference 1.2e-07 (voe/solidity/S)
+  oracle            121 numbers, largest difference 1.2e-06 (voe/permanence/ci/1)
+  passive           121 numbers, largest difference 3.6e-07 (probes/self_location)
+  passive_novest    121 numbers, largest difference 2.3e-07 (voe/permanence/S)
+  smell_only        121 numbers, largest difference 3.7e-07 (probes/relations)
+  touch_only        121 numbers, largest difference 2.2e-07 (voe_untrained/solidity/S)
+  translation       392 numbers, largest difference 4.5e-06 (translation_r2/6/8)
+  vision_only       121 numbers, largest difference 7.0e-07 (probes/elapsed)
+  largest difference over all minds: 8.3e-05

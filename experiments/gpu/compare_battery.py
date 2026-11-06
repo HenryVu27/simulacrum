@@ -8,8 +8,9 @@ Four checks on the GPU's rerun on the Mac's recording (results/hardware/e7/f32de
    since the redesign changed the movies and nothing else, and whole GPU runs at these settings repeat bit for bit;
 3. every number against the Mac's stored run, mind by mind.
 Timings are left out. Nothing is written; the output goes to results/hardware/compare_e7b_battery.log.
-Later reruns name their own folders (the scores over noise draws: --new f32det-macdata-noise --old
-f32det-macdata-battery, output compare_e7b_noise.log).
+Later reruns name their own folders (surprise over noise draws: --new f32det-macdata-noise --old
+f32det-macdata-battery, output compare_e7b_noise.log; then --new f32det-macdata-noise200 --old
+f32det-macdata-noise, output compare_e7b_noise200.log).
 
     uv run python experiments/gpu/compare_battery.py [--new NAME] [--old NAME]
 """

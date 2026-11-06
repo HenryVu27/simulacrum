@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-11-05, evening (surprise-test movies redesigned; every mind's surprise scores recomputed). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-05, evening (surprise-test movies redesigned; surprise scored over 20 sensor-noise draws). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
@@ -46,8 +46,8 @@ none is surprised by a vanishing object. The world lever is spent. The next leve
      memoryless -0.03. At 6 to 20 steps: -0.02, -0.02, -0.04.
    - P2, passive_novest is not below human (6 to 20 steps: -0.01 versus -0.02).
    - P3, counting: human -0.06, memoryless -0.07.
-   - P4, surprise: human permanence S 0.002 and 0.001, intervals include 0, about the v1 value (0.002).
-     (0.004 in both seeds before the 2026-11-05 battery correction, below.)
+   - P4, surprise: human permanence S -0.0003 and -0.0002, intervals include 0, below the v1
+     value (-0.0001). (0.004 before the 2026-11-05 corrections to the surprise tests, below.)
 4. **Exploratory: a brief trace in the first moments of darkness, probably not memory updated by
    self-motion.** For objects hidden 1 to 5 steps and in a dark spell, the human mind scores 0.014 and 0.088
    (seeds 0 and 1) against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The
@@ -93,6 +93,7 @@ What is known (all in `docs/gpu.md`; every result recomputed by three independen
   surprise score within 2.5e-7 of the Mac's corrected values; the dog's old mismatch (8.7e-4) is gone.
   Rerun after the battery redesign: every surprise score within 1.3e-6 of the Mac's recomputed values
   (interval ends 2.2e-6), every other number bit-identical to the previous GPU run.
+  Rerun with surprise over 200 noise draws: within 6.6e-7 (interval ends 9.5e-7).
 - A data seed is not portable across machines; a recording is. Re-recorded episodes part within a few
   steps, and that moved `cause` scores by a learner seed's worth (E7, which failed for that reason).
 - Rules for pooling GPU and Mac results: share recordings (copy, never regenerate); run at full float32
@@ -126,6 +127,13 @@ Open, from the GPU work:
   ghost-trained minds, for which walls stop nothing, score the same. V3 still fails, now only because the
   oracle sees the hidden event; "V3 excluding the oracle" now passes in v1; H6 and P4 still fail.
   An independent check confirmed the redesign and caught a wrong statement and too-narrow tests, both fixed.
+- Done 2026-11-05 at Henry's go-ahead: every surprise score is now taken on the mean errors of 200
+  sensor-noise draws, with a bootstrap over quadruplets. One draw, shared by every run of a mind, had moved
+  scores by about half an interval (smell_only's "permanence surprise" of up to +0.045 in every run was that
+  draw). A first version (20 draws, draws resampled too) was wrong, and its independent check said why; the
+  record keeps both. Every verdict as before; P4 now fails two of its three parts. Permanence intervals are
+  a tenth as wide, and the vision minds' permanence surprise is within a few ten-thousandths of zero
+  (`docs/preregistration.md`, last section).
 - The `cause` probe is hypersensitive: 6 changed labels among 7,873 moved a score by 0.038, more than a
   learner seed. Every cause result so far should be read with that in mind; a more robust cause target or
   more probe data would help.
@@ -236,6 +244,9 @@ Open, from the GPU work:
   each file). Verdicts: V3 still fails, now only on the oracle; "V3 excluding the oracle" (not preregistered)
   now passes in v1; H6 and P4 still fail. Most vision minds' negative causality scores moved toward zero
   (human -0.073 to -0.020, lawful seed 0).
+- 2026-11-05, after that: surprise scores taken over 200 sensor-noise draws instead of one shared draw, with a
+  bootstrap over quadruplets and 2,000 resamples; all 498 rescored; every verdict as before
+  (`docs/preregistration.md`, last section).
 
 ## Machine notes
 

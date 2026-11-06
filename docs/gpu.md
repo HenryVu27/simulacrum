@@ -349,6 +349,17 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   every machine builds the same walls; the GPU job below confirms the PC gets the Mac's hash.
 - 2026-11-05 15:23 to 15:40. `e7b-battery` (schedule line added at 15:23, lock free, marked DONE at 15:40):
   E7b again on code c35cc6e; result below ("E7b after the battery redesign").
+- 2026-11-05 16:30 to 17:04. Surprise scores now average 20 sensor-noise draws (Henry's go-ahead;
+  `docs/preregistration.md`, last section), and every stored score was rescored on the Mac. Provenance gains
+  `voe_draws`, which a tag refuses to mix, so a GPU result is pooled only with results scored the same way.
+- 2026-11-05 17:05 to 17:19. `e7b-noise` (schedule line added at 17:05, lock free, marked DONE at 17:19): E7b
+  again on code 73f46c9. It compiled nothing new (5,852 cache entries before and after).
+- 2026-11-05 17:20 to 18:36. The independent check of 73f46c9 found the 20-draw statistic wrong (it counted the
+  noise twice, and 20 draws were too few); corrected to 200 draws, a bootstrap over quadruplets and 2,000
+  resamples (2787bc7; provenance gains `voe_boot`). Everything rescored on the Mac.
+- 2026-11-05 18:36 to 18:55. `e7b-noise200` (schedule line added at 18:36; queued behind the other project's
+  `b26-train`, which held the lock from 17:53; took the lock at 18:39; marked DONE at 18:55): E7b on code 2787bc7,
+  with three documentation files uncommitted (the job log lists them; no code). Nothing new compiled.
 
 ## How to run on the GPU
 
@@ -818,6 +829,23 @@ E7b's code with the redesigned movies. The compile cache worked (5,480 entries b
 
 So the redesign changed what it was meant to and nothing else, the GPU still reproduces the Mac given the same
 recording, and the `stimuli` hash in provenance does the pooling check it was added for.
+
+### E7b with surprise over noise draws (2026-11-05): the GPU agrees again
+
+Configuration `f32det-macdata` as before; E7b's code with the redesigned movies and every surprise score over
+sensor-noise draws. Two runs, compared with `experiments/gpu/compare_battery.py --new NAME --old NAME`:
+
+- `e7b-noise` (17:05 to 17:19, code 73f46c9, 20 draws, the statistic later corrected; output
+  `results/hardware/compare_e7b_noise.log`): every surprise score within 6.6e-7 of the Mac's, interval ends within
+  1.2e-6; against the redesign run only the 13 noisy minds' surprise numbers differ.
+- `e7b-noise200` (18:39 to 18:55, code 2787bc7, 200 draws, the final statistic; output
+  `results/hardware/compare_e7b_noise200.log`): the same movies (`016fc3d72807e39d`) and exactly equal copy
+  baselines; trained `S` within 6.6e-7 of the Mac's rescored values (the oracle's permanence score, the largest of
+  all), interval ends within 9.5e-7, untrained networks within 2e-7. Against `e7b-noise`, only surprise numbers
+  differ: 24 for each mind with sensor noise and 12 for the oracle (its interval ends, from 2,000 resamples instead
+  of 500). Every probe, training-log and translation number is bit-identical. Against the Mac's stored run, every
+  number: largest 8.3e-5, the hearing_only probe prediction seen before; everything else within 4.5e-6.
+
 
 ### What E4, E7 and E7b establish together
 
