@@ -22,3 +22,6 @@ results/remote/
 # kept off the public repository (README, "Publishing")
 experiments/gpu/.pc
 .private-patterns
+# v3 networks and observation caches (regenerable; the scores are kept)
+results/v3/**/*.pkl
+results/v3/**/*.npy

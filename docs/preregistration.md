@@ -655,3 +655,42 @@ with memory and not for memoryless.
   the chosen learner runs on the lawful recording (data seed 0, 1,280 episodes) on both before Stage 2.
 - Cost: Stage 0 a few CPU hours on the Mac and one GPU hour; Stage 1 about 3 GPU hours; Stage 2 about 6; Stage 3
   about 10. The GPU is shared with another project through the lock and the schedule.
+
+### Stage 0 result (2026-11-05): the preregistered stop
+
+Run as written (`experiments/stage0.py`; outputs in `results/v3/stage0`), checked by an independent agent that
+reproduced every score exactly (`results/v3/stage0/independent_check`). Two departures, neither changing the
+outcome: the row cap was scaled with the fitting episodes (60,000 per 1,024); and the candidate "MLP with early
+stopping on a held-out split" was not run separately, on the reasoning that the battery's probes already stop
+early on held-out episodes. That holds at 1,024 fitting episodes. At 4,096 and 8,192 the probes reach their best
+held-out point only at the end of their 1,500-step budget, so those candidates were limited by the budget. With real
+early stopping, they fail the same criterion by more (raw object_seen 0.681 against 0.616 and 0.577 at 8,192).
+
+**What happened.** Every candidate (MLP probes and ridge probes, at 1,024, 4,096 and 8,192 fitting episodes) passed
+three criteria and failed one. Last seen, updated beat raw senses by 0.70 to 0.95 at 1 to 5 and 6 to 20 steps.
+Full scored at least 0.997 at every delay. The tracking mind beat raw senses by at least 0.19 at 1 to 5 steps (0.266
+against 0.021 with the battery as it was). The failure: adding copies of earlier frames lowered object_seen (ridge
+at 8,192 episodes: raw 0.457, buffers 0.450 and 0.448; MLP at 8,192: 0.613, 0.579 and 0.559). The MLP at 1,024
+episodes also lowered object_hidden and self_location. And the tracking mind's permanence S was -0.0003 [-0.0010,
++0.0002], not above 0. By the rule, v3 stops.
+
+**What it means, from the check and from diagnostics run after the failure (not preregistered).**
+- The failing criterion was close to unmeetable as written, and it does not show that the probes cannot measure
+  memory. It asked for no drop at all, on one probe seed's point estimate, on object_seen, where past frames add
+  almost nothing. Nothing was lost: fit on the fitting rows themselves, the ridge probe's object_seen rises with
+  every buffer at every size; object_now on held-out episodes rises too; and at 4,096 episodes all six differences
+  (buffer minus raw, three probe seeds) have paired bootstrap intervals that include 0. The MLP at 1,024 episodes,
+  the battery as it was, does lose information as inputs widen (its held-out loss and object_now get worse), which
+  confirms the audit's finding for that probe.
+- The surprise check has not been done. The tracking mind is not a tracker anywhere: its head explains about 40
+  percent of the variance of the positions it was trained on, and on held-out episodes it is about as far from the
+  truth for objects in view (1.05) as for hidden ones (1.26 at 1 to 5 steps). Inside the surprise movies it is worse
+  than keeping the last position seen (0.94 against 0.56). A heavier tracking loss (weight 10, exploratory) did not
+  make it a tracker either. Its lack of surprise therefore says nothing about the test. The probes did register the
+  weak memory it has (skill 0.27 to 0.33 at 1 to 5 steps).
+
+**Next.** A further amendment, written before any new run, is Henry's decision. Options the check laid out: restate
+the buffer criterion without object_seen, with intervals instead of a zero tolerance, and real early stopping, then
+rerun the candidates on a fresh recording, since data seed 0's numbers are now known; build a surprise-test
+positive control whose permanence is built in and checked by a gate before it counts; or train a real tracker with
+a preregistered gate on its head.

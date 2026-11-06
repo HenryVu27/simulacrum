@@ -72,15 +72,16 @@ barely register memory at all.) The world lever is spent. The next lever is the 
    - P3, counting: human -0.06, memoryless -0.07.
    - P4, surprise: human permanence S -0.0003 and -0.0002, intervals include 0, below the v1
      value (-0.0001). (0.004 before the 2026-11-05 corrections to the surprise tests, below.)
-4. **Exploratory: a brief trace in the first moments of darkness, probably not memory updated by
-   self-motion.** For objects hidden 1 to 5 steps and in a dark spell, the human mind scores 0.014 and 0.088
-   (seeds 0 and 1) against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The
-   minds with no efference copy do as well or better (passive 0.046 and 0.063, passive_novest 0.059 and
-   0.084), so the likeliest reading is that the last lit scene persists briefly in the hidden state, not that
-   the mind tracks objects through its own motion. (audit: the trace is clearer than these numbers say. Split
-   by darkness and bootstrapped over test episodes, the human beats its raw senses by +0.10 [0.07, 0.13] and the
-   memoryless mind by +0.10 [0.07, 0.13] at 1 to 5 steps; part of the gap between seeds is probe noise.) (Every recurrent mind with eyes also beats memoryless here,
-   but memoryless sits below its own raw senses, so that comparison flatters them.)
+4. **Exploratory: a brief trace in the first moments of darkness, probably not memory updated by self-motion.**
+   For objects hidden 1 to 5 steps and in a dark spell, the human mind scores 0.014 and 0.088 (seeds 0 and 1)
+   against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The minds with no
+   efference copy do as well or better (passive 0.046 and 0.063, passive_novest 0.059 and 0.084), so the
+   likeliest reading is that the last lit scene persists briefly in the hidden state, not that the mind tracks
+   objects through its own motion. (audit: the trace is clearer than these numbers say. Split by darkness and
+   bootstrapped over test episodes, the human beats its raw senses by +0.10 [0.07, 0.13] and the memoryless mind
+   by +0.10 [0.07, 0.13] at 1 to 5 steps; part of the gap between seeds is probe noise.) (Every recurrent mind
+   with eyes also beats memoryless here, but memoryless sits below its own raw senses, so that comparison
+   flatters them.)
 5. **Exploratory: what counts as hidden depends on the body.** Bat and chimera locate objects the eyes cannot
    see (about 0.17 to 0.19 at 1 to 5 steps, in v1 and v2 alike), because echolocation covers 360 degrees and
    works in the dark. That is sensing, not memory.
@@ -168,7 +169,11 @@ Open, from the GPU work:
 
 ## Next steps, in order
 
-1. v3, preregistered as Amendment 5 (`docs/preregistration.md`). First fix the instrument: find a probe that
+1. v3, preregistered as Amendment 5 (`docs/preregistration.md`). Stage 0 ran on 2026-11-05 and stopped by its rule
+   (`docs/preregistration.md`, Stage 0 result): every probe candidate failed one criterion (memory buffers
+   lowered object_seen, a criterion that turned out close to unmeetable; nothing was lost), and the tracking
+   mind meant to test the surprise test turned out not to track at all, so that check has not been done. The
+   next amendment is Henry's decision. The plan as written: first fix the instrument: find a probe that
    registers memory on minds whose memory is known (engineered states, an explicit memory buffer, a learner
    trained to track hidden objects), check the surprise test registers it too, and rescore v1 and v2 with that
    probe. Then change the learner, not the world: five candidates screened in the dark world (residual-weighted
@@ -238,12 +243,12 @@ Open, from the GPU work:
    has 33 slow-changing features that neither its current senses nor any named world variable
    explains. The likely source is the diffusing scent field, which our vocabulary does not name. Not
    yet tested.
-7. **Mind versus world (H7, failed as written).** (audit: the shares depend on which minds and worlds
-   were sampled, so they cannot say what the world forces. With only the five minds that have human eyes,
+7. **Mind versus world (H7, failed as written).** (audit: the shares depend on which minds and worlds were
+   sampled, so they cannot say what the world forces. With only the five minds that have human eyes,
    object_hidden is world 0.99 and cause world 0.96; without the nonlocal world, cause is mind 0.97. And the
-   cause probe mostly reads proximity: distance alone scores 0.588 in the lawful world.) Two-way ANOVA (analysis of variance)
-   over 13 minds and 4 worlds. The design is unbalanced (lawful has two seeds, the others one), and the
-   report uses sample-size-weighted (Type I/II) sums of squares:
+   cause probe mostly reads proximity: distance alone scores 0.588 in the lawful world.) Two-way ANOVA (analysis
+   of variance) over 13 minds and 4 worlds. The design is unbalanced (lawful has two seeds, the others one), and
+   the report uses sample-size-weighted (Type I/II) sums of squares:
    - Causal attribution is the one concept the world decides: world share 0.74, mind share 0.23.
      Other ways of handling the imbalance give world 0.74 to 0.79 and mind 0.18 to 0.23. The world
      share comes mostly from the nonlocal world, where pushes act at a distance.

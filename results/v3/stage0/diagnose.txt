@@ -1,0 +1,8 @@
+1. one readout for objects in view and hidden (1,024 fitting episodes)
+   Probe      raw           object_now +0.212  seen +0.527  hidden +0.096  | seen, probe fit on seen only +0.728
+   Probe      buffer 3,6,9  object_now +0.197  seen +0.466  hidden +0.098  | seen, probe fit on seen only +0.674
+   RidgeProbe raw           object_now +0.162  seen +0.448  hidden +0.057  | seen, probe fit on seen only +0.672
+   RidgeProbe buffer 3,6,9  object_now +0.172  seen +0.428  hidden +0.077  | seen, probe fit on seen only +0.671
+
+2. the tracking mind's own head on the permanence movies (P1: object always there), frames behind the screen
+   318 hidden frames: mean distance from the truth, tracking head 0.936; keeping the last position seen 0.562; the object moves 0.060 per frame in these units

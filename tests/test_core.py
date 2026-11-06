@@ -153,6 +153,36 @@ def test_surprise_over_draws():
         assert np.allclose([s, *ci], [s0, *ci0], atol=1e-6), (s, ci, s0, ci0)
 
 
+def test_tracking_loss_is_off_unless_asked():
+    """The v3 Stage 0 tracking loss (learner.LearnerConfig.track) changes nothing at weight 0 or with an empty mask,
+    and adds heads only when asked for."""
+    from umwelt import learner
+
+    rng = np.random.default_rng(0)
+    obs, act = rng.normal(size=(4, 30, 6)).astype(np.float32), rng.normal(size=(4, 30, 2)).astype(np.float32)
+    y = rng.normal(size=(4, 30, 2 * kinds.N_KINDS)).astype(np.float32)
+    assert not any(k.startswith("trk") for k in learner.init(jax.random.PRNGKey(0), 6, learner.LearnerConfig()))
+    p = learner.init(jax.random.PRNGKey(0), 6, learner.LearnerConfig(track=1.0))
+    base = learner.loss_fn(p, obs, act, 4)[0]
+    assert np.isclose(learner.loss_fn(p, obs, act, 4, track=(y, np.ones_like(y)), track_w=0.0)[0], base)
+    assert np.isclose(learner.loss_fn(p, obs, act, 4, track=(y, np.zeros_like(y)), track_w=1.0)[0], base)
+    assert learner.loss_fn(p, obs, act, 4, track=(y, np.ones_like(y)), track_w=1.0)[0] > base
+
+
+def test_ridge_probe_reads_a_planted_signal_and_respects_masks():
+    rng = np.random.default_rng(0)
+    X = rng.normal(size=(8000, 20)).astype(np.float32)
+    Y = np.c_[X[:, :2] @ np.array([[1.0, -2.0], [0.5, 0.3]]), rng.normal(size=(8000, 2))].astype(np.float32)
+    M = np.ones((8000, 4), bool)
+    M[::3, 2:] = False
+    Y[~M] = 1e3  # masked targets must not be fit
+    groups = np.repeat(np.arange(160), 50)
+    p = probes.RidgeProbe(X[:6000], Y[:6000], M[:6000], "reg", 0, 0, groups[:6000])
+    pred = p(X[6000:])
+    assert probes._r2_cols(pred[:, :2], Y[6000:, :2], M[6000:, :2], M[6000:, :2]) > 0.99
+    assert abs(probes._r2_cols(pred[:, 2:], Y[6000:, 2:], M[6000:, 2:], M[6000:, 2:])) < 0.02
+
+
 def test_dark_blinds_eyes_but_not_echolocation():
     d = generate("dark", 8, T=128, seed=1, chunk=8)
     dark = ~d["gt_light"]

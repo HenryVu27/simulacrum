@@ -12,6 +12,7 @@ import jax.numpy as jnp
 import numpy as np
 import optax
 
+from umwelt import kinds
 
 
 @dataclass(frozen=True)
@@ -27,6 +28,9 @@ class LearnerConfig:
     horizons: tuple = (5,)  # far heads: predict o_{t+k} given the next k actions
     obs_dropout: float = 0.0  # training only: chance a step's senses are blanked, so prediction must lean on memory
     objective: str = "pixel"  # pixel: predict observations (this module); jepa: predict embeddings (learner_jepa)
+    # v3 Stage 0 only: weight of an auxiliary loss that predicts every object's egocentric position from the hidden
+    # state, in view or not. It makes a mind whose memory is known, to check the instruments (Amendment 5).
+    track: float = 0.0
 
 
 def _dense(key, n_in, n_out):
@@ -46,6 +50,9 @@ def init(key, obs_dim, cfg: LearnerConfig, recurrent=True):
         kk = jax.random.split(jax.random.fold_in(ks[4], i))
         p[f"far{k}_1"] = _dense(kk[0], H + 2 * k, cfg.dec)
         p[f"far{k}_2"] = _dense(kk[1], cfg.dec, obs_dim)
+    if cfg.track > 0:
+        p["trk1"] = _dense(ks[5], H, cfg.dec)
+        p["trk2"] = _dense(jax.random.fold_in(ks[5], 1), cfg.dec, 2 * kinds.N_KINDS)
     if recurrent:
         p["gru_x"] = _dense(ks[6], E, 3 * H)
         w = jnp.concatenate([jax.random.orthogonal(k, H) for k in jax.random.split(ks[7], 3)], 1)
@@ -117,18 +124,25 @@ def step_errors(p, obs, act):
     return jnp.mean((near[:, :-1] - obs[:, 1:]) ** 2, -1)
 
 
-def loss_fn(p, obs, act, burn_in, obs_in=None):
+def loss_fn(p, obs, act, burn_in, obs_in=None, track=None, track_w=0.0):
     h = latents(p, obs if obs_in is None else obs_in, act)
     near, far = predict(p, h, act)
     l1 = jnp.mean((near[:, burn_in:-1] - obs[:, burn_in + 1 :]) ** 2)
     lf = jnp.mean(jnp.stack([jnp.mean((f[:, burn_in:-k] - obs[:, burn_in + k :]) ** 2) for k, f in far.items()]))
-    return l1 + 0.5 * lf, (l1, lf)
+    loss = l1 + 0.5 * lf
+    if track is not None:  # (targets, mask), each (B, T, 2K): every object's egocentric position, in view or not
+        y, m = track
+        pred = _lin(p["trk2"], jax.nn.gelu(_lin(p["trk1"], h)))
+        m = m[:, burn_in:]
+        loss = loss + track_w * jnp.sum(m * (pred[:, burn_in:] - y[:, burn_in:]) ** 2) / (jnp.sum(m) + 1e-6)
+    return loss, (l1, lf)
 
 
-def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, verbose=True):
+def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, verbose=True, track=None):
     """obs (E, T, D) standardized, act (E, T, 2). Returns trained params and a loss log.
 
-    Batches are gathered on the host, so obs can be a memory-mapped array larger than free memory.
+    Batches are gathered on the host, so obs can be a memory-mapped array larger than free memory. track: with
+    cfg.track > 0, (targets, mask) arrays (E, T, 2K) for the auxiliary tracking loss.
     """
     E, T, D = obs.shape
     key = jax.random.PRNGKey(seed)
@@ -145,9 +159,9 @@ def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, v
         return ep, start, k3
 
     @jax.jit
-    def update(p, state, o, a, k3):
+    def update(p, state, o, a, k3, trk=None):
         keep = jax.random.bernoulli(k3, 1.0 - cfg.obs_dropout, o.shape[:2])[..., None]
-        (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in, o * keep)
+        (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(p, o, a, cfg.burn_in, o * keep, trk, cfg.track)
         upd, state = opt.update(g, state, p)
         return optax.apply_updates(p, upd), state, loss, aux
 
@@ -159,7 +173,8 @@ def train(obs, act, cfg: LearnerConfig, seed=0, recurrent=True, log_every=500, v
         ep, idx = np.asarray(ep)[:, None], np.asarray(start)[:, None] + window
         o = jnp.asarray(obs[ep, idx], jnp.float32)
         a = jnp.asarray(act[ep, idx], jnp.float32)
-        p, state, loss, (l1, l5) = update(p, state, o, a, k3)
+        trk = None if track is None else (jnp.asarray(track[0][ep, idx], jnp.float32), jnp.asarray(track[1][ep, idx], jnp.float32))
+        p, state, loss, (l1, l5) = update(p, state, o, a, k3, trk)
         if i % log_every == 0 or i == cfg.steps - 1:
             log.append((i, float(loss), float(l1), float(l5)))
             if verbose:

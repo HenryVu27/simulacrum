@@ -170,7 +170,7 @@ class Probe:
     that memorizes episodes instead of reading a concept.
     """
 
-    def __init__(self, X, Y, M, task, hidden, seed, groups):
+    def __init__(self, X, Y, M, task, hidden, seed, groups, max_rows=60_000):
         rng = np.random.default_rng(seed)
         keep = M.any(1) if M.ndim == 2 else M
         eps = np.unique(groups)
@@ -178,8 +178,8 @@ class Probe:
         is_val = np.isin(groups, val_eps)
         tr = np.flatnonzero(keep & ~is_val)
         va = np.flatnonzero(keep & is_val)
-        if len(tr) > 60_000:
-            tr = rng.choice(tr, 60_000, replace=False)
+        if len(tr) > max_rows:
+            tr = rng.choice(tr, max_rows, replace=False)
         if len(va) > 3_000:
             va = rng.choice(va, 3_000, replace=False)
         idx = np.concatenate([tr, va])
@@ -203,6 +203,55 @@ class Probe:
     def __call__(self, X):
         out = np.asarray(_apply(self.p, jnp.asarray((X - self.mu) / self.sd)))
         return out * self.ys + self.ym if self.task == "reg" else out
+
+
+class RidgeProbe:
+    """A masked multi-output ridge regression (v3 Stage 0, Amendment 5: a candidate probe that cannot lose
+    information by failing to fit). Each column is fit on its own masked training rows in closed form, once per
+    penalty in a fixed grid; the fit whose error on held-out episodes (the same split rule as Probe) is lowest is
+    kept. Regression only."""
+
+    LAMBDAS = (1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0, 1000.0)
+
+    def __init__(self, X, Y, M, task, hidden, seed, groups, max_rows=60_000):
+        assert task == "reg"
+        rng = np.random.default_rng(seed)
+        keep = M.any(1)
+        eps = np.unique(groups)
+        val_eps = rng.choice(eps, max(len(eps) // 5, 1), replace=False)
+        is_val = np.isin(groups, val_eps)
+        tr, va = np.flatnonzero(keep & ~is_val), np.flatnonzero(keep & is_val)
+        if len(tr) > max_rows:
+            tr = rng.choice(tr, max_rows, replace=False)
+        idx = np.concatenate([tr, va])
+        self.mu, self.sd = X[idx].mean(0), X[idx].std(0) + 1e-6
+        Z = ((X - self.mu) / self.sd).astype(np.float64)
+        Y = Y.astype(np.float64)
+        D = Z.shape[1]
+        self.W = np.zeros((D + 1, Y.shape[1]))
+        groups_of = {}
+        for c in range(Y.shape[1]):  # columns sharing a mask share one factorization
+            groups_of.setdefault(M[:, c].tobytes(), []).append(c)
+        for cols in groups_of.values():
+            m = M[:, cols[0]]
+            a, b = tr[m[tr]], va[m[va]]
+            if len(a) < 10:
+                continue
+            A = np.c_[Z[a], np.ones(len(a))]
+            G, R = A.T @ A, A.T @ Y[np.ix_(a, cols)]
+            best = None
+            for lam in self.LAMBDAS:
+                reg = lam * len(a) * np.eye(D + 1)
+                reg[-1, -1] = 0.0  # no penalty on the intercept
+                W = np.linalg.solve(G + reg, R)
+                err = np.mean((np.c_[Z[b], np.ones(len(b))] @ W - Y[np.ix_(b, cols)]) ** 2) if len(b) else 0.0
+                if best is None or err < best[0]:
+                    best = (err, W)
+            self.W[:, cols] = best[1]
+
+    def __call__(self, X):
+        Z = (X - self.mu) / self.sd
+        return np.c_[Z, np.ones(len(Z))] @ self.W
 
 
 def _r2_cols(pred, Y, M, ref_mask):

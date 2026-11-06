@@ -1,0 +1,6 @@
+[8192 eps] raw           TEST pooled: seen +0.4573 hidden +0.0689 now +0.1735 | seen-only probe: seen +0.6818 | hidden-only probe: hidden +0.1176
+[8192 eps] raw           IN-SAMPLE pooled (fitting rows): seen +0.4616 hidden +0.0820 now +0.1850   lambdas {'pooled': [0.01, 0.001, 0.01, 0.01, 0.01, 0.01, 0.001, 0.001], 'seen-only': [0.1, 0.01, 0.1, 0.1, 0.1, 0.1, 0.01, 0.001], 'hidden-only': [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.001]} (10 s)
+[8192 eps] buffer 2,4    TEST pooled: seen +0.4504 hidden +0.0915 now +0.1882 | seen-only probe: seen +0.6853 | hidden-only probe: hidden +0.1383
+[8192 eps] buffer 2,4    IN-SAMPLE pooled (fitting rows): seen +0.4644 hidden +0.1119 now +0.2075   lambdas {'pooled': [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01], 'seen-only': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.01], 'hidden-only': [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]} (162 s)
+[8192 eps] buffer 3,6,9  TEST pooled: seen +0.4481 hidden +0.0992 now +0.1932 | seen-only probe: seen +0.6860 | hidden-only probe: hidden +0.1477
+[8192 eps] buffer 3,6,9  IN-SAMPLE pooled (fitting rows): seen +0.4643 hidden +0.1216 now +0.2145   lambdas {'pooled': [0.1, 0.01, 0.01, 0.1, 0.1, 0.01, 0.01, 0.01], 'seen-only': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 'hidden-only': [0.1, 0.01, 0.01, 0.1, 0.1, 0.1, 0.1, 0.01]} (241 s)

@@ -1,0 +1,7 @@
+weight 10.0, 4000 updates: trained in 324 s; log first (0, 23.644763946533203, 1.0235728025436401, 1.035642147064209) last (3999, 12.205753326416016, 0.3130027651786804, 0.56653892993927)
+  held-out tracking loss 1.1465 (target variance ~1.99; weight-1 mind 1.2025)
+  in view      head mean distance 1.040; last seen, updated 0.000
+  hidden 1-5   head mean distance 1.208; last seen, updated 0.038
+  hidden 6-20  head mean distance 1.268; last seen, updated 0.146
+  movies: head error hidden 0.794 (frozen 0.562); head error seen 1.036
+  permanence S -0.00099 [-0.00174, -0.00031]
