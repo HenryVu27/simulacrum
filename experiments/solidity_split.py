@@ -15,8 +15,8 @@ A difference in the stimuli that only a learned predictor picks up would show in
 
 Errors are scored with the stored networks on the movies the battery uses, over voe.NOISE_DRAWS draws of each
 preset's sensor noise (the stored scores; asserted) and again without noise. Intervals: bootstrap over the 18
-quadruplets and the draws, as in voe.surprise. (The first version of this check used one noise draw, as every
-score did then; its conclusion is unchanged.)
+quadruplets of the draws' mean, as in voe.surprise. (Its first version used one noise draw, as every score did
+then, and a later one 20 draws; the conclusion did not change.)
 
     uv run python experiments/solidity_split.py > results/checks/2026-11-05_battery/solidity_split.txt
 """
@@ -40,19 +40,19 @@ RUNS = ["main/lawful_s0", "main/lawful_s1", "main/ghost_s0", "main/impermanent_s
         "main/lawful_mj_s0", "v2/dark_s0", "v2/dark_s1", "jepa/lawful_s0", "long/lawful_s0"]
 
 
-def contrasts(err, crit, rng, n_boot=1000):
-    """err (draws, n*4, T-1). Returns {name: (value, (lo, hi))} for S, pass and bounce, over the draws' mean
-    errors, resampling draws and quadruplets as voe.surprise does."""
-    tot = voe.totals(err, crit)  # (draws, n, 4): P1 P2 I1 I2
-    k, n = tot.shape[:2]
+def contrasts(err, crit, rng, n_boot=voe.N_BOOT):
+    """err (draws, n*4, T-1). Returns {name: (value, (lo, hi))} for S, pass and bounce on the draws' mean errors,
+    resampling quadruplets as voe.surprise does."""
+    mean = voe.totals(err, crit).mean(0)  # (n, 4): P1 P2 I1 I2
+    n = len(mean)
 
     def stats(t):
         base = t[:, 0].sum() + t[:, 1].sum()
         return {"S": (t[:, 2].sum() + t[:, 3].sum() - base) / base, "pass": (t[:, 2].sum() - t[:, 1].sum()) / base,
                 "bounce": (t[:, 3].sum() - t[:, 0].sum()) / base}
 
-    point = stats(tot.mean(0))
-    boots = [stats(tot[rng.integers(0, k, k)].mean(0)[rng.integers(0, n, n)]) for _ in range(n_boot)]
+    point = stats(mean)
+    boots = [stats(mean[rng.integers(0, n, n)]) for _ in range(n_boot)]
     return {k: (v, tuple(np.percentile([b[k] for b in boots], [2.5, 97.5]))) for k, v in point.items()}
 
 

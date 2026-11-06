@@ -37,7 +37,8 @@ INERT = [k for k in range(kinds.N_KINDS) if not kinds.ANIMATE[k]]
 VARIANTS = ("P1", "P2", "I1", "I2")
 TESTS = ("permanence", "solidity", "causality")
 LAYOUT_SEED = 0  # which bystander walls; experiments/battery_layouts.py scores other seeds
-NOISE_DRAWS = 20  # sensor-noise draws each surprise score averages over (experiment._voe_scores)
+NOISE_DRAWS = 200  # sensor-noise draws each surprise score averages over (experiment._voe_scores)
+N_BOOT = 2000  # bootstrap resamples for a surprise interval (500 until 2026-11-05)
 WALL_CENTRE, WALL_HALF = (2.5, 7.5), (0.75, 1.5)  # world.reset's ranges for internal walls (v1 and dark worlds)
 GRID_STEP = 1 / 256  # wall ends on an exact binary grid, so every machine's NumPy gives the same walls
 
@@ -321,27 +322,27 @@ def totals(err, crit):
     return np.array([[e[i, :, crit[i] - 1 :].sum(-1) for i in range(n)] for e in err])
 
 
-def surprise(err, crit, rng=None, n_boot=500):
-    """S and its 95% bootstrap interval. err (instances*4, T-1) one-step errors, or (draws, instances*4, T-1)
-    for several sensor-noise draws: S is then taken over the draws' mean errors, and each bootstrap sample
-    resamples draws as well as instances, so the interval also covers which noise the mind happened to sense
-    (docs/preregistration.md, 2026-11-05: one draw moved permanence scores by as much as the effects tested)."""
+def surprise(err, crit, rng=None, n_boot=N_BOOT):
+    """S and its 95% bootstrap interval over instances. err (instances*4, T-1) one-step errors, or
+    (draws, instances*4, T-1) for several sensor-noise draws, when S is taken on the draws' mean summed errors.
+
+    One draw of noise moves S by about half its interval, and every run of a mind shares the draw, so scores
+    average many (docs/preregistration.md, surprise scores over sensor-noise draws). The noise acts independently
+    on each quadruplet, so resampling quadruplets of the draw-mean covers what noise is left; resampling draws as
+    well would count it twice. With one draw and n_boot=500 this is exactly the statistic of every score made
+    before 2026-11-05."""
     tot = totals(err, crit)
-    n, k = len(crit), len(tot)
+    n = len(crit)
+    mean = tot[0] if len(tot) == 1 else tot.mean(0)
+    possible, impossible = mean[:, 0] + mean[:, 1], mean[:, 2] + mean[:, 3]
     rng = rng or np.random.default_rng(0)
-
-    def s_of(t):
-        possible, impossible = t[:, 0] + t[:, 1], t[:, 2] + t[:, 3]
-        return (impossible.sum() - possible.sum()) / possible.sum()
-
-    mean = tot[0] if k == 1 else tot.mean(0)
+    s = (impossible.sum() - possible.sum()) / possible.sum()
     boots = []
     for _ in range(n_boot):
         i = rng.integers(0, n, n)
-        t = mean if k == 1 else tot[rng.integers(0, k, k)].mean(0)
-        boots.append(s_of(t[i]))
+        boots.append((impossible[i].sum() - possible[i].sum()) / possible[i].sum())
     lo, hi = np.percentile(boots, [2.5, 97.5])
-    return float(s_of(mean)), (float(lo), float(hi))
+    return float(s), (float(lo), float(hi))
 
 
 def copy_errors(obs):

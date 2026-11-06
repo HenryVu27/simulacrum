@@ -1,0 +1,10 @@
+66 scores. z(draws 0..19 vs 40..239): mean +0.07, SD 1.18, |z|>2 in 6; z(draws 20..39 vs 40..239): mean -0.00, SD 1.21, |z|>2 in 7
+(exchangeable draws: mean 0, SD 1, about 3 of 66 beyond 2)
+  main/lawful_s0  chimera      trained   solidity   z0-19 +2.86 z20-39 -0.03  S(0-19) +0.00833 S(20-39) +0.00530 S(40-239) +0.00533
+  main/lawful_s0  vision_only  trained   permanence z0-19 -2.70 z20-39 +1.93  S(0-19) -0.00083 S(20-39) +0.00068 S(40-239) +0.00005
+  main/lawful_s0  human        trained   permanence z0-19 +2.26 z20-39 +1.24  S(0-19) +0.00079 S(20-39) +0.00033 S(40-239) -0.00023
+  main/lawful_s0  bat          untrained solidity   z0-19 +2.11 z20-39 +0.10  S(0-19) +0.00186 S(20-39) +0.00110 S(40-239) +0.00106
+  v2/dark_s0      bat          untrained solidity   z0-19 +2.11 z20-39 +0.14  S(0-19) +0.00184 S(20-39) +0.00110 S(40-239) +0.00105
+  v2/dark_s0      dog          trained   solidity   z0-19 -2.05 z20-39 -0.89  S(0-19) -0.00245 S(20-39) -0.00134 S(40-239) -0.00049
+  v2/dark_s0      human        trained   permanence z0-19 +1.96 z20-39 +1.11  S(0-19) +0.00082 S(20-39) +0.00031 S(40-239) -0.00036
+  v2/dark_s0      bat          trained   causality  z0-19 -1.84 z20-39 -0.64  S(0-19) -0.06588 S(20-39) -0.06485 S(40-239) -0.06430

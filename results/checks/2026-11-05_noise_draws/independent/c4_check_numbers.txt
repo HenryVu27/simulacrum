@@ -1,0 +1,8 @@
+156 scores; committed rows 156 ; keys equal: True
+max |mine - committed check.json| over all S and interval ends: 0.00e+00
+single draw: SD of S over draws 0..19: median 0.0024, max 0.0310  (commit: 'moved a score by a median 0.0024 (up to 0.031)')
+  for scale: range over 20 draws median 0.0086 max 0.1430; |draw 0 - mean of 20| median 0.0017 max 0.0436
+'excludes 0' differs from draw 0's in 18.4% of (score, draw) pairs; across all pairs of draws 18.1%
+set A (0..19) vs set B (20..39): 'excludes 0' agrees in 97.4% (4 disagree)
+  A excludes 0 in 30/156 scores; chance agreement if exclusion were random at that rate: 68.9%
+  one draw: interval excludes 0 in 18.3% of (score, draw)

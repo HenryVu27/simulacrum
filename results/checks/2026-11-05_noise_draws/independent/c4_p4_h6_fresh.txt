@@ -1,0 +1,13 @@
+main/lawful_s0  human        stored(0-19) S +0.00079 [-0.00063, 0.00233] | fresh 200 draws S -0.00023 code-scheme [-0.00067, 0.00024] quadruplets-only [-0.00052, 5e-05]
+main/lawful_s0  memoryless   stored(0-19) S +0.00064 [-0.00062, 0.00181] | fresh 200 draws S +0.00000 code-scheme [-0.00047, 0.00051] quadruplets-only [-0.0003, 0.00031]
+main/lawful_s0  vision_only  stored(0-19) S -0.00083 [-0.00179, 0.00029] | fresh 200 draws S +0.00005 code-scheme [-0.00027, 0.0004] quadruplets-only [-0.00017, 0.00027]
+main/lawful_s1  human        stored(0-19) S +0.00069 [-0.00086, 0.00233] | fresh 200 draws S -0.00032 code-scheme [-0.00077, 0.00016] quadruplets-only [-0.00059, -4e-05]
+main/lawful_s1  memoryless   stored(0-19) S +0.00085 [-0.00049, 0.00231] | fresh 200 draws S -0.00001 code-scheme [-0.00053, 0.00053] quadruplets-only [-0.00034, 0.00033]
+main/lawful_s1  vision_only  stored(0-19) S -0.00088 [-0.00183, 0.00023] | fresh 200 draws S +0.00003 code-scheme [-0.00028, 0.00035] quadruplets-only [-0.00017, 0.00021]
+v2/dark_s0      human        stored(0-19) S +0.00082 [-0.00113, 0.00296] | fresh 200 draws S -0.00036 code-scheme [-0.00091, 0.0002] quadruplets-only [-0.00064, -6e-05]
+v2/dark_s0      memoryless   stored(0-19) S +0.00025 [-0.00129, 0.0018] | fresh 200 draws S -0.00002 code-scheme [-0.00063, 0.00059] quadruplets-only [-0.00041, 0.00036]
+v2/dark_s0      vision_only  stored(0-19) S -0.00087 [-0.0018, 9e-05] | fresh 200 draws S -0.00003 code-scheme [-0.00036, 0.00028] quadruplets-only [-0.00026, 0.00017]
+v2/dark_s1      human        stored(0-19) S +0.00079 [-0.00129, 0.0029] | fresh 200 draws S -0.00032 code-scheme [-0.00089, 0.00025] quadruplets-only [-0.00065, -0.0]
+v2/dark_s1      memoryless   stored(0-19) S +0.00033 [-0.00109, 0.0018] | fresh 200 draws S +0.00005 code-scheme [-0.00051, 0.00061] quadruplets-only [-0.00032, 0.0004]
+v2/dark_s1      vision_only  stored(0-19) S -0.00080 [-0.00175, 0.00013] | fresh 200 draws S +0.00000 code-scheme [-0.00032, 0.00032] quadruplets-only [-0.00022, 0.00021]
+P4 third part on fresh draws: human mean S dark -0.00034 vs v1 lawful -0.00028 -> fails (stored: 0.0008 vs 0.0007, holds)

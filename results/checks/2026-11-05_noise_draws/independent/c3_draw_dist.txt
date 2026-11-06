@@ -1,0 +1,4 @@
+human        single-draw S over 240 draws: mean -0.00010 sd 0.00194 skew -0.11 excess kurtosis -0.28; draws 0..19 mean +0.00079 (z +2.29); Welch t-test 0..19 vs 40..239 p 0.084; Mann-Whitney p 0.050
+vision_only  single-draw S over 240 draws: mean +0.00003 sd 0.00139 skew -0.12 excess kurtosis -0.09; draws 0..19 mean -0.00083 (z -2.82); Welch t-test 0..19 vs 40..239 p 0.041; Mann-Whitney p 0.024
+memoryless   single-draw S over 240 draws: mean +0.00011 sd 0.00190 skew +0.03 excess kurtosis -0.02; draws 0..19 mean +0.00065 (z +1.46); Welch t-test 0..19 vs 40..239 p 0.166; Mann-Whitney p 0.094
+smell_only   single-draw S over 240 draws: mean -0.00287 sd 0.02501 skew +0.05 excess kurtosis -0.25; draws 0..19 mean -0.00357 (z -0.14); Welch t-test 0..19 vs 40..239 p 0.898; Mann-Whitney p 0.993

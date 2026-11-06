@@ -1,11 +1,12 @@
 import functools
+import zlib
 from dataclasses import replace
 
 import jax
 import jax.numpy as jnp
 import numpy as np
 
-from umwelt import probes, voe
+from umwelt import presets, probes, voe
 from umwelt.data import generate
 from umwelt.presets import PRESETS, observe
 from umwelt.senses import MAX_RANGE, RAY_REL, raycast
@@ -103,28 +104,53 @@ def test_permanence_quadruplet_is_balanced_for_a_memoryless_predictor():
 
 
 def test_noise_draws_keep_draw_0_and_vary_the_rest():
-    """Draw 0 is the sensor noise every result before 2026-11-05 used (and training still uses); other draws differ."""
-    d = generate("lawful", 2, T=16, seed=0, chunk=2)
-    p = PRESETS["human"]
-    assert np.array_equal(observe(d, p), observe(d, p, draw=0))
-    assert not np.array_equal(observe(d, p), observe(d, p, draw=1))
-    assert np.array_equal(observe(d, p, draw=3), observe(d, p, draw=3))
+    """Draw 0 is the sensor noise every result before 2026-11-05 used (and training still uses): seeded by the
+    preset's name, drawn sense by sense. With all-zero recordings the observation is the noise alone."""
+    from umwelt.world import ORACLE_DIM
+
+    E, T = 3, 5
+    shapes = {"vision": (128, 4), "ray_tex": (128,), "hearing": (8,), "smell": (8,), "touch": (36,), "proprio": (3,),
+              "compass": (2,), "oracle": (ORACLE_DIM,)}
+    d = {f"obs_{k}": np.zeros((E, T) + s, np.float16) for k, s in shapes.items()}
+    d["action"] = np.zeros((E, T, 2), np.float32)
+    for name in ("human", "dog", "bat"):
+        p = PRESETS[name]
+        rng = np.random.default_rng(zlib.crc32(name.encode()))
+        expect = np.concatenate([rng.normal(0.0, s.noise, presets._channel(d, s).shape).astype(np.float32)
+                                 for s in p.senses], -1)
+        assert np.array_equal(observe(d, p), expect) and np.array_equal(observe(d, p, draw=0), expect), name
+        assert not np.array_equal(observe(d, p, draw=1), expect)
+        assert np.array_equal(observe(d, p, draw=7), observe(d, p, draw=7))
+
+
+def _surprise_before(err, crit, n_boot=500):
+    """voe.surprise as it was until 2026-11-05 (commit e1007a5), kept to pin the one-draw statistic."""
+    n = len(crit)
+    err = err.reshape(n, 4, -1)
+    tot = np.array([err[i, :, crit[i] - 1 :].sum(-1) for i in range(n)])
+    possible = tot[:, 0] + tot[:, 1]
+    impossible = tot[:, 2] + tot[:, 3]
+    rng = np.random.default_rng(0)
+    s = (impossible.sum() - possible.sum()) / possible.sum()
+    boots = []
+    for _ in range(n_boot):
+        i = rng.integers(0, n, n)
+        boots.append((impossible[i].sum() - possible[i].sum()) / possible[i].sum())
+    lo, hi = np.percentile(boots, [2.5, 97.5])
+    return float(s), (float(lo), float(hi))
 
 
 def test_surprise_over_draws():
-    """One draw gives exactly the old statistic; the interval over draws widens when the draws disagree."""
+    """One draw gives exactly the old statistic. Several draws give the old statistic on the draws' mean errors:
+    S on the mean, and quadruplets (not draws) resampled, since the noise is independent across quadruplets."""
     rng = np.random.default_rng(0)
-    crit = np.full(12, 5)
-    err = rng.uniform(1.0, 2.0, size=(12 * 4, 20)).astype(np.float32)
-    assert voe.surprise(err, crit) == voe.surprise(err[None], crit)
-    # the same movies under 10 draws that shift every impossible movie's error together, by a draw-specific amount
-    shift = np.linspace(-0.2, 0.2, 10)[:, None, None]
-    variant = np.tile(np.array([0, 0, 1, 1]), 12)[None, :, None]
-    draws = np.broadcast_to(err, (10,) + err.shape) + shift * variant
-    s, (lo, hi) = voe.surprise(draws, crit)
-    per_draw = [voe.surprise(x, crit)[0] for x in draws]
-    assert abs(s - np.mean(per_draw)) < 1e-3
-    assert hi - lo > voe.surprise(err, crit)[1][1] - voe.surprise(err, crit)[1][0]  # the draws' spread is in it
+    for crit in (np.full(12, 5), rng.integers(3, 15, 18)):
+        err = rng.uniform(1.0, 2.0, size=(len(crit) * 4, 20)).astype(np.float32)
+        assert voe.surprise(err, crit, n_boot=500) == _surprise_before(err, crit)
+        draws = err + rng.normal(0.0, 0.3, size=(10,) + err.shape).astype(np.float32)
+        s, ci = voe.surprise(draws, crit, n_boot=500)
+        s0, ci0 = _surprise_before(draws.astype(np.float64).mean(0), crit)
+        assert np.allclose([s, *ci], [s0, *ci0], atol=1e-6), (s, ci, s0, ci0)
 
 
 def test_dark_blinds_eyes_but_not_echolocation():

@@ -1,0 +1,19 @@
+P4 third part: human mean S dark 0.00081 vs v1 lawful 0.00074; difference +0.00007
+  per-draw difference: mean +0.00007, SD over draws 0.00108, SE of 20-draw mean 0.00024
+  draw-bootstrap of the 20 draws: P(dark > lawful) = 0.61
+  single draws with dark mean > lawful mean: 11/20
+H6 share (my totals, 20 draws): 0.54 = 7/13
+  bat             impermanent - lawful +0.00030
+  blind           impermanent - lawful -0.00024
+  chimera         impermanent - lawful +0.00027
+  deafblind       impermanent - lawful -0.00025
+  dog             impermanent - lawful +0.00013
+  hearing_only    impermanent - lawful -0.00493
+  human           impermanent - lawful +0.00003
+  memoryless      impermanent - lawful -0.00008
+  passive         impermanent - lawful +0.00008
+  passive_novest  impermanent - lawful -0.00008
+  smell_only      impermanent - lawful +0.00108
+  touch_only      impermanent - lawful -0.00099
+  vision_only     impermanent - lawful -0.00006
+  draw-bootstrap of H6 share: median 0.54, 2.5-97.5% [0.30769231 0.84615385], P(>0.5) 0.70

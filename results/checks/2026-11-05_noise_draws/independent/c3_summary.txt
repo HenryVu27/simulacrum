@@ -1,0 +1,7 @@
+66 scores (lawful s0 and dark s0; 11 minds; trained+untrained; 3 tests; 200 fresh draws each)
+single-draw SD of S / sqrt(sum of per-quadruplet noise variances): median 0.98 (min 0.89, max 1.15)  -> noise acts independently per quadruplet
+draw-resampling bootstrap SD / SD of S20 over 10 fresh sets: median 1.01 (min 0.68, max 1.77)  -> the draw part alone is right
+share of the quadruplet-bootstrap variance (on the 20-draw mean) that is leftover noise: median 0.25; permanence median 1.17; causality median 0.02
+code interval (half-width/1.96) / SD of S20 over fresh sets: median 2.5; permanence 1.8, solidity 2.7, causality 8.0
+vision_only permanence main/lawful_s0 trained: half/1.96 0.00051, SD of S20 over 10 sets 0.00037, ratio 1.36
+vision_only permanence main/lawful_s0 untrained: half/1.96 0.00022, SD of S20 over 10 sets 0.00013, ratio 1.64

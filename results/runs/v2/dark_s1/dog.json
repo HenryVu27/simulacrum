@@ -107,28 +107,28 @@
  },
  "voe": {
   "permanence": {
-   "S": -0.00015484282630495727,
+   "S": -0.0005587072810158134,
    "ci": [
-    -0.0050173681345768275,
-    0.0045814103563316146
+    -0.0015011123614385724,
+    0.00031626269119442373
    ],
-   "S_copy": -0.004438990261405706
+   "S_copy": -0.0013078514020889997
   },
   "solidity": {
-   "S": 8.878257358446717e-05,
+   "S": 0.0004645328735932708,
    "ci": [
-    -0.005014667520299554,
-    0.005616563174407923
+    -0.0035702434950508175,
+    0.0050408687558956425
    ],
-   "S_copy": 8.072282071225345e-05
+   "S_copy": 0.0012482665479183197
   },
   "causality": {
-   "S": -7.965318218339235e-05,
+   "S": 0.0004985553096048534,
    "ci": [
-    -0.009846770321018994,
-    0.008992262952961025
+    -0.008603372680954634,
+    0.008320636325515805
    ],
-   "S_copy": -0.00020286081416998059
+   "S_copy": -0.0004523845564108342
   }
  },
  "timing": {
@@ -184,9 +184,9 @@
   },
   {
    "date": "2026-11-05",
-   "what": "surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05)",
+   "what": "surprise scores over 200 sensor-noise draws, 2000 bootstrap resamples (docs/preregistration.md, surprise scores over sensor-noise draws)",
    "script": "experiments/recompute_noise.py",
-   "code": "a1cda64 with uncommitted changes in src",
+   "code": "73f46c9 with uncommitted changes in src",
    "machine": "Mac-2206.lan"
   }
  ],
@@ -218,7 +218,8 @@
  },
  "provenance": {
   "stimuli": "016fc3d72807e39d",
-  "voe_draws": 20
+  "voe_draws": 200,
+  "voe_boot": 2000
  },
  "voe_before_noise_draws": {
   "permanence": {

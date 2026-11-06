@@ -1,0 +1,40 @@
+459 noisy scores; quadruplets-only interval width / stored width: median 0.63 (min 0.37, max 1.05)
+'excludes 0' would change in 24 scores:
+   ('main/ghost_s0', 'blind', 'trained', 'solidity', -0.0032, [-0.0093, 0.0023], [-0.0057, -0.0003])
+   ('main/ghost_s0', 'passive_novest', 'trained', 'solidity', -0.003, [-0.0059, 0.0002], [-0.0061, -0.0003])
+   ('main/ghost_s0', 'vision_only', 'trained', 'permanence', -0.0008, [-0.0018, 0.0002], [-0.0014, -0.0003])
+   ('main/impermanent_s0', 'blind', 'trained', 'solidity', -0.0047, [-0.0134, 0.0041], [-0.0093, -0.0005])
+   ('main/impermanent_s0', 'touch_only', 'trained', 'permanence', 0.0039, [-0.006, 0.0132], [0.0002, 0.0086])
+   ('main/impermanent_s0', 'vision_only', 'trained', 'permanence', -0.0009, [-0.0018, 0.0001], [-0.0014, -0.0005])
+   ('main/lawful_mj_s0', 'chimera', 'trained', 'permanence', 0.0014, [-0.0015, 0.0043], [0.0, 0.0031])
+   ('main/lawful_mj_s0', 'deafblind', 'trained', 'causality', -0.0066, [-0.0182, 0.0058], [-0.0147, -0.0002])
+   ('main/lawful_mj_s0', 'dog', 'untrained', 'solidity', 0.0013, [-0.0004, 0.0027], [0.0002, 0.0024])
+   ('main/lawful_mj_s0', 'vision_only', 'trained', 'permanence', -0.0008, [-0.0017, 0.0002], [-0.0012, -0.0004])
+   ('main/lawful_mj_s0', 'vision_only', 'untrained', 'solidity', -0.0013, [-0.0023, 0.0001], [-0.0022, -0.0001])
+   ('main/lawful_s0', 'dog', 'untrained', 'solidity', 0.0013, [-0.0002, 0.0026], [0.0003, 0.0024])
+   ('main/lawful_s0', 'memoryless', 'trained', 'permanence', 0.0006, [-0.0006, 0.0018], [0.0, 0.0012])
+   ('main/lawful_s0', 'touch_only', 'trained', 'permanence', 0.0046, [-0.0062, 0.0149], [0.0002, 0.0102])
+   ('main/lawful_s0', 'vision_only', 'trained', 'permanence', -0.0008, [-0.0018, 0.0003], [-0.0014, -0.0003])
+   ('main/lawful_s1', 'dog', 'trained', 'permanence', -0.0019, [-0.006, 0.0029], [-0.0035, -0.0])
+   ('main/lawful_s1', 'memoryless', 'trained', 'permanence', 0.0008, [-0.0005, 0.0023], [0.0002, 0.0015])
+   ('main/lawful_s1', 'touch_only', 'trained', 'permanence', 0.0052, [-0.0051, 0.0155], [0.0005, 0.0107])
+   ('main/lawful_s1', 'vision_only', 'trained', 'permanence', -0.0009, [-0.0018, 0.0002], [-0.0013, -0.0004])
+   ('main/nonlocal_s0', 'vision_only', 'trained', 'permanence', -0.0007, [-0.0016, 0.0002], [-0.0012, -0.0002])
+   ('pilot/lawful_s0', 'memoryless', 'trained', 'permanence', 0.0007, [-0.0005, 0.0017], [0.0001, 0.0013])
+   ('v2/dark_s0', 'vision_only', 'trained', 'permanence', -0.0009, [-0.0018, 0.0001], [-0.0012, -0.0005])
+   ('v2/dark_s1', 'touch_only', 'trained', 'permanence', 0.0048, [-0.0061, 0.0144], [0.0005, 0.0098])
+   ('v2/dark_s1', 'vision_only', 'trained', 'permanence', -0.0008, [-0.0017, 0.0001], [-0.0013, -0.0004])
+
+verdict parts with quadruplets-only intervals:
+  main/lawful_s0  human        permanence S +0.0008 quad-only [-0.0001, 0.0016] stored [-0.0006, 0.0023]
+  main/lawful_s0  vision_only  permanence S -0.0008 quad-only [-0.0014, -0.0003] stored [-0.0018, 0.0003]
+  main/lawful_s0  memoryless   permanence S +0.0006 quad-only [0.0, 0.0012] stored [-0.0006, 0.0018]
+  main/lawful_s1  human        permanence S +0.0007 quad-only [-0.0003, 0.0016] stored [-0.0009, 0.0023]
+  main/lawful_s1  vision_only  permanence S -0.0009 quad-only [-0.0013, -0.0004] stored [-0.0018, 0.0002]
+  main/lawful_s1  memoryless   permanence S +0.0008 quad-only [0.0002, 0.0015] stored [-0.0005, 0.0023]
+  v2/dark_s0      human        permanence S +0.0008 quad-only [-0.0004, 0.002] stored [-0.0011, 0.003]
+  v2/dark_s0      vision_only  permanence S -0.0009 quad-only [-0.0012, -0.0005] stored [-0.0018, 0.0001]
+  v2/dark_s0      memoryless   permanence S +0.0003 quad-only [-0.0005, 0.001] stored [-0.0013, 0.0018]
+  v2/dark_s1      human        permanence S +0.0008 quad-only [-0.0007, 0.002] stored [-0.0013, 0.0029]
+  v2/dark_s1      vision_only  permanence S -0.0008 quad-only [-0.0013, -0.0004] stored [-0.0017, 0.0001]
+  v2/dark_s1      memoryless   permanence S +0.0003 quad-only [-0.0004, 0.001] stored [-0.0011, 0.0018]

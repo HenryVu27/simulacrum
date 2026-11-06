@@ -1,0 +1,12 @@
+78 scores (lawful s0, noisy minds, trained and untrained, 3 tests), 6 layout seeds x 20 draws each
+SD of S across layouts / interval's implied SD (half-width/1.96, mean over layouts): median 0.20, 90th pct 0.57, max 0.78; above 1 in 0 scores
+'excludes 0' differs between layouts in 9/78 scores
+largest ratios:
+  dog             trained   solidity   SD across layouts 0.00253, interval SD 0.00325, ratio 0.78, layouts excluding 0: 5/6
+  dog             trained   causality  SD across layouts 0.00360, interval SD 0.00481, ratio 0.75, layouts excluding 0: 6/6
+  human           untrained causality  SD across layouts 0.00062, interval SD 0.00084, ratio 0.74, layouts excluding 0: 0/6
+  passive_novest  untrained causality  SD across layouts 0.00060, interval SD 0.00093, ratio 0.65, layouts excluding 0: 1/6
+  passive         untrained causality  SD across layouts 0.00055, interval SD 0.00085, ratio 0.65, layouts excluding 0: 0/6
+  passive_novest  trained   solidity   SD across layouts 0.00128, interval SD 0.00205, ratio 0.62, layouts excluding 0: 0/6
+  passive_novest  untrained solidity   SD across layouts 0.00029, interval SD 0.00047, ratio 0.61, layouts excluding 0: 4/6
+  chimera         trained   solidity   SD across layouts 0.00122, interval SD 0.00214, ratio 0.57, layouts excluding 0: 6/6

@@ -1,0 +1,3 @@
+312 noisy scores (6 runs): 'excludes 0' differs from the stored decision for some bootstrap seed in 2.2% of scores; for >=25% of seeds in 0.6% (2 scores)
+   main/ghost_s0 passive_novest trained solidity S -0.0030 ci [-0.0059, 0.0002] differs for 100% of seeds
+   v2/dark_s0 human untrained causality S -0.0013 ci [-0.0025, 0.0001] differs for 55% of seeds

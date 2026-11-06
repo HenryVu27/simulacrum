@@ -1,0 +1,2 @@
+20 draws, new interval: spread over layouts 0-4 / interval width on layout 0: max 0.63 (human untrained causality), median 0.11
+one draw (draw 0), old interval: spread over layouts 0-4 / interval width on layout 0: max 0.68 (human untrained causality), median 0.13

@@ -34,7 +34,7 @@ The manipulation check M1 failed, so by Amendments 2 and 4 every hypothesis P1 t
 - FAIL P1 permanence needs memory (weak manipulation): 1-5 steps: human 0.02, human raw senses 0.00, memoryless -0.03; 6-20 steps: human -0.02, human raw senses -0.02, memoryless -0.04
 - FAIL P2 updating a hidden object needs knowledge of own motion (weak manipulation): 6-20 steps: human -0.02, passive_novest -0.01
 - FAIL P3 counting needs memory when objects hide (weak manipulation): number: human -0.06, memoryless -0.07
-- FAIL P4 surprise at impossible permanence (weak manipulation): human S 0.0008 [-0.0011, 0.0030], S 0.0008 [-0.0013, 0.0029]; memoryless S 0.0003 [-0.0013, 0.0018], S 0.0003 [-0.0011, 0.0018]; human mean S 0.0008 here vs 0.0007 in v1 lawful (all three parts must hold)
+- FAIL P4 surprise at impossible permanence (weak manipulation): human S -0.0003 [-0.0005, 0.0000], S -0.0002 [-0.0006, 0.0001]; memoryless S -0.0000 [-0.0004, 0.0004], S 0.0000 [-0.0004, 0.0004]; human mean S -0.0003 here vs -0.0001 in v1 lawful (all three parts must hold)
 
 ## v1 hypotheses re-run in the chosen world (exploratory)
 
@@ -95,19 +95,19 @@ Skill at locating each object relative to the agent, by steps since it was last 
 | mind | permanence | solidity | causality |
 |---|---|---|---|
 | oracle | 0.973 | 0.002 | -0.028 |
-| human | 0.001 | -0.003 | -0.001 |
-| dog | -0.001 | -0.001 | 0.002 |
-| vision_only | -0.001 | -0.002 | 0.002 |
-| bat | -0.000 | 0.007 | -0.067 |
-| chimera | 0.001 | 0.011 | -0.049 |
-| blind | -0.005 | -0.004 | 0.001 |
-| hearing_only | 0.003 | -0.000 | 0.002 |
-| smell_only | -0.005 | 0.007 | 0.000 |
-| deafblind | -0.001 | 0.005 | -0.006 |
-| touch_only | 0.005 | -0.002 | 0.004 |
-| passive | -0.000 | -0.003 | -0.004 |
-| passive_novest | 0.000 | 0.000 | -0.006 |
-| memoryless | 0.000 | -0.002 | -0.003 |
+| human | -0.000 | -0.003 | -0.001 |
+| dog | -0.000 | -0.000 | 0.003 |
+| vision_only | -0.000 | -0.002 | 0.002 |
+| bat | -0.000 | 0.007 | -0.066 |
+| chimera | 0.000 | 0.008 | -0.048 |
+| blind | -0.000 | -0.001 | -0.002 |
+| hearing_only | 0.001 | -0.000 | 0.001 |
+| smell_only | -0.003 | 0.002 | 0.001 |
+| deafblind | -0.001 | 0.001 | 0.001 |
+| touch_only | 0.002 | -0.001 | 0.000 |
+| passive | 0.000 | -0.004 | -0.004 |
+| passive_novest | 0.000 | 0.001 | -0.005 |
+| memoryless | 0.000 | -0.001 | -0.003 |
 
 ## Figures
 

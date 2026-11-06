@@ -62,10 +62,10 @@ def scores(rec, saved, suite):
     cfg = learner.LearnerConfig(**{k: tuple(v) if isinstance(v, list) else v for k, v in rec["config"].items()})
     L = learner_jepa if cfg.objective == "jepa" else learner
     p = presets.PRESETS[rec["preset"]]
-    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L, draws=1)}
+    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L, draws=1, n_boot=500)}
     if "voe_untrained" in rec:  # the run's untrained-network control, rebuilt from its seed
         p0 = L.init(jax.random.PRNGKey(10_000 + rec["seed"]), rec["obs_dim"], cfg, p.recurrent)
-        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L, draws=1)
+        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L, draws=1, n_boot=500)
     return json.loads(json.dumps(_jsonable(out)))  # the same rounding to JSON as the stored files
 
 

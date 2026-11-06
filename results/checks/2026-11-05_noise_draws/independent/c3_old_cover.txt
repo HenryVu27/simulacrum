@@ -1,0 +1,1 @@
+66 scores x 200 fresh draws: the one-draw interval contains the noise-averaged S (same quadruplets) in 95.3% (per score min 85.5%, median 95.0%)

@@ -1,14 +1,15 @@
-"""Surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05, after the second correction).
+"""Surprise scores over sensor-noise draws (docs/preregistration.md, surprise scores over sensor-noise draws).
 
-Every surprise score so far saw one draw of sensor noise, the same in every run of a mind (presets.observe seeds
-it with the preset's name). The draw moved permanence scores by as much as the effects H6 and P4 test (bat:
--0.0052 on that draw, +0.0001 over 20), and the interval did not cover it. Now each score averages the errors of
-voe.NOISE_DRAWS draws (draw 0 is the old one), and the interval resamples draws as well as quadruplets
-(voe.surprise). Minds without sensor noise (the oracle) are unchanged. Nothing is retrained.
+Every surprise score was made with one draw of sensor noise, the same in every run of a mind (presets.observe seeds
+it with the preset's name). The draw moves a score by about half its interval, as much as the permanence effects
+H6 and P4 test. Now each score is taken on the mean errors of voe.NOISE_DRAWS draws (draw 0 is the old one), with
+a bootstrap over quadruplets of that mean (voe.surprise). Minds without sensor noise (the oracle) keep one draw.
+Nothing is retrained. (Commit 73f46c9 used 20 draws and also resampled draws, which counted the noise twice; its
+independent check found both. This version replaces it.)
 
-For each stored mind it first rescores with one draw and requires the stored scores exactly, then scores with
-voe.NOISE_DRAWS draws and writes those, keeping the previous ones under voe_before_noise_draws and
-voe_untrained_before_noise_draws.
+For each stored mind it first rescores with one draw and the old 500 resamples and requires the original scores
+(kept under voe_before_noise_draws, or the live ones if not yet kept) exactly, then scores over
+voe.NOISE_DRAWS draws and writes those.
 
     uv run python experiments/recompute_noise.py            # check only
     uv run python experiments/recompute_noise.py --write    # check, then write
@@ -30,17 +31,18 @@ from umwelt.experiment import RESULTS, _code_version, _jsonable, _voe_scores
 spec = importlib.util.spec_from_file_location("recompute_battery", Path(__file__).with_name("recompute_battery.py"))
 rb = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rb)
-WHAT = f"surprise scores over {voe.NOISE_DRAWS} sensor-noise draws (docs/preregistration.md, 2026-11-05)"
+WHAT = (f"surprise scores over {voe.NOISE_DRAWS} sensor-noise draws, {voe.N_BOOT} bootstrap resamples "
+        "(docs/preregistration.md, surprise scores over sensor-noise draws)")
 
 
-def scores(rec, saved, suite, draws):
+def scores(rec, saved, suite, draws, n_boot):
     cfg = learner.LearnerConfig(**{k: tuple(v) if isinstance(v, list) else v for k, v in rec["config"].items()})
     L = learner_jepa if cfg.objective == "jepa" else learner
     p = presets.PRESETS[rec["preset"]]
-    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L, draws=draws)}
+    out = {"voe": _voe_scores(saved["params"], suite, p, saved["mu"], saved["sd"], L, draws=draws, n_boot=n_boot)}
     if "voe_untrained" in rec:
         p0 = L.init(jax.random.PRNGKey(10_000 + rec["seed"]), rec["obs_dim"], cfg, p.recurrent)
-        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L, draws=draws)
+        out["voe_untrained"] = _voe_scores(p0, suite, p, saved["mu"], saved["sd"], L, draws=draws, n_boot=n_boot)
     return json.loads(json.dumps(_jsonable(out)))
 
 
@@ -62,8 +64,8 @@ def main(write):
                 saved = pickle.load(fh)
             stored = {k: rec[f"{k}_before_noise_draws"] if f"{k}_before_noise_draws" in rec else rec[k]
                       for k in ("voe", "voe_untrained") if k in rec}
-            assert scores(rec, saved, suite, 1) == stored, f"{run}/{name}: one draw does not reproduce the stored scores"
-            new = scores(rec, saved, suite, voe.NOISE_DRAWS)
+            assert scores(rec, saved, suite, 1, 500) == stored, f"{run}/{name}: one draw does not reproduce the original scores"
+            new = scores(rec, saved, suite, voe.NOISE_DRAWS, voe.N_BOOT)
             for k in new:
                 for test in new[k]:
                     a, b = stored[k][test], new[k][test]
@@ -75,15 +77,18 @@ def main(write):
                     rec[f"{k}_before_noise_draws"] = stored[k]
                     rec[k] = new[k]
                 rec["provenance"]["voe_draws"] = voe.NOISE_DRAWS
-                kept = [c for c in rec.get("corrections", []) if not (isinstance(c, dict) and c.get("what") == WHAT)]
+                rec["provenance"]["voe_boot"] = voe.N_BOOT
+                kept = [c for c in rec.get("corrections", [])  # this script's earlier entry (73f46c9) is replaced
+                        if not (isinstance(c, dict) and c.get("script") == "experiments/recompute_noise.py")]
                 rec["corrections"] = kept + [{"date": "2026-11-05", "what": WHAT, "script": "experiments/recompute_noise.py",
                                               "code": _code_version(), "machine": platform.node()}]
                 f.write_text(json.dumps(rec, indent=1))
-        print(f"{run}: one draw reproduces all {len(rb.minds(d))} minds' stored scores exactly"
+        print(f"{run}: one draw reproduces the original scores of all {len(rb.minds(d))} minds' stored scores exactly"
               + ("; written" if write else "") + f" ({time.time() - t0:.0f} s)", flush=True)
     out = RESULTS / "noise_draws_recompute.json"
     if write:
-        out.write_text(json.dumps({"draws": voe.NOISE_DRAWS, "stimuli": stimuli, "scores": report}, indent=1))
+        out.write_text(json.dumps({"draws": voe.NOISE_DRAWS, "draws_note": "one draw for minds without sensor noise (the oracle)",
+                                   "n_boot": voe.N_BOOT, "stimuli": stimuli, "scores": report}, indent=1))
     print("wrote" if write else "checked; not written:", out, f"({len(report)} scores, {time.time() - t0:.0f} s)")
 
 

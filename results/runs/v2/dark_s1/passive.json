@@ -107,28 +107,28 @@
  },
  "voe": {
   "permanence": {
-   "S": -0.00034404711914248765,
+   "S": 0.000381783174816519,
    "ci": [
-    -0.0021461607771925627,
-    0.001533325086347758
+    -7.352628254011506e-05,
+    0.0008588189448346377
    ],
-   "S_copy": -0.0016317968256771564
+   "S_copy": 0.0013723255833610892
   },
   "solidity": {
-   "S": 0.0011153625091537833,
+   "S": -9.924406185746193e-05,
    "ci": [
-    -0.0020505191932898015,
-    0.004425758437719194
+    -0.00288923557382077,
+    0.0024110511061735443
    ],
-   "S_copy": 0.006147095467895269
+   "S_copy": 0.00011392302985768765
   },
   "causality": {
-   "S": -0.005542818456888199,
+   "S": -0.005689328536391258,
    "ci": [
-    -0.050214693415910006,
-    0.03586982125416398
+    -0.043867367599159476,
+    0.03438908383250236
    ],
-   "S_copy": -0.00030626312945969403
+   "S_copy": 0.0004598438390530646
   }
  },
  "timing": {
@@ -167,7 +167,8 @@
  },
  "provenance": {
   "stimuli": "016fc3d72807e39d",
-  "voe_draws": 20
+  "voe_draws": 200,
+  "voe_boot": 2000
  },
  "corrections": [
   {
@@ -181,9 +182,9 @@
   },
   {
    "date": "2026-11-05",
-   "what": "surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05)",
+   "what": "surprise scores over 200 sensor-noise draws, 2000 bootstrap resamples (docs/preregistration.md, surprise scores over sensor-noise draws)",
    "script": "experiments/recompute_noise.py",
-   "code": "a1cda64 with uncommitted changes in src",
+   "code": "73f46c9 with uncommitted changes in src",
    "machine": "Mac-2206.lan"
   }
  ],

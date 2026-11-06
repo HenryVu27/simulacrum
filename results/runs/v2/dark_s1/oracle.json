@@ -109,24 +109,24 @@
   "permanence": {
    "S": 1.0283125638961792,
    "ci": [
-    0.8375391781330108,
-    1.3511048674583435
+    0.852375577390194,
+    1.3597813099622722
    ],
    "S_copy": 5082.447265625
   },
   "solidity": {
    "S": -0.0012464789906516671,
    "ci": [
-    -0.008046536077745258,
-    0.005714939313475038
+    -0.008317058626562356,
+    0.006499742111191125
    ],
    "S_copy": 0.0
   },
   "causality": {
    "S": -0.045856282114982605,
    "ci": [
-    -0.05786752151325345,
-    -0.03435020009055734
+    -0.05670431852340698,
+    -0.03433957090601325
    ],
    "S_copy": 0.0
   }
@@ -184,9 +184,9 @@
   },
   {
    "date": "2026-11-05",
-   "what": "surprise scores over 20 sensor-noise draws (docs/preregistration.md, 2026-11-05)",
+   "what": "surprise scores over 200 sensor-noise draws, 2000 bootstrap resamples (docs/preregistration.md, surprise scores over sensor-noise draws)",
    "script": "experiments/recompute_noise.py",
-   "code": "a1cda64 with uncommitted changes in src",
+   "code": "73f46c9 with uncommitted changes in src",
    "machine": "Mac-2206.lan"
   }
  ],
@@ -218,7 +218,8 @@
  },
  "provenance": {
   "stimuli": "016fc3d72807e39d",
-  "voe_draws": 20
+  "voe_draws": 200,
+  "voe_boot": 2000
  },
  "voe_before_noise_draws": {
   "permanence": {

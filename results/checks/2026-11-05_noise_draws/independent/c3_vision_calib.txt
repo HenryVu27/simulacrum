@@ -1,0 +1,4 @@
+draws 0..199: SD of S20 over 10 sets 0.00052 (ddof=0: 0.00049); mean half-width 0.00102; ratio 1.97
+draws 40..239: SD of S20 over 10 sets 0.00037 (ddof=0: 0.00035); mean half-width 0.00101; ratio 2.70
+precise: SD of single-draw S over 240 draws 0.00139 -> SD of a 20-draw mean 0.00031; half-width / that = 3.23 (1.96 if the interval only covered the draws)
+spread of a 10-set SD estimate (random partitions of the 240 draws): 2.5-97.5% [0.00017, 0.00044]
