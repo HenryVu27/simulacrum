@@ -1,6 +1,6 @@
 """Claim 5 (pipeline part): every stored mind, scored by the project's own _voe_scores on the previous movies and on
 the committed new movies, compared for exact equality with the committed JSON (voe, voe_untrained,
-*_before_battery_fix). My own loop; the committed files come from git (c35cc6e), the networks from the working tree."""
+*_before_battery_fix). My own loop; the committed files come from git (6290064), the networks from the working tree."""
 import json
 import pickle
 import time

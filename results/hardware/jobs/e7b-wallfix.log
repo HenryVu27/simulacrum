@@ -142,7 +142,7 @@
 [2026-11-05T12:26:21-0600] waiting: GPU memory in use 15854 MiB; lock: held by another project
 [2026-11-05T12:27:21-0600] waiting: GPU memory in use 15854 MiB; lock: held by another project
 [2026-11-05T12:28:21-0600] lock taken: project=umwelt job=e7b-wallfix host=HenrysPC pid=465 started=2026-11-05T10:05:11-0600
-[2026-11-05T12:28:21-0600] code: code 29b1b7f6cc9f0858 git cf27e28 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T10:05:07-0600 
+[2026-11-05T12:28:21-0600] code: code 29b1b7f6cc9f0858 git 4aaf76d uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T10:05:07-0600 
 [2026-11-05T12:28:23-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T12:28:23-0600] start: bash -c bash\ experiments/gpu/e7.sh\ f32det-macdata\ f32det-macdata-wallfix 
 /root/umwelt/.venv/lib/python3.13/site-packages/jax/_src/compiler.py:826: UserWarning: Error reading persistent compilation cache entry for 'jit_stage': RuntimeError: Please install the `filelock` package to set `jax_compilation_cache_max_size`

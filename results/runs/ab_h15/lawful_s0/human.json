@@ -168,7 +168,7 @@
    "date": "2026-11-05",
    "what": "surprise-test stimuli redesigned: three real walls in every movie, solidity wall seen face-on (docs/preregistration.md, second correction, 2026-11-05)",
    "script": "experiments/recompute_battery.py",
-   "code": "d6c6763 with uncommitted changes in src",
+   "code": "28996ac with uncommitted changes in src",
    "machine": "Henrys-MacBook-Pro-2.local",
    "stimuli": "016fc3d72807e39d",
    "stimuli_before": "not recorded"
@@ -177,7 +177,7 @@
    "date": "2026-11-05",
    "what": "surprise scores over 200 sensor-noise draws, 2000 bootstrap resamples (docs/preregistration.md, surprise scores over sensor-noise draws)",
    "script": "experiments/recompute_noise.py",
-   "code": "73f46c9 with uncommitted changes in src",
+   "code": "35f1e5e with uncommitted changes in src",
    "machine": "Mac-2206.lan"
   }
  ],

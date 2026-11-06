@@ -54,7 +54,7 @@ for run in ("main/lawful_s0", "v2/dark_s0"):
     print(f"  seeds 0-4: {min(vals[:5]):.4f} to {max(vals[:5]):.4f}; seeds 0-19: {min(vals):.4f} to {max(vals):.4f}, sd {np.std(vals):.4f}")
     old = old_voe()
     base = old.HIDDEN_WALL.copy()
-    for label, w in (("on boundary y=0 (pre first fix)", [0.5, 0.0, 1.5, 0.0]), ("y=-1 (as committed at d6c6763)", [0.5, -1.0, 1.5, -1.0]),
+    for label, w in (("on boundary y=0 (pre first fix)", [0.5, 0.0, 1.5, 0.0]), ("y=-1 (as committed at 28996ac)", [0.5, -1.0, 1.5, -1.0]),
                      ("y=-5", [0.5, -5.0, 1.5, -5.0]), ("top y=11", [0.5, 11.0, 1.5, 11.0]), ("far (-50,-50)", [-50.0, -50.0, -49.0, -50.0])):
         old.HIDDEN_WALL = np.array(w, np.float32)
         s, ci = S_of(run, "oracle", *perm_suite(old))

@@ -51,7 +51,7 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   priority: GPU utilization stayed at 23 to 31 percent, so the CPU job was not the bottleneck. The
   E4 run stayed at idle priority anyway, as a courtesy.
 - 2026-11-04. Independent check (outside-judge agent, given the artifacts and claims, not the
-  reasoning) of commit c4e8320. It recomputed every number from the raw arrays, on both machines for E4,
+  reasoning) of commit 28c4f7e. It recomputed every number from the raw arrays, on both machines for E4,
   and reran stage 3 on the Mac a third time (byte-identical again). All headline numbers held. It found
   two wrong statements, corrected below (the cause of the E2 differences; "everything else 9 s" in E6),
   and script bugs, fixed: the lock could be removed by its non-owner (`unlock`, and `job.sh`'s exit
@@ -232,7 +232,7 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   queued training run; the schedule line was updated. The first push with the new deletion step went
   through on the real PC (verified, nothing to delete). Log: `results/hardware/jobs/series-2026-11-05.log`.
 - 2026-11-05 03:08. Series done: all four jobs exit 0 (`e7-f32det` 01:49, `e7-default` 02:31,
-  `speed-check-3` 02:52, `e7-f32det-rerun` 03:08). The first ran at commit 7d70dde, the others at 3447602;
+  `speed-check-3` 02:52, `e7-f32det-rerun` 03:08). The first ran at commit 92ee826, the others at 07c7eb1;
   the two differ only in `docs/gpu.md`. Results under E7 and E6 below.
 - 2026-11-05. Saved memory probes (`results/hardware/memprobe_default.txt`, `memprobe_cuda_async.txt`):
   - Default allocator: one array of 3.5 GiB works, 3.99 GiB fails. Ten 1 GiB arrays held at once work,
@@ -279,7 +279,7 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-05 04:21. The new tooling on the real PC (`smoke-final`, log in `results/hardware/jobs/`): the
   Mac's lawful recording pushed and verified file by file; the job ran with the recording guard on, half
   the card, the 2 GB cache cap (correction: that cap switched the cache off, see 12:45 below) and its code
-  version (ecf3527); `experiment.provenance` on the GPU gave the
+  version (c0e0cd4); `experiment.provenance` on the GPU gave the
   recording hash `e9b74db4218d7e27`, the same as the Mac's; asking for a recording that is not there was
   refused and nothing was recorded.
 - 2026-11-05 about 04:45 to 10:05. Henry chose to fix the surprise-test geometry. `voe.HIDDEN_WALL` now lies
@@ -295,7 +295,7 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
 - 2026-11-05 12:28 to 12:42. `e7b-wallfix` ran (the other project's server released the lock at 12:28). Result:
   the dog's mismatch is gone, everything else repeats bit for bit (section "E7b after the stimulus fix").
   Fourth independent check (outside-judge agent, its own code on the raw files, the code fingerprint
-  rebuilt from `git archive cf27e28`): confirmed, with three corrections, all applied.
+  rebuilt from `git archive 4aaf76d`): confirmed, with three corrections, all applied.
   - My comparison skipped the interval ends: the largest difference among the dog's and oracle's 48
     surprise numbers is 5.0e-7 (an oracle solidity interval end, 5.1e-7 apart before the fix too), not the
     2.5e-7 I first wrote. `compare_wallfix.py` now compares all 48.
@@ -305,16 +305,16 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
     `compare_e7.py` passes the pre-fix GPU run against the corrected Mac, `S_copy` cannot see a static
     wall, and provenance had no stimulus field. Now `voe.suite_hash` names the rendered movies, every
     result's provenance records it as `stimuli`, and a tag refuses to reuse a mind scored on other or
-    unknown movies (c63b23e; two new tests, which the previous code fails). The same tiny run on the
+    unknown movies (f27f922; two new tests, which the previous code fails). The same tiny run on the
     commits before and after gave the same 59 numbers. `e7.sh` writes the code version into `env.txt`,
     since the two E7b runs' `env.txt` files were byte-identical.
 - 2026-11-05 about 12:45 to 13:05. Finding, from a warning in `e7b-wallfix`'s log: the compile cache had
-  not worked since ecf3527 (04:20). JAX keeps the cache's size cap (`JAX_COMPILATION_CACHE_MAX_SIZE`, set
-  by `job.sh` since ecf3527) only with the `filelock` package, which the environment lacked. Without it
+  not worked since c0e0cd4 (04:20). JAX keeps the cache's size cap (`JAX_COMPILATION_CACHE_MAX_SIZE`, set
+  by `job.sh` since c0e0cd4) only with the `filelock` package, which the environment lacked. Without it
   the first cache read raises, JAX prints one warning ("Please install the `filelock` package") and
   compiles everything itself, and nothing is written: on the PC no cache entry was newer than 02:49.
   Speed only: no result depends on the cache (`cache-check` above), and both E7b runs compiled from
-  scratch. Fix (a30fb0b): `filelock` joins the `gpu` extra; `job.sh` drops the cap rather than the cache
+  scratch. Fix (a354f12): `filelock` joins the `gpu` extra; `job.sh` drops the cap rather than the cache
   if it is ever missing, and ends each log with the cache's entry count before and after and its number
   of cache errors (three new job tests, which the previous `job.sh` fails). On the PC's CPU, two
   processes building the surprise-test movies with the cap set: the first wrote 1,351 entries in 65 s,
@@ -328,18 +328,18 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   every other array identical, at both settings. Plausibly the same kind of last-bit tie as the hidden wall,
   here from the solidity wall seen edge-on (not shown). Too small to move a score (E7b after the fix agrees
   within 2.5e-7 with these movies), but it made the movies, and so the `stimuli` hash, machine-dependent.
-  Fix (7651cea): `voe.build_suite` renders on the CPU on every machine, the way a recording is shared rather
+  Fix (05fec2d): `voe.build_suite` renders on the CPU on every machine, the way a recording is shared rather
   than regenerated; nothing changes on the Mac, which renders on its CPU already (a new test, which the
   previous code fails). The cache check in the same job: the first process wrote 1,351 entries in 109 s, the
   second read them in 42 s, no errors. Confirmation of the fix on the GPU: `stimuli-check-2`, below.
-- 2026-11-05 13:20 to 13:21. `stimuli-check-2` (code 845d1e4, CPU rendering): all three processes on the PC,
+- 2026-11-05 13:20 to 13:21. `stimuli-check-2` (code 0642c3e, CPU rendering): all three processes on the PC,
   at full float32 with deterministic operations twice and at the GPU's defaults, give `e8b112a5e2a11879`,
   the Mac's hash. So a GPU job now scores on exactly the Mac's movies, and `stimuli` in provenance can be
   compared across machines. 20 s each, from the compile cache (5,480 entries before and after, no errors;
   the CPU compiles were cached by `stimuli-diff`).
 - 2026-11-05 13:05. Correction to the test counts: `test_job.sh` had 32 cases, not 34 (the 03:40 entry and
   "How to run"; counted from the file and from a run of it against the `job.sh` of that time). It now has
-  35; a30fb0b's message says 37, which is wrong.
+  35; a354f12's message says 37, which is wrong.
 - 2026-11-05 14:25 to 15:23. The surprise-test movies were redesigned at Henry's go-ahead ("Fix both"; the
   oracle's input and the solidity movies, `docs/preregistration.md`, second correction), and every stored
   mind's surprise scores were recomputed on the Mac from the stored networks. For this machine: the movies'
@@ -348,17 +348,17 @@ settings and needs a reboot, which would also stop any other-project job, so Hen
   well as JAX (wall endpoints rounded to multiples of 1/256, no trigonometry in the solidity screen) so that
   every machine builds the same walls; the GPU job below confirms the PC gets the Mac's hash.
 - 2026-11-05 15:23 to 15:40. `e7b-battery` (schedule line added at 15:23, lock free, marked DONE at 15:40):
-  E7b again on code c35cc6e; result below ("E7b after the battery redesign").
+  E7b again on code 6290064; result below ("E7b after the battery redesign").
 - 2026-11-05 16:30 to 17:04. Surprise scores now average 20 sensor-noise draws (Henry's go-ahead;
   `docs/preregistration.md`, last section), and every stored score was rescored on the Mac. Provenance gains
   `voe_draws`, which a tag refuses to mix, so a GPU result is pooled only with results scored the same way.
 - 2026-11-05 17:05 to 17:19. `e7b-noise` (schedule line added at 17:05, lock free, marked DONE at 17:19): E7b
-  again on code 73f46c9. It compiled nothing new (5,852 cache entries before and after).
-- 2026-11-05 17:20 to 18:36. The independent check of 73f46c9 found the 20-draw statistic wrong (it counted the
+  again on code 35f1e5e. It compiled nothing new (5,852 cache entries before and after).
+- 2026-11-05 17:20 to 18:36. The independent check of 35f1e5e found the 20-draw statistic wrong (it counted the
   noise twice, and 20 draws were too few); corrected to 200 draws, a bootstrap over quadruplets and 2,000
-  resamples (2787bc7; provenance gains `voe_boot`). Everything rescored on the Mac.
+  resamples (be44658; provenance gains `voe_boot`). Everything rescored on the Mac.
 - 2026-11-05 18:36 to 18:55. `e7b-noise200` (schedule line added at 18:36; queued behind the other project's
-  `b26-train`, which held the lock from 17:53; took the lock at 18:39; marked DONE at 18:55): E7b on code 2787bc7,
+  `b26-train`, which held the lock from 17:53; took the lock at 18:39; marked DONE at 18:55): E7b on code be44658,
   with three documentation files uncommitted (the job log lists them; no code). Nothing new compiled.
 
 ## How to run on the GPU
@@ -402,7 +402,7 @@ What a job guarantees (`experiments/gpu/job.sh`):
 - Job names are used once, so a log never mixes two runs. JAX takes GPU memory as needed
   (`XLA_PYTHON_CLIENT_PREALLOCATE=false`).
 - Every job uses a persistent compile cache (`results/jax_cache` on the PC), which halved a mind's time
-  and changed no result. (Correction: from ecf3527 to a30fb0b the size cap below switched it off; see the
+  and changed no result. (Correction: from c0e0cd4 to a354f12 the size cap below switched it off; see the
   setup log, 2026-11-05 12:45.) The last lines of a job's log give the cache's entries before and after
   and its errors, so a job that did not use it shows.
 
@@ -411,11 +411,11 @@ What a job guarantees (`experiments/gpu/job.sh`):
   half the card (`XLA_PYTHON_CLIENT_MEM_FRACTION=0.5`, 8 GB); the compile cache is capped at 2 GB (the cap
   needs the `filelock` package, in the `gpu` extra).
 - Every result file of `umwelt run` carries a `provenance` block: machine, backend, device, JAX version,
-  matmul precision, XLA flags, code version, the recording's content hash and, since c63b23e, the
+  matmul precision, XLA flags, code version, the recording's content hash and, since f27f922, the
   surprise-test movies' hash (`stimuli`). Rerunning a tag with other settings, another recording or other
   movies stops with an error instead of keeping the earlier minds. Before pooling a GPU result with a Mac
   result, compare `recording_hash` and `stimuli` (the movies are rendered on the CPU everywhere since
-  7651cea, so the hash is the same on every machine). The Mac's stored runs predate provenance, but all their
+  05fec2d, so the hash is the same on every machine). The Mac's stored runs predate provenance, but all their
   surprise scores are those of the movies with hash `e8b112a5e2a11879`: every stored dog and oracle file
   (17) carries the 2026-11-05 correction, and every other mind's inputs are the same under the old and
   new movies.
@@ -516,7 +516,7 @@ Added 2026-11-05, after the second independent check and before running it:
   - for `f32det` against `f32det-rerun`, whether every number is identical.
   The comparison was tried on the Mac first: the Mac against itself passes with every difference zero; seed
   1 posing as another machine fails every family; a run with only one mind fails as incomplete.
-- E7b, added 2026-11-05 03:10 (commit e9966c7) after E7 failed and before running it: E7's `f32det`
+- E7b, added 2026-11-05 03:10 (commit 8b63d7d) after E7 failed and before running it: E7's `f32det`
   configuration on the Mac's own recording (`results/data/lawful_s0_e1280_t256`, pushed and copied in;
   hash checked on both machines), so the only difference from the Mac's run is GPU arithmetic (not quite:
   the surprise-test movies are rendered on each machine, see the result). Same comparison, same rule.
@@ -603,7 +603,7 @@ E3 run, alone on the PC, was also slower (28 s against 11 s, compile included).
 
 ### E1 to E3 and E5 on the GPU (2026-11-04)
 
-`experiments/gpu/checks.sh` section `repro`, on the RTX 5080 inside WSL (code 2a972b5, before the
+`experiments/gpu/checks.sh` section `repro`, on the RTX 5080 inside WSL (code b76be9b, before the
 world precision fix). Comparisons in `results/hardware/compare_gpu.log` and `compare_*_vs_pc-gpu*.json`.
 
 - E1 World data, GPU against Mac. The world simulator is JAX code, so a GPU job also simulates on the
@@ -776,8 +776,8 @@ failure came from the recordings.
 
 Job `e7b-wallfix` (queued 10:05, waited behind the other project's servers, held the GPU 12:28 to
 12:42), configuration `f32det-macdata` again: the Mac's lawful recording (hash `e9b74db4218d7e27`), full
-float32, deterministic operations, code cf27e28 with no uncommitted files. cf27e28 is E7b's code plus the
-moved hidden wall (the job log's code fingerprint, rebuilt independently from `git archive cf27e28`;
+float32, deterministic operations, code 4aaf76d with no uncommitted files. 4aaf76d is E7b's code plus the
+moved hidden wall (the job log's code fingerprint, rebuilt independently from `git archive 4aaf76d`;
 settings and recording hash from `env.txt` and every file's provenance). Later commits changed no
 computation (the provenance field, the cache fix and new scripts; the same tiny run before and after gave
 identical numbers). Judged as the setup log entry of 10:05 says: score by score, not by `compare_e7.py`'s
@@ -806,12 +806,12 @@ surprise score, 5e-7 on their intervals and 5e-6 on everything else but that one
 independent check reproduced every number above with its own code (setup log, 12:28 entry). The GPU job
 also compiled everything from scratch (the cache was off, setup log 12:45), so it says nothing about the
 cache either way. It rendered the surprise-test movies on the GPU, where 8 solidity vision values differ
-from the Mac's by at most 0.000244 (setup log 13:00); runs from 7651cea on render them on the CPU.
+from the Mac's by at most 0.000244 (setup log 13:00); runs from 05fec2d on render them on the CPU.
 
 ### E7b after the battery redesign (2026-11-05): the GPU reproduces every recomputed score
 
 Job `e7b-battery` (15:24 to 15:40), configuration `f32det-macdata`: the Mac's lawful recording (hash
-`e9b74db4218d7e27`), full float32, deterministic operations, code c35cc6e with no uncommitted files, which is
+`e9b74db4218d7e27`), full float32, deterministic operations, code 6290064 with no uncommitted files, which is
 E7b's code with the redesigned movies. The compile cache worked (5,480 entries before, 5,852 after, no errors).
 `experiments/gpu/compare_battery.py`, output `results/hardware/compare_e7b_battery.log`:
 
@@ -835,10 +835,10 @@ recording, and the `stimuli` hash in provenance does the pooling check it was ad
 Configuration `f32det-macdata` as before; E7b's code with the redesigned movies and every surprise score over
 sensor-noise draws. Two runs, compared with `experiments/gpu/compare_battery.py --new NAME --old NAME`:
 
-- `e7b-noise` (17:05 to 17:19, code 73f46c9, 20 draws, the statistic later corrected; output
+- `e7b-noise` (17:05 to 17:19, code 35f1e5e, 20 draws, the statistic later corrected; output
   `results/hardware/compare_e7b_noise.log`): every surprise score within 6.6e-7 of the Mac's, interval ends within
   1.2e-6; against the redesign run only the 13 noisy minds' surprise numbers differ.
-- `e7b-noise200` (18:39 to 18:55, code 2787bc7, 200 draws, the final statistic; output
+- `e7b-noise200` (18:39 to 18:55, code be44658, 200 draws, the final statistic; output
   `results/hardware/compare_e7b_noise200.log`): the same movies (`016fc3d72807e39d`) and exactly equal copy
   baselines; trained `S` within 6.6e-7 of the Mac's rescored values (the oracle's permanence score, the largest of
   all), interval ends within 9.5e-7, untrained networks within 2e-7. Against `e7b-noise`, only surprise numbers

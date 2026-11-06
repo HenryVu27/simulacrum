@@ -9,7 +9,7 @@ from umwelt.world import N_SLOTS
 HUMAN = np.abs(np.rad2deg(RAY_REL)) <= 90
 print("human rays:", HUMAN.sum())
 old = old_voe()
-print("== previous movies (d6c6763)")
+print("== previous movies (28996ac)")
 hits_wall = 0
 for k in old.INERT:
     for j in (-0.5, 0.0, 0.5):
@@ -28,7 +28,7 @@ for k in old.INERT:
         print(f"  kind {k} j {j:+.1f}: senses (not oracle) that differ: {diff}; agent at {cap.calls[0]['agent']}, wall {cap.calls[0]['internal'][0]}")
 print(f"  ray-frames meeting the wall in the previous wall-present movies (my caster): {hits_wall}")
 
-print("== new movies (c35cc6e): human rays that differ, frames 0..tc-1, and where those rays land")
+print("== new movies (6290064): human rays that differ, frames 0..tc-1, and where those rays land")
 allmin = []
 for k in voe.INERT:
     for j in (-0.5, 0.0, 0.5):

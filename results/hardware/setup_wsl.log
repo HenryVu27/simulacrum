@@ -1,4 +1,4 @@
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code ca877ac8f6583ae1 git 49c9477 uncommitted 1 files, diff 07586db438b72e31 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code ca877ac8f6583ae1 git d19739b uncommitted 1 files, diff 07586db438b72e31 
 == GPU seen from WSL
 name, driver_version, memory.used [MiB], memory.total [MiB]
 NVIDIA GeForce RTX 5080, 616.56, 1537 MiB, 16303 MiB

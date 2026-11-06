@@ -4,7 +4,7 @@ Every surprise score was made with one draw of sensor noise, the same in every r
 it with the preset's name). The draw moves a score by about half its interval, as much as the permanence effects
 H6 and P4 test. Now each score is taken on the mean errors of voe.NOISE_DRAWS draws (draw 0 is the old one), with
 a bootstrap over quadruplets of that mean (voe.surprise). Minds without sensor noise (the oracle) keep one draw.
-Nothing is retrained. (Commit 73f46c9 used 20 draws and also resampled draws, which counted the noise twice; its
+Nothing is retrained. (Commit 35f1e5e used 20 draws and also resampled draws, which counted the noise twice; its
 independent check found both. This version replaces it.)
 
 For each stored mind it first rescores with one draw and the old 500 resamples and requires the original scores
@@ -78,7 +78,7 @@ def main(write):
                     rec[k] = new[k]
                 rec["provenance"]["voe_draws"] = voe.NOISE_DRAWS
                 rec["provenance"]["voe_boot"] = voe.N_BOOT
-                kept = [c for c in rec.get("corrections", [])  # this script's earlier entry (73f46c9) is replaced
+                kept = [c for c in rec.get("corrections", [])  # this script's earlier entry (35f1e5e) is replaced
                         if not (isinstance(c, dict) and c.get("script") == "experiments/recompute_noise.py")]
                 rec["corrections"] = kept + [{"date": "2026-11-05", "what": WHAT, "script": "experiments/recompute_noise.py",
                                               "code": _code_version(), "machine": platform.node()}]

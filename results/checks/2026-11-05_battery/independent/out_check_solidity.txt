@@ -1,5 +1,5 @@
 human rays: 64
-== previous movies (d6c6763)
+== previous movies (28996ac)
   kind 0 j -0.5: senses (not oracle) that differ: {'P1 vs I2': [], 'I1 vs P2': []}; agent at [6. 1.], wall [6. 3. 6. 6.]
   kind 0 j +0.0: senses (not oracle) that differ: {'P1 vs I2': [], 'I1 vs P2': []}; agent at [6. 1.], wall [6.  3.5 6.  6.5]
   kind 0 j +0.5: senses (not oracle) that differ: {'P1 vs I2': [], 'I1 vs P2': []}; agent at [6. 1.], wall [6. 4. 6. 7.]
@@ -19,7 +19,7 @@ human rays: 64
   kind 6 j +0.0: senses (not oracle) that differ: {'P1 vs I2': [], 'I1 vs P2': []}; agent at [6. 1.], wall [6.  3.5 6.  6.5]
   kind 6 j +0.5: senses (not oracle) that differ: {'P1 vs I2': [], 'I1 vs P2': []}; agent at [6. 1.], wall [6. 4. 6. 7.]
   ray-frames meeting the wall in the previous wall-present movies (my caster): 0
-== new movies (c35cc6e): human rays that differ, frames 0..tc-1, and where those rays land
+== new movies (6290064): human rays that differ, frames 0..tc-1, and where those rays land
   kind 0 j -0.5 tc 37: P1-I2: min 3 max 6 (float16 min 3), not on the wall 0; I1-P2: min 3 max 6 (float16 min 3), not on the wall 0
   kind 0 j +0.0 tc 37: P1-I2: min 3 max 6 (float16 min 3), not on the wall 0; I1-P2: min 3 max 6 (float16 min 3), not on the wall 0
   kind 0 j +0.5 tc 37: P1-I2: min 3 max 6 (float16 min 3), not on the wall 0; I1-P2: min 3 max 6 (float16 min 3), not on the wall 0

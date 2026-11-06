@@ -138,7 +138,7 @@ case "$backend" in
   *) [ -f "$dir/$name.allow_cpu" ] || end 5 "refused: JAX does not see the GPU (remote.sh run --allow-cpu for a CPU job)" ;;
 esac
 # Without filelock JAX cannot keep the size cap, and then every cache read and write fails with a single
-# warning: every job from ecf3527 on compiled from scratch (docs/gpu.md). The cap goes before the cache does.
+# warning: every job from c0e0cd4 on compiled from scratch (docs/gpu.md). The cap goes before the cache does.
 if ! uv run python -c "import filelock" 2> /dev/null; then
   export JAX_COMPILATION_CACHE_MAX_SIZE=-1
   say "compile cache: filelock missing, size cap dropped"

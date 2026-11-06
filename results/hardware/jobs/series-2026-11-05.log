@@ -1,12 +1,12 @@
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code 061fc1a4f5127436 git 7d70dde uncommitted 0 files, diff e3b0c44298fc1c14 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code 061fc1a4f5127436 git 92ee826 uncommitted 0 files, diff e3b0c44298fc1c14 
 started e7-f32det; follow it with: experiments/gpu/remote.sh status e7-f32det
 [2026-11-05 01:49:27] e7-f32det finished, exit code 0
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 3447602 uncommitted 0 files, diff e3b0c44298fc1c14 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 07c7eb1 uncommitted 0 files, diff e3b0c44298fc1c14 
 started e7-default; follow it with: experiments/gpu/remote.sh status e7-default
 [2026-11-05 02:31:34] e7-default finished, exit code 0
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 3447602 uncommitted 0 files, diff e3b0c44298fc1c14 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 07c7eb1 uncommitted 0 files, diff e3b0c44298fc1c14 
 started speed-check-3; follow it with: experiments/gpu/remote.sh status speed-check-3
 [2026-11-05 02:52:25] speed-check-3 finished, exit code 0
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 3447602 uncommitted 0 files, diff e3b0c44298fc1c14 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code d66aa14f8a3629c2 git 07c7eb1 uncommitted 0 files, diff e3b0c44298fc1c14 
 started e7-f32det-rerun; follow it with: experiments/gpu/remote.sh status e7-f32det-rerun
 [2026-11-05 03:08:12] e7-f32det-rerun finished, exit code 0

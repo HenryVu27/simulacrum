@@ -1,5 +1,5 @@
 [2026-11-05T15:24:12-0600] lock taken: project=umwelt job=e7b-battery host=HenrysPC pid=530 started=2026-11-05T15:24:12-0600
-[2026-11-05T15:24:12-0600] code: code 6425439894264755 git c35cc6e uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T15:24:10-0600 
+[2026-11-05T15:24:12-0600] code: code 6425439894264755 git 6290064 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T15:24:10-0600 
 [2026-11-05T15:24:14-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T15:24:14-0600] start: bash experiments/gpu/e7.sh f32det-macdata f32det-macdata-battery 
 [lawful s0] oracle: obs dim 58, training

@@ -1,5 +1,5 @@
 [2026-11-05T03:12:10-0600] lock taken: project=umwelt job=e7b-macdata host=HenrysPC pid=471 started=2026-11-05T03:12:10-0600
-[2026-11-05T03:12:10-0600] code: code eda9554da32d46fe git 9beb45e uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T03:12:07-0600 
+[2026-11-05T03:12:10-0600] code: code eda9554da32d46fe git 6d458d5 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T03:12:07-0600 
 [2026-11-05T03:12:12-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T03:12:12-0600] start: bash -c bash\ experiments/gpu/e7.sh\ f32det-macdata 
 [lawful s0] oracle: obs dim 58, training

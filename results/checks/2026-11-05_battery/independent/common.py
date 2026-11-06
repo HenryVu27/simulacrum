@@ -1,4 +1,4 @@
-"""Shared helpers for the independent check. Imports umwelt from the c35cc6e snapshot (PYTHONPATH)."""
+"""Shared helpers for the independent check. Imports umwelt from the 6290064 snapshot (PYTHONPATH)."""
 import importlib.util
 import sys
 from pathlib import Path

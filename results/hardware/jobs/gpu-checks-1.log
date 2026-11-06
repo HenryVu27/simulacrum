@@ -1,5 +1,5 @@
 [2026-11-04T22:58:09-0600] lock taken: project=umwelt job=gpu-checks host=HenrysPC pid=491 started=2026-11-04T22:58:09-0600
-[2026-11-04T22:58:09-0600] code: code 52a49cb2aae26923 git 2a972b5 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-04T22:58:07-0600 
+[2026-11-04T22:58:09-0600] code: code 52a49cb2aae26923 git b76be9b uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-04T22:58:07-0600 
 [2026-11-04T22:58:11-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-04T22:58:11-0600] start: bash experiments/gpu/checks.sh 
 backend gpu [CudaDevice(id=0)]

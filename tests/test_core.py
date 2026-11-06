@@ -124,7 +124,7 @@ def test_noise_draws_keep_draw_0_and_vary_the_rest():
 
 
 def _surprise_before(err, crit, n_boot=500):
-    """voe.surprise as it was until 2026-11-05 (commit e1007a5), kept to pin the one-draw statistic."""
+    """voe.surprise as it was until 2026-11-05 (commit a223c3c), kept to pin the one-draw statistic."""
     n = len(crit)
     err = err.reshape(n, 4, -1)
     tot = np.array([err[i, :, crit[i] - 1 :].sum(-1) for i in range(n)])

@@ -1,6 +1,6 @@
 scores compared: 498 minds: 121
 (a) draw 0 + old statistic == *_before_noise_draws exactly: 498 / 498
-    *_before_noise_draws == e1007a5 stored voe fields: 480 / 480 (no e1007a5 file: ['pilot/lawful_s0'] )
+    *_before_noise_draws == a223c3c stored voe fields: 480 / 480 (no a223c3c file: ['pilot/lawful_s0'] )
 (b) draws 0..19 + new statistic == stored voe exactly: 498 / 498
     by k: Counter({(20, True): 459, (1, True): 39})
 (c) |S_float64 - S_stored| max 2.52e-07, median 4.26e-08

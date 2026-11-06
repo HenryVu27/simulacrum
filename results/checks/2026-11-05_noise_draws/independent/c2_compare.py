@@ -1,5 +1,5 @@
 """Compare my loop's totals against the stored scores.
-(a) old statistic on draw 0 (bootstrap replica, instances only) == *_before_noise_draws, and == e1007a5's voe fields
+(a) old statistic on draw 0 (bootstrap replica, instances only) == *_before_noise_draws, and == a223c3c's voe fields
 (b) new statistic on draws 0..19 (bootstrap replica, instances then draws) == voe / voe_untrained
 (c) independent float64 point estimate (mask totals, mean over draws) vs stored S
 (d) independent float64 vectorised bootstrap with another seed: stored CI ends vs mine (Monte Carlo agreement only)"""
@@ -80,8 +80,8 @@ for f in sorted(tdir.glob("*__0_20.npz")):
 import collections
 print("scores compared:", len(rows), "minds:", len({(r['run'], r['mind']) for r in rows}))
 print("(a) draw 0 + old statistic == *_before_noise_draws exactly:", sum(r["a"] for r in rows), "/", len(rows))
-print("    *_before_noise_draws == e1007a5 stored voe fields:", sum(r["a_old"] is True for r in rows), "/", sum(r["a_old"] is not None for r in rows),
-      "(no e1007a5 file:", sorted({r['run'] for r in rows if r['a_old'] is None}), ")")
+print("    *_before_noise_draws == a223c3c stored voe fields:", sum(r["a_old"] is True for r in rows), "/", sum(r["a_old"] is not None for r in rows),
+      "(no a223c3c file:", sorted({r['run'] for r in rows if r['a_old'] is None}), ")")
 print("(b) draws 0..19 + new statistic == stored voe exactly:", sum(r["b"] for r in rows), "/", len(rows))
 print("    by k:", collections.Counter((r["k"], r["b"]) for r in rows))
 d = np.array([r["dS64"] for r in rows]); print(f"(c) |S_float64 - S_stored| max {d.max():.2e}, median {np.median(d):.2e}")

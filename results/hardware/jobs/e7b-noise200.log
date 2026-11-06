@@ -2,7 +2,7 @@
 [2026-11-05T18:37:15-0600] waiting: GPU memory in use 15350 MiB; lock: held by another project
 [2026-11-05T18:38:15-0600] waiting: GPU memory in use 15354 MiB; lock: held by another project
 [2026-11-05T18:39:15-0600] lock taken: project=umwelt job=e7b-noise200 host=HenrysPC pid=515 started=2026-11-05T18:36:15-0600
-[2026-11-05T18:39:15-0600] code: code 611b5131620533e7 git 2787bc7 uncommitted 3 files, diff 525735b678bc695c pushed 2026-11-05T18:36:12-0600 
+[2026-11-05T18:39:15-0600] code: code 611b5131620533e7 git be44658 uncommitted 3 files, diff 525735b678bc695c pushed 2026-11-05T18:36:12-0600 
 [2026-11-05T18:39:17-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T18:39:17-0600] start: bash experiments/gpu/e7.sh f32det-macdata f32det-macdata-noise200 
 [lawful s0] oracle: obs dim 58, training

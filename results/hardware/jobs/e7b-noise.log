@@ -1,5 +1,5 @@
 [2026-11-05T17:05:10-0600] lock taken: project=umwelt job=e7b-noise host=HenrysPC pid=521 started=2026-11-05T17:05:10-0600
-[2026-11-05T17:05:10-0600] code: code 6dd4b80f824b52fb git 73f46c9 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T17:05:08-0600 
+[2026-11-05T17:05:10-0600] code: code 6dd4b80f824b52fb git 35f1e5e uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T17:05:08-0600 
 [2026-11-05T17:05:13-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T17:05:13-0600] start: bash experiments/gpu/e7.sh f32det-macdata f32det-macdata-noise 
 [lawful s0] oracle: obs dim 58, training

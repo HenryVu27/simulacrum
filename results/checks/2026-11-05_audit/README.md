@@ -1,4 +1,4 @@
-# Independent audit of umwelt (2026-11-05, at commit f55fb7c)
+# Independent audit of umwelt (2026-11-05, at commit bdf9cf5)
 
 Scripts and outputs of a skeptical outside audit (outside-judge agent) of the project's methodology, process and
 results, copied unchanged so the record's numbers have a source. Each `NN_name.py` has its output in

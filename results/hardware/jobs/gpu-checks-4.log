@@ -9,7 +9,7 @@
 [2026-11-04T23:38:30-0600] waiting: GPU memory in use 12877 MiB; lock: held by another project
 [2026-11-04T23:39:30-0600] waiting: GPU memory in use 12880 MiB; lock: held by another project
 [2026-11-04T23:40:30-0600] lock taken: project=umwelt job=gpu-checks-4 host=HenrysPC pid=1009 started=2026-11-04T23:30:29-0600
-[2026-11-04T23:40:30-0600] code: code c9835e193d2bbe4a git d308984 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-04T23:30:27-0600 
+[2026-11-04T23:40:30-0600] code: code c9835e193d2bbe4a git d77abdd uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-04T23:30:27-0600 
 [2026-11-04T23:40:32-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-04T23:40:32-0600] start: bash experiments/gpu/checks.sh precfix bench stage3 
 backend gpu [CudaDevice(id=0)]

@@ -1,4 +1,4 @@
-"""Old (e1007a5) voe.surprise vs new (73f46c9) voe.surprise on identical one-draw inputs, 2D and 3D (1, ...)."""
+"""Old (a223c3c) voe.surprise vs new (35f1e5e) voe.surprise on identical one-draw inputs, 2D and 3D (1, ...)."""
 import sys, types, numpy as np
 def load(path, name):
     mod = types.ModuleType(name)

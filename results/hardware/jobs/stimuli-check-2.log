@@ -1,5 +1,5 @@
 [2026-11-05T13:20:16-0600] lock taken: project=umwelt job=stimuli-check-2 host=HenrysPC pid=525 started=2026-11-05T13:20:16-0600
-[2026-11-05T13:20:16-0600] code: code 569e4978bd304410 git 845d1e4 uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:20:14-0600 
+[2026-11-05T13:20:16-0600] code: code 569e4978bd304410 git 0642c3e uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:20:14-0600 
 [2026-11-05T13:20:18-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T13:20:18-0600] start: bash -c bash\ experiments/gpu/stimuli_check.sh 
 == full float32, deterministic operations: once, then again from the cache

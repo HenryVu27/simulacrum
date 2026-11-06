@@ -37,7 +37,7 @@ import jax
 from umwelt import learner, learner_jepa, presets, voe
 from umwelt.experiment import RESULTS, _code_version, _jsonable, _voe_scores
 
-BEFORE = "d6c6763"  # the last commit with the previous movies
+BEFORE = "28996ac"  # the last commit with the previous movies
 # Every stored run whose surprise scores are used. The pilot's files are not in git. The bench_* runs time the
 # code and are not in git either; bench_mac-cpu keeps a network, but its scores are used nowhere, so it is left
 # as it was (it still holds the previous movies' scores).

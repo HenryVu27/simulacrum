@@ -1,6 +1,6 @@
-# Independent check of the 20-draw surprise scores (commit 73f46c9)
+# Independent check of the 20-draw surprise scores (commit 35f1e5e)
 
-Scripts and text outputs of the outside-judge agent that checked commit 73f46c9 against e1007a5, copied here
+Scripts and text outputs of the outside-judge agent that checked commit 35f1e5e against a223c3c, copied here
 unchanged so the record's numbers have a source. They ran on the Mac from a scratch folder against `git archive`
 snapshots; paths inside them point at that folder. Large intermediate files (per-draw totals, JSON rows, pickles)
 are left out.

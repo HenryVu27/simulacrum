@@ -1,0 +1,63 @@
+# Commit names before and after 2026-11-05
+
+The history was rewritten once, before the repository was first published, to remove details of the
+machines it runs on and of other projects (README, "Publishing"). Every commit got a new name. The docs and
+result files now cite the new names; commit messages were updated by the rewrite. Old name, new name:
+
+1259771 fbc3ed3
+1b763c5 9616ded
+2787bc7 be44658
+2a972b5 b76be9b
+30d86c4 d59e42b
+3447602 07c7eb1
+38f7cb6 d302af3
+44d3e24 99d758b
+47781fc f62f22b
+483f98e 3f8d546
+49c9477 d19739b
+586c213 0c260cd
+5eb9530 6f1e10e
+5f75ff5 085c2f3
+60bfb8b 318e220
+73f46c9 35f1e5e
+7651cea 05fec2d
+7a7ffd7 b6476e1
+7d70dde 92ee826
+845d1e4 0642c3e
+8763570 633df1b
+8b77aa1 4a6436b
+8b94c28 24e4439
+9394cac e097b8c
+9b02f8e 8ad578f
+9beb45e 6d458d5
+9f61948 b8e07f3
+a0f30a3 55826df
+a1cda64 be32c1d
+a28729c a932c66
+a30fb0b a354f12
+a61dc08 1afc3b0
+abb9ea0 3014ac9
+abf2418 1c8ce87
+ad270b0 cd95686
+b0ef474 2902506
+b401e2a a1d4d03
+bab01c9 43f4e17
+c18456b c942d25
+c35cc6e 6290064
+c4e8320 28c4f7e
+c63b23e f27f922
+cf27e28 4aaf76d
+d308984 d77abdd
+d40f571 51a765c
+d6c6763 28996ac
+d79ca2a 13cd92b
+dd0ad58 febe669
+e1007a5 a223c3c
+e5273c8 b35ae79
+e75d340 05a3d5e
+e796887 8a0d668
+e9966c7 8b63d7d
+ecb0e59 c4aa6c7
+ecf3527 c0e0cd4
+f55fb7c bdf9cf5
+f6388a3 06c5932

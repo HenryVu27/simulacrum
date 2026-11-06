@@ -1,5 +1,5 @@
 [2026-11-05T04:00:06-0600] lock taken: project=umwelt job=cache-check host=HenrysPC pid=477 started=2026-11-05T04:00:06-0600
-[2026-11-05T04:00:06-0600] code: code 3b8544e6cc88b4c7 git 8763570 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:00:03-0600 
+[2026-11-05T04:00:06-0600] code: code 3b8544e6cc88b4c7 git 633df1b uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T04:00:03-0600 
 [2026-11-05T04:00:08-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T04:00:08-0600] start: bash -c bash\ experiments/gpu/cache_check.sh 
 == 1. default settings, no cache, a second time

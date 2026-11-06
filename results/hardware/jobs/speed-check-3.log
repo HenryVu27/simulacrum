@@ -1,5 +1,5 @@
 [2026-11-05T02:33:09-0600] lock taken: project=umwelt job=speed-check-3 host=HenrysPC pid=477 started=2026-11-05T02:33:09-0600
-[2026-11-05T02:33:09-0600] code: code d66aa14f8a3629c2 git 3447602 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T02:33:04-0600 
+[2026-11-05T02:33:09-0600] code: code d66aa14f8a3629c2 git 07c7eb1 uncommitted 0 files, diff e3b0c44298fc1c14 pushed 2026-11-05T02:33:04-0600 
 [2026-11-05T02:33:11-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T02:33:11-0600] start: bash -c bash\ experiments/gpu/speed_check.sh 
 == training loop, default precision, then full float32

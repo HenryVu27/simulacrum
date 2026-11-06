@@ -1,5 +1,5 @@
 [2026-11-04T23:05:39-0600] lock taken: project=umwelt job=alloc-check host=HenrysPC pid=462 started=2026-11-04T23:05:39-0600
-[2026-11-04T23:05:39-0600] code: code 38d071632499ab3b git 2a972b5 uncommitted 6 files, diff e34208289be36897 pushed 2026-11-04T23:05:36-0600 
+[2026-11-04T23:05:39-0600] code: code 38d071632499ab3b git b76be9b uncommitted 6 files, diff e34208289be36897 pushed 2026-11-04T23:05:36-0600 
 [2026-11-04T23:05:41-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-04T23:05:41-0600] start: bash experiments/gpu/alloc_check.sh 
 == same weights under cuda_async (deterministic operations)

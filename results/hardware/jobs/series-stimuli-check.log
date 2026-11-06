@@ -1,3 +1,3 @@
-pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code 8510a0d5b3844c5e git e75d340 uncommitted 1 files, diff 856cf694ee0ccfab 
+pushed the working tree to <pc-user>@<pc-ip>:~/umwelt (Ubuntu-26.04): code 8510a0d5b3844c5e git 05a3d5e uncommitted 1 files, diff 856cf694ee0ccfab 
 started stimuli-check; follow it with: experiments/gpu/remote.sh status stimuli-check
 [2026-11-05 13:07:09] stimuli-check finished, exit code 0

@@ -56,3 +56,8 @@ The repository is public. Details of the machines it runs on and of other projec
 - Job logs record that another project holds the shared GPU lock, not what it is running.
 - `.githooks/pre-push` refuses a push whose commits contain any string listed in `.private-patterns` (ignored by
   git; one extended regular expression per line). Turn it on once per clone: `git config core.hooksPath .githooks`.
+
+The history was rewritten once, on 2026-11-05, before the first push, to take those details out. Commit names
+cited in the docs and in result files were updated to match; `docs/commit-map.txt` lists the old names. Code
+fingerprints in job logs from before then were computed on the files as they were, so they do not match one
+computed from this history.

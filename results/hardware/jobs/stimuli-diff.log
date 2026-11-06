@@ -1,5 +1,5 @@
 [2026-11-05T13:09:16-0600] lock taken: project=umwelt job=stimuli-diff host=HenrysPC pid=495 started=2026-11-05T13:09:16-0600
-[2026-11-05T13:09:16-0600] code: code 4a5962022b46d19f git dd0ad58 uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:09:13-0600 
+[2026-11-05T13:09:16-0600] code: code 4a5962022b46d19f git febe669 uncommitted 2 files, diff 60021ada7a793556 pushed 2026-11-05T13:09:13-0600 
 [2026-11-05T13:09:18-0600] JAX backend: gpu NVIDIA GeForce RTX 5080
 [2026-11-05T13:09:18-0600] start: bash -c JAX_DEFAULT_MATMUL_PRECISION=highest\ XLA_FLAGS=--xla_gpu_deterministic_ops=true\ uv\ run\ python\ experiments/gpu/stimuli_diff.py\;\ uv\ run\ python\ experiments/gpu/stimuli_diff.py 
 settings: precision highest, XLA_FLAGS '--xla_gpu_deterministic_ops=true'
