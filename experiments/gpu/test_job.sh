@@ -61,7 +61,8 @@ mkdir "$UMWELT_LOCK" && echo "other-project job" > "$UMWELT_LOCK/owner"
 new waits 'echo ran'
 bash "$job" waits & pid=$!
 sleep 1
-check "waits while another project holds the lock" 'grep -q "waiting:.*other-project" $R/waits.log && ! grep -q "^ran" $R/waits.log'
+check "waits while another project holds the lock" 'grep -q "waiting:.*held by another project" $R/waits.log && ! grep -q "^ran" $R/waits.log'
+check "does not copy another project's lock line into its log" '! grep -q "$(cat $UMWELT_LOCK/owner)" $R/waits.log'
 check "never touches another project's lock while waiting" '[ "$(cat $UMWELT_LOCK/owner)" = "other-project job" ]'
 rm -rf "$UMWELT_LOCK"
 limit_wait $pid

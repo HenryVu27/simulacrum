@@ -27,7 +27,9 @@
 # change the code while an umwelt job is queued or running is refused. Job names are used once.
 set -euo pipefail
 self=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")
-PC=${UMWELT_PC:-<pc-user>@<pc-ip>}  # known_hosts has the PC under its Tailscale IP
+# The PC's address stays out of the repository, which is public: set UMWELT_PC=user@host, or write it to
+# experiments/gpu/.pc, which git ignores (known_hosts has the PC under its Tailscale address).
+PC=${UMWELT_PC:-$(cat "$(dirname "$self")/.pc" 2>/dev/null || true)}
 DISTRO=${UMWELT_DISTRO:-Ubuntu-26.04}
 # umwelt runs as the distribution's root user, in /root/umwelt: no Linux account had to be created, and
 # naming the user keeps this working if Henry later makes his own (root in WSL has no extra Windows rights).
@@ -35,7 +37,10 @@ WSL="wsl -d $DISTRO -u ${UMWELT_WSL_USER:-root} --cd ~ --"
 cd "$(dirname "$self")/../.."
 export COPYFILE_DISABLE=1  # with --no-xattrs --no-mac-metadata: no macOS ._ files or extended attributes
 
-ssh_pc() { ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"; }
+ssh_pc() {
+  [ -n "$PC" ] || { echo "no PC address: set UMWELT_PC=user@host or write it to experiments/gpu/.pc" >&2; exit 2; }
+  ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 "$PC" "$@"
+}
 wsl_sh() { ssh_pc "$WSL bash -s"; }  # runs the bash script on stdin inside WSL
 # For WSL-side scripts: is PID still job NAME's job.sh? A bare kill -0 is fooled by a reused process id.
 IS_JOB='is_job() { [ -n "$1" ] && ps -p "$1" -o args= 2>/dev/null | grep -q "job.sh $2\$"; }'
@@ -100,7 +105,7 @@ EOF
         exit 1
       fi
     fi
-    echo "pushed the working tree${*:+ and $*} to $PC:~/umwelt ($DISTRO): $(echo "$m" | head -3 | tr '\n' ' ')"
+    echo "pushed the working tree${*:+ and $*} to the PC, ~/umwelt ($DISTRO): $(echo "$m" | head -3 | tr '\n' ' ')"
     ;;
   setup)
     "$self" push

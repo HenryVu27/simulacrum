@@ -19,3 +19,6 @@ results/runs/bench_*/
 .umwelt_files
 # job files mirrored from the PC by remote.sh pull; logs worth keeping are copied into results/hardware
 results/remote/
+# kept off the public repository (README, "Publishing")
+experiments/gpu/.pc
+.private-patterns

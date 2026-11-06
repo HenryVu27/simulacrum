@@ -46,3 +46,13 @@ experiments/gpu/remote.sh run NAME CMD   # a job on the RTX 5080 PC (docs/gpu.md
 ```
 
 `--presets` picks a subset of minds, `--steps` sets training length, `--tag` keeps runs apart.
+
+## Publishing
+
+The repository is public. Details of the machines it runs on and of other projects stay out of it:
+
+- `experiments/gpu/remote.sh` reads the GPU PC's address from `UMWELT_PC` or from `experiments/gpu/.pc`, which
+  git ignores.
+- Job logs record that another project holds the shared GPU lock, not what it is running.
+- `.githooks/pre-push` refuses a push whose commits contain any string listed in `.private-patterns` (ignored by
+  git; one extended regular expression per line). Turn it on once per clone: `git config core.hooksPath .githooks`.

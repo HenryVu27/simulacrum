@@ -111,7 +111,9 @@ while true; do
     echo "$token" > "$lock/owner"
     break
   else
-    say "waiting: GPU memory in use ${used} MiB; lock: $(head -n 1 "$lock/owner" 2>/dev/null || echo none)"
+    owner=$(head -n 1 "$lock/owner" 2>/dev/null || echo none)
+    case "$owner" in project=umwelt*|none) ;; *) owner="held by another project" ;; esac  # logs are published: not its details
+    say "waiting: GPU memory in use ${used} MiB; lock: $owner"
   fi
   sleep "${POLL_S:-60}"
 done

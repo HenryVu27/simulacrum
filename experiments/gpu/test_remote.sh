@@ -17,7 +17,7 @@ cleanup() {
   rmdir "$repo/results/remote" 2>/dev/null
 }
 trap cleanup EXIT
-export FAKE_PC=$T/pc UMWELT_LOCK=$T/gpu-lock UMWELT_SMI=$T/smi UMWELT_PAUSE=$T/gpu-pause POLL_S=0.2 PAUSE_POLL_S=0.2 PATH=$T/bin:$PATH
+export UMWELT_PC=test@fake-pc FAKE_PC=$T/pc UMWELT_LOCK=$T/gpu-lock UMWELT_SMI=$T/smi UMWELT_PAUSE=$T/gpu-pause POLL_S=0.2 PAUSE_POLL_S=0.2 PATH=$T/bin:$PATH
 mkdir -p "$T/bin" "$FAKE_PC/.local/bin"
 echo 3000 > "$T/mem"
 cat > "$T/bin/ssh" <<'EOF'
