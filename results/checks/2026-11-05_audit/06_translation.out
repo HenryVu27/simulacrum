@@ -1,0 +1,46 @@
+[reproduce] stored vs recomputed translation R^2 (subset of minds; the stored run used all 14, so the random row draw differs only through the rng stream)
+   oracle     ->human       stored -0.016 recomputed -0.016 | CKA stored 0.042 recomputed 0.042
+   oracle     ->blind       stored +0.044 recomputed +0.044 | CKA stored 0.028 recomputed 0.028
+   oracle     ->vision_only stored -0.030 recomputed -0.030 | CKA stored 0.035 recomputed 0.035
+   oracle     ->dog         stored -0.009 recomputed -0.009 | CKA stored 0.037 recomputed 0.037
+   oracle     ->smell_only  stored +0.133 recomputed +0.133 | CKA stored 0.046 recomputed 0.046
+   human      ->oracle      stored -0.022 recomputed -0.017 | CKA stored 0.042 recomputed 0.042
+   human      ->blind       stored +0.743 recomputed +0.743 | CKA stored 0.556 recomputed 0.556
+   human      ->vision_only stored +0.885 recomputed +0.885 | CKA stored 0.884 recomputed 0.884
+   human      ->dog         stored +0.799 recomputed +0.799 | CKA stored 0.850 recomputed 0.850
+   human      ->smell_only  stored +0.636 recomputed +0.636 | CKA stored 0.179 recomputed 0.179
+   blind      ->oracle      stored -0.032 recomputed -0.032 | CKA stored 0.028 recomputed 0.028
+   blind      ->human       stored +0.365 recomputed +0.365 | CKA stored 0.556 recomputed 0.556
+   blind      ->vision_only stored +0.220 recomputed +0.220 | CKA stored 0.291 recomputed 0.291
+   blind      ->dog         stored +0.506 recomputed +0.507 | CKA stored 0.766 recomputed 0.766
+   blind      ->smell_only  stored +0.739 recomputed +0.739 | CKA stored 0.275 recomputed 0.275
+   vision_only->oracle      stored -0.012 recomputed -0.012 | CKA stored 0.035 recomputed 0.035
+   vision_only->human       stored +0.774 recomputed +0.774 | CKA stored 0.884 recomputed 0.884
+   vision_only->blind       stored +0.368 recomputed +0.368 | CKA stored 0.291 recomputed 0.291
+   vision_only->dog         stored +0.598 recomputed +0.598 | CKA stored 0.676 recomputed 0.676
+   vision_only->smell_only  stored +0.375 recomputed +0.375 | CKA stored 0.090 recomputed 0.090
+   dog        ->oracle      stored -0.028 recomputed -0.028 | CKA stored 0.037 recomputed 0.037
+   dog        ->human       stored +0.775 recomputed +0.775 | CKA stored 0.850 recomputed 0.850
+   dog        ->blind       stored +0.796 recomputed +0.796 | CKA stored 0.766 recomputed 0.766
+   dog        ->vision_only stored +0.731 recomputed +0.731 | CKA stored 0.676 recomputed 0.676
+   dog        ->smell_only  stored +0.819 recomputed +0.819 | CKA stored 0.287 recomputed 0.287
+   smell_only ->oracle      stored -0.030 recomputed -0.037 | CKA stored 0.046 recomputed 0.046
+   smell_only ->human       stored +0.169 recomputed +0.169 | CKA stored 0.179 recomputed 0.179
+   smell_only ->blind       stored +0.288 recomputed +0.288 | CKA stored 0.275 recomputed 0.275
+   smell_only ->vision_only stored +0.150 recomputed +0.150 | CKA stored 0.090 recomputed 0.090
+   smell_only ->dog         stored +0.203 recomputed +0.203 | CKA stored 0.287 recomputed 0.287
+
+[H5 on untrained networks] pair: trained a->b vs b->a | untrained a->b vs b->a
+   human->blind: trained 0.74 vs 0.36 | untrained 0.47 vs 0.20
+   human->vision_only: trained 0.89 vs 0.77 | untrained 0.85 vs 0.80
+   dog->smell_only: trained 0.82 vs 0.20 | untrained 0.70 vs 0.15
+
+[variance] oracle: share of hidden-state variance that is between episodes (constant within an episode) = 0.686
+
+[variance] human: share of hidden-state variance that is between episodes (constant within an episode) = 0.138
+
+[variance] vision_only: share of hidden-state variance that is between episodes (constant within an episode) = 0.128
+   human->oracle: R^2 as stored -0.017; within-episode states only +0.027
+   oracle->human: R^2 as stored -0.016; within-episode states only +0.005
+   vision_only->oracle: R^2 as stored -0.012; within-episode states only +0.039
+   oracle->vision_only: R^2 as stored -0.030; within-episode states only -0.008

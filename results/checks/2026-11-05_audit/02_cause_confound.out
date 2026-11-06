@@ -1,0 +1,22 @@
+lawful       n_train 11031 n_test 5836 share agent-caused 0.73
+   distance only              logistic      cause score 0.588
+   distance only              boosted trees cause score 0.596
+   distance+direction+speed   logistic      cause score 0.624
+   distance+direction+speed   boosted trees cause score 0.689
+impermanent  n_train 8732 n_test 4268 share agent-caused 0.63
+   distance only              logistic      cause score 0.562
+   distance only              boosted trees cause score 0.589
+   distance+direction+speed   logistic      cause score 0.593
+   distance+direction+speed   boosted trees cause score 0.607
+nonlocal     n_train 13654 n_test 7299 share agent-caused 0.71
+   distance only              logistic      cause score 0.157
+   distance only              boosted trees cause score 0.178
+   distance+direction+speed   logistic      cause score 0.365
+   distance+direction+speed   boosted trees cause score 0.398
+lawful_mj    n_train 14144 n_test 7338 share agent-caused 0.51
+   distance only              logistic      cause score 0.662
+   distance only              boosted trees cause score 0.663
+   distance+direction+speed   logistic      cause score 0.694
+   distance+direction+speed   boosted trees cause score 0.754
+
+Stored MLP-probe cause scores (seed-mean), for comparison: lawful human 0.52, smell_only 0.74, blind 0.65, oracle 0.43; nonlocal human 0.24, smell_only 0.32, oracle 0.30

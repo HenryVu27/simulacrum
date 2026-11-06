@@ -1,0 +1,18 @@
+suite hash 016fc3d72807e39d (stored provenance stimuli 016fc3d72807e39d) 43s
+[reproduce] main/lawful_s0 human permanence: recomputed S -0.0001138 ci [-0.000377, +0.000149] | stored S -0.0001138 ci [-0.000377, +0.000149]
+[reproduce] main/lawful_s0 human solidity: recomputed S -0.0017694 ci [-0.006816, +0.002767] | stored S -0.0017694 ci [-0.006816, +0.002767]
+[reproduce] main/lawful_s0 human causality: recomputed S -0.0212895 ci [-0.054664, +0.013432] | stored S -0.0212895 ci [-0.054664, +0.013432]
+   (25s)
+[reproduce] main/lawful_s0 smell_only permanence: recomputed S -0.0031738 ci [-0.006785, +0.000452] | stored S -0.0031738 ci [-0.006785, +0.000452]
+[reproduce] main/lawful_s0 smell_only solidity: recomputed S +0.0021007 ci [-0.000917, +0.005011] | stored S +0.0021007 ci [-0.000917, +0.005011]
+[reproduce] main/lawful_s0 smell_only causality: recomputed S +0.0014454 ci [-0.001857, +0.004911] | stored S +0.0014454 ci [-0.001857, +0.004911]
+   (15s)
+[reproduce] v2/dark_s0 human permanence: recomputed S -0.0002613 ci [-0.000523, +0.000029] | stored S -0.0002613 ci [-0.000523, +0.000029]
+[reproduce] v2/dark_s0 human solidity: recomputed S -0.0057455 ci [-0.009449, -0.002059] | stored S -0.0057455 ci [-0.009449, -0.002059]
+[reproduce] v2/dark_s0 human causality: recomputed S -0.0012427 ci [-0.037066, +0.035971] | stored S -0.0012427 ci [-0.037066, +0.035971]
+   (25s)
+[power] main/lawful_s0 human: obs dims 311; possible-movie error 130.08 (per instance 7.227); S over 20 draws +0.00079; S_ideal first-frame 0.0104; S_ideal whole-window 0.5467; instances with any visible difference 1.00
+[power] main/lawful_s0 vision_only: obs dims 256; possible-movie error 128.99 (per instance 7.166); S over 20 draws -0.00083; S_ideal first-frame 0.0128; S_ideal whole-window 0.6697; instances with any visible difference 1.00
+[power] main/lawful_s0 dog: obs dims 103; possible-movie error 57.88 (per instance 3.216); S over 20 draws -0.00103; S_ideal first-frame 0.0021; S_ideal whole-window 0.2563; instances with any visible difference 1.00
+[power] v2/dark_s0 human: obs dims 311; possible-movie error 87.94 (per instance 4.885); S over 20 draws +0.00082; S_ideal first-frame 0.0084; S_ideal whole-window 0.4022; instances with any visible difference 1.00
+[power] main/lawful_s0 bat: obs dims 111; possible-movie error 55.57 (per instance 3.087); S over 20 draws +0.00004; S_ideal first-frame 0.0442; S_ideal whole-window 0.5949; instances with any visible difference 1.00

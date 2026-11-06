@@ -1,0 +1,21 @@
+[V2] trained-minus-untrained wins per mind, lawful seed-mean; and wins with margin > 0.02 (about 2 seed sd)
+  blind           wins 12:  9  wins original 10:  9  wins by >0.02:  3
+  passive         wins 12: 10  wins original 10:  9  wins by >0.02:  7
+  touch_only      wins 12:  5  wins original 10:  5  wins by >0.02:  2
+  passive_novest  wins 12: 10  wins original 10:  9  wins by >0.02:  8
+  deafblind       wins 12: 10  wins original 10:  9  wins by >0.02:  2
+  dog             wins 12: 11  wins original 10: 10  wins by >0.02:  9
+  vision_only     wins 12: 10  wins original 10:  9  wins by >0.02:  6
+  hearing_only    wins 12:  5  wins original 10:  5  wins by >0.02:  1
+  human           wins 12: 10  wins original 10:  9  wins by >0.02:  8
+  oracle          wins 12: 12  wins original 10: 10  wins by >0.02: 12
+  smell_only      wins 12:  7  wins original 10:  5  wins by >0.02:  0
+  chimera         wins 12: 11  wins original 10: 10  wins by >0.02:  9
+  memoryless      wins 12: 11  wins original 10: 10  wins by >0.02:  9
+  bat             wins 12: 11  wins original 10:  9  wins by >0.02:  8
+
+[H6] impermanent minus lawful permanence S per mind: {'blind': '-0.00011', 'passive': '+0.00007', 'touch_only': '-0.00053', 'passive_novest': '+0.00004', 'deafblind': '-0.00008', 'dog': '+0.00001', 'vision_only': '-0.00004', 'hearing_only': '-0.00095', 'human': '-0.00003', 'smell_only': '+0.00103', 'chimera': '+0.00004', 'memoryless': '+0.00003', 'bat': '-0.00013'}
+  share < 0: 0.5384615384615384  (n minds 13 )
+  human lawful: [(-0.00011, [-0.00038, 0.00015]), (-0.00017, [-0.00047, 0.00013])]
+  vision_only lawful: [(2e-05, [-0.00016, 0.0002]), (0.0, [-0.00017, 0.00018])]
+  memoryless lawful: [(9e-05, [-0.00024, 0.00042]), (0.0001, [-0.00023, 0.00043])]

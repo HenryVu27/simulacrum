@@ -1,0 +1,16 @@
+across 13 minds x 12 concepts: r(trained, raw senses) = 0.914; r(trained, untrained) = 0.960
+R^2 of trained on max(raw, untrained): 0.981
+trained minus the better of (raw senses, untrained network): median +0.005, share above +0.05: 0.07
+per concept, trained minus max(raw, untrained), by mind:
+  object_seen          median +0.009 largest: memoryless +0.021, human +0.020, passive_novest +0.018
+  object_hidden        median +0.009 largest: touch_only +0.022, vision_only +0.014, blind +0.013
+  object_now           median +0.011 largest: human +0.015, passive_novest +0.014, touch_only +0.014
+  object_past          median +0.009 largest: blind +0.015, passive_novest +0.014, passive +0.014
+  object_allo_seen     median +0.000 largest: human +0.023, memoryless +0.022, passive_novest +0.019
+  object_allo_hidden   median -0.010 largest: vision_only -0.003, bat -0.003, dog -0.004
+  number               median -0.002 largest: bat +0.017, deafblind +0.008, chimera +0.007
+  self_motion          median +0.045 largest: vision_only +0.311, chimera +0.261, passive_novest +0.125
+  self_location        median -0.022 largest: bat -0.001, chimera -0.003, blind -0.011
+  cause                median +0.034 largest: hearing_only +0.074, touch_only +0.072, deafblind +0.070
+  elapsed              median +0.016 largest: memoryless +0.036, blind +0.024, chimera +0.020
+  relations            median +0.005 largest: human +0.010, passive_novest +0.009, passive +0.009

@@ -1,0 +1,3 @@
+raw human senses, lags (0,): object_hidden +0.172 object_seen +0.566 self_location +0.536 elapsed +0.031 number +0.009
+raw human senses, lags (0, 2, 4): object_hidden +0.161 object_seen +0.516 self_location +0.482 elapsed +0.110 number -0.014
+raw human senses, lags (0, 3, 6, 9): object_hidden +0.147 object_seen +0.506 self_location +0.444 elapsed +0.163 number -0.021

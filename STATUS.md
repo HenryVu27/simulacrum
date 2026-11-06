@@ -4,6 +4,28 @@ Last updated: 2026-11-05, evening (surprise-test movies redesigned; surprise sco
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
+## Independent audit (2026-11-05): what holds and what does not
+
+A skeptical outside audit of the whole project (scripts and outputs in `results/checks/2026-11-05_audit`).
+- Holds. The record reproduces: both reports regenerate byte for byte, and probe scores, test errors and
+  surprise scores recompute exactly from the stored networks. The process was honest: each amendment precedes
+  the run it governs, the preregistered checks are unchanged since the first commit, and the 2026-11-05
+  corrections fixed real defects. The permanence surprise test is well powered: a mind expecting a vanished
+  object back would score about 0.01 from the first mismatched frame alone, and the observed intervals are about
+  plus or minus 0.0003. So "no mind is surprised by a vanishing object" is a real null for the vision minds.
+- Does not hold: the probe battery cannot register memory. Given the human's raw senses plus exact copies of
+  earlier frames, its hidden-object score goes down (0.172 with none, 0.147 with three), and a perfect 2- and
+  4-step memory barely clears P1's bar of 0.05; with four times the probe data it reaches 0.125. H1, P1 and P3,
+  and the probe side of "every mind is reactive", were close to untestable. The ANOVA shares (H7) depend on
+  which minds and worlds were sampled: with only the five minds that have human eyes, the world decides
+  object_hidden (0.99) and object_seen (0.93). The cause probe mostly reads how near an object is (distance
+  alone scores 0.588 in the lawful world, the human 0.52). Learning adds little the battery can see: the better
+  of the raw-senses and untrained-network controls explains 98 percent of the variance in trained scores. H5's
+  asymmetry also appears between untrained networks, so it reflects which inputs contain which, not learned
+  concepts.
+- Corrections to claims below are marked "(audit)". Next step 1 now starts by fixing the instrument
+  (`docs/preregistration.md`, Amendment 5).
+
 ## v2 in one paragraph
 
 v1 found that no mind remembers hidden objects. v2 asked whether that changes when the world makes memory
@@ -13,8 +35,10 @@ moments (an object coming back into view, the lights returning), about 4 percent
 mind also memorized its 1,024 training episodes. With 8,192 training episodes, the dark world (the v1 lawful
 world plus random lights-out spells) narrowly passed the replacement manipulation check. On fresh data it
 then fell short (memory value at object returns 0.093 and 0.057 against a bar of 0.10). All four
-preregistered v2 hypotheses fail: no mind knows more about a hidden object than its raw senses give, and
-none is surprised by a vanishing object. The world lever is spent. The next lever is the learner.
+preregistered v2 hypotheses fail: as tested (lit and dark moments pooled), no mind knows more about a
+hidden object than its raw senses give, and none is surprised by a vanishing object. (audit: in the first 1 to
+5 steps of darkness the human does know more than its raw senses, +0.10 [0.07, 0.13]; and the probes could
+barely register memory at all.) The world lever is spent. The next lever is the learner.
 
 ## v2 results
 
@@ -53,7 +77,9 @@ none is surprised by a vanishing object. The world lever is spent. The next leve
    (seeds 0 and 1) against its raw senses at -0.032, a gap of 0.05 and 0.12. It is gone by 6 to 20 steps. The
    minds with no efference copy do as well or better (passive 0.046 and 0.063, passive_novest 0.059 and
    0.084), so the likeliest reading is that the last lit scene persists briefly in the hidden state, not that
-   the mind tracks objects through its own motion. (Every recurrent mind with eyes also beats memoryless here,
+   the mind tracks objects through its own motion. (audit: the trace is clearer than these numbers say. Split
+   by darkness and bootstrapped over test episodes, the human beats its raw senses by +0.10 [0.07, 0.13] and the
+   memoryless mind by +0.10 [0.07, 0.13] at 1 to 5 steps; part of the gap between seeds is probe noise.) (Every recurrent mind with eyes also beats memoryless here,
    but memoryless sits below its own raw senses, so that comparison flatters them.)
 5. **Exploratory: what counts as hidden depends on the body.** Bat and chimera locate objects the eyes cannot
    see (about 0.17 to 0.19 at 1 to 5 steps, in v1 and v2 alike), because echolocation covers 360 degrees and
@@ -142,11 +168,13 @@ Open, from the GPU work:
 
 ## Next steps, in order
 
-1. Change the learner, not the world. The next-frame objective gives memory little gradient, because memory
-   moments are a few percent of the loss. Candidates, cheapest first: weight the loss toward moments when
-   the senses change in ways the present cannot predict; predict further ahead across dark spells; a larger
-   recurrent core; a learner that attends over past frames. The last two want a GPU: the RTX 5080 machine is
-   set up for that (see the GPU section above and `docs/gpu.md`).
+1. v3, preregistered as Amendment 5 (`docs/preregistration.md`). First fix the instrument: find a probe that
+   registers memory on minds whose memory is known (engineered states, an explicit memory buffer, a learner
+   trained to track hidden objects), check the surprise test registers it too, and rescore v1 and v2 with that
+   probe. Then change the learner, not the world: five candidates screened in the dark world (residual-weighted
+   loss, far horizons, a larger GRU, causal attention), a confirmatory run on fresh training with three seeds,
+   and, if memory appears, the world question again with within-mind contrasts instead of variance shares. The
+   training runs on the RTX 5080 (see the GPU section above and `docs/gpu.md`).
 2. Test the smell-only mind's unnamed features against scent-field variables (from v1, still open).
 3. Nonlinear translation maps, to separate "different frame" from "different content" for the oracle.
 4. Aporia Atlas: join aporias that share claims and tag umwelt results to premises.
@@ -170,7 +198,8 @@ Open, from the GPU work:
 
 ## Main results
 
-1. **The test battery works.**
+1. **The test battery works.** (audit: overstated. Nothing here is a positive control for memory, and the
+   probes fail one; the MuJoCo audit shares the sense formulas, policy, learner and probes.)
    - The oracle scores 0.949 to 0.969 on object location in every world and engine.
    - Seeds reproduce: across 168 lawful-world scores, the mean difference is 0.006 and the largest
      is 0.04.
@@ -184,7 +213,8 @@ Open, from the GPU work:
      failed to add memory.
    - A JEPA-style latent-prediction learner and four times the training (16,000 updates) also failed.
    - Permanence decay curves for all 14 minds: trained minds track their raw senses within about
-     0.03 at every delay after an object leaves view.
+     0.03 at every delay after an object leaves view. (audit: raw-sense curves exist for 5 minds only, and
+     smell_only departs from its own by 0.10 at 1 to 5 steps. The probes could not have shown memory anyway.)
 
    The preregistered memory hypotheses (H1 permanence, H4 counting, H6 surprise) therefore fail, for
    that reason. This is the main finding to build on: object permanence did not emerge from
@@ -192,18 +222,26 @@ Open, from the GPU work:
 3. **Translation runs from richer minds to poorer ones (H5, passed).** Human to blind 0.74 versus blind
    to human 0.36. Human to vision-only 0.89 versus 0.77. Dog to smell-only 0.82 versus 0.20. Minds
    cluster by their main sense. Smell-only is the most alien mind: smell-rich minds can read it, but
-   it can read almost nobody.
+   it can read almost nobody. (audit: untrained networks show the same asymmetries, for example dog to
+   smell_only 0.70 against 0.15, so they come from one mind's inputs containing the other's, not from
+   learned concepts.)
 4. **The view from nowhere does not translate.** The oracle's world-centered state has essentially
    zero linear translation to or from any embodied mind (R^2 about 0, CKA about 0.04). This is
    exploratory, and linear maps cannot rotate between frames.
 5. **Held and Hein, half confirmed (H3, failed as written).** Without an efference copy and body
    sense, self-motion knowledge collapses (0.88 to 0.53) while object knowledge is unchanged.
-   Self-location does not drop, because vision reads location off the room's landmarks.
+   Self-location does not drop, because vision reads location off the room's landmarks. (audit: the drop
+   follows the inputs, since body sense carries velocity (raw senses 0.79 against 0.17), and passive, with
+   body sense but no efference copy, scores 0.91 against the human's 0.88: the efference copy adds nothing
+   measurable.)
 6. **Concept import, first pass.** Vision-based minds have no unnamed features. The smell-only mind
    has 33 slow-changing features that neither its current senses nor any named world variable
    explains. The likely source is the diffusing scent field, which our vocabulary does not name. Not
    yet tested.
-7. **Mind versus world (H7, failed as written, mostly right).** Two-way ANOVA (analysis of variance)
+7. **Mind versus world (H7, failed as written).** (audit: the shares depend on which minds and worlds
+   were sampled, so they cannot say what the world forces. With only the five minds that have human eyes,
+   object_hidden is world 0.99 and cause world 0.96; without the nonlocal world, cause is mind 0.97. And the
+   cause probe mostly reads proximity: distance alone scores 0.588 in the lawful world.) Two-way ANOVA (analysis of variance)
    over 13 minds and 4 worlds. The design is unbalanced (lawful has two seeds, the others one), and the
    report uses sample-size-weighted (Type I/II) sums of squares:
    - Causal attribution is the one concept the world decides: world share 0.74, mind share 0.23.
@@ -218,6 +256,11 @@ Open, from the GPU work:
      scored as skill above baseline, so its world share was the scale artifact.
 
 ## Deviations from the preregistration
+
+- Never logged until the audit found them (2026-11-05): probes were fit on 1,024 training episodes, not the
+  384 the preregistration says, from the first commit; and V2 counted 10 concepts, now 12, not the nine
+  stated. The v2 report's V2 FAIL (smell_only beats its untrained copy on 4 of 12 concepts) and H2 (fails in
+  Flatland at noise level, bias -0.003) were left out of this file until then.
 
 - Amendment 1 (before the sweep): seeds trimmed, controls limited to the lawful worlds (in practice
   seed 0 only), allocentric probes added. The same commit changed learner, probe and runner code;

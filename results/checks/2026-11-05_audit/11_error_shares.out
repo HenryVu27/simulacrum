@@ -1,0 +1,2 @@
+dark_u16000: return steps 0.037 of steps carry 0.190 of memoryless error; returns or first lit step: 0.040 of steps, 0.229 of error
+dark_n8192: return steps 0.040 of steps carry 0.179 of memoryless error; returns or first lit step: 0.043 of steps, 0.218 of error

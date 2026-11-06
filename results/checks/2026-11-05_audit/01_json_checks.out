@@ -1,0 +1,62 @@
+runs: [('ghost', 0), ('impermanent', 0), ('lawful', 0), ('lawful', 1), ('lawful_mj', 0), ('nonlocal', 0)]
+
+[seeds] n=168 mean|diff|=0.0064 max=0.0391 at ('oracle', 'relations')
+  largest 5: [(('oracle', 'relations'), 0.209, 0.248), (('deafblind', 'cause'), 0.647, 0.611), (('hearing_only', 'cause'), 0.55, 0.576), (('oracle', 'number'), 0.883, 0.908), (('dog', 'elapsed'), 0.149, 0.126)]
+  per concept: sd of seed diff / 2**.5 vs sd across minds (oracle excluded)
+   object_seen          seed sd 0.0053  mind sd 0.0854
+   object_hidden        seed sd 0.0053  mind sd 0.1647
+   object_now           seed sd 0.0025  mind sd 0.1340
+   object_past          seed sd 0.0027  mind sd 0.1343
+   object_allo_seen     seed sd 0.0032  mind sd 0.0279
+   object_allo_hidden   seed sd 0.0039  mind sd 0.0151
+   number               seed sd 0.0080  mind sd 0.0354
+   self_motion          seed sd 0.0050  mind sd 0.1156
+   self_location        seed sd 0.0046  mind sd 0.2755
+   cause                seed sd 0.0111  mind sd 0.0883
+   elapsed              seed sd 0.0067  mind sd 0.0276
+   relations            seed sd 0.0038  mind sd 0.0314
+
+[mujoco, lawful seed-mean] n=168 r=0.9976 mean|d|=0.0172 max=0.1166
+  within-concept r (oracle excluded): {'object_seen': 0.992, 'object_hidden': 0.999, 'object_now': 0.999, 'object_past': 0.999, 'object_allo_seen': 0.985, 'object_allo_hidden': 0.981, 'number': 0.787, 'self_motion': 0.996, 'self_location': 0.997, 'cause': 0.909, 'elapsed': 0.921, 'relations': 0.851}
+  engine |diff| (oracle excl) mean 0.0179, 95th pct 0.0472
+
+[mujoco, lawful seed 0] n=168 r=0.9975 mean|d|=0.0174 max=0.1213
+  within-concept r (oracle excluded): {'object_seen': 0.989, 'object_hidden': 0.999, 'object_now': 0.999, 'object_past': 0.999, 'object_allo_seen': 0.985, 'object_allo_hidden': 0.963, 'number': 0.761, 'self_motion': 0.995, 'self_location': 0.997, 'cause': 0.9, 'elapsed': 0.902, 'relations': 0.853}
+  engine |diff| (oracle excl) mean 0.0179, 95th pct 0.0436
+
+[ANOVA] recomputed shares (all 13 non-oracle minds), weighted and balanced-on-cell-means
+  object_seen          mind 0.96 world 0.03 inter 0.01 noise 0.001 | balanced mind 0.95 world 0.04 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  object_hidden        mind 0.95 world 0.04 inter 0.01 noise 0.000 | balanced mind 0.95 world 0.05 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  object_now           mind 0.97 world 0.03 inter 0.00 noise 0.000 | balanced mind 0.96 world 0.03 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  object_past          mind 0.99 world 0.01 inter 0.00 noise 0.000 | balanced mind 0.98 world 0.02 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  object_allo_seen     mind 0.72 world 0.18 inter 0.10 noise 0.003 | balanced mind 0.69 world 0.20 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  object_allo_hidden   mind 0.50 world 0.46 inter 0.02 noise 0.010 | balanced mind 0.45 world 0.53 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  number               mind 0.87 world 0.05 inter 0.07 noise 0.010 | balanced mind 0.87 world 0.05 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  self_motion          mind 0.99 world 0.01 inter 0.01 noise 0.000 | balanced mind 0.99 world 0.01 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  self_location        mind 1.00 world 0.00 inter 0.00 noise 0.000 | balanced mind 0.99 world 0.00 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  cause                mind 0.23 world 0.74 inter 0.03 noise 0.002 | balanced mind 0.18 world 0.79 | worlds ['impermanent', 'lawful', 'nonlocal']
+  elapsed              mind 0.47 world 0.48 inter 0.04 noise 0.006 | balanced mind 0.42 world 0.53 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+  relations            mind 0.86 world 0.04 inter 0.09 noise 0.005 | balanced mind 0.86 world 0.05 | worlds ['ghost', 'impermanent', 'lawful', 'nonlocal']
+
+[ANOVA, Lewontin check] only the five human-eyed minds (human, vision_only, passive, passive_novest, memoryless)
+  object_seen     mind 0.02 world 0.93 inter 0.04 noise 0.01
+  object_hidden   mind 0.00 world 0.99 inter 0.00 noise 0.00
+  number          mind 0.05 world 0.63 inter 0.19 noise 0.13
+  self_motion     mind 0.99 world 0.01 inter 0.00 noise 0.00
+  cause           mind 0.03 world 0.96 inter 0.01 noise 0.00
+  elapsed         mind 0.26 world 0.68 inter 0.05 noise 0.01
+  H7 verdict on this mind set: world>mind for object_hidden and cause, mind>world for seen/number/self_motion -> False
+
+[ANOVA, cause without nonlocal] (lawful, impermanent only; ghost has no cause)
+  cause mind 0.97 world 0.01 inter 0.02 noise 0.01
+  elapsed without impermanent: mind 0.49 world 0.46
+
+[V2] trained-minus-untrained wins per mind, lawful seed-mean; and wins with margin > 0.02 (about 2 seed sd)
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_audit/01_json_checks.py", line 99, in <module>
+    L, L0 = tab("lawful"), tab("lawful", "probes_untrained")
+                           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/claude-501/-Users-henryvu-personal/f1847dfd-1cc5-4ef1-8ec5-2e09638810e1/scratchpad/umwelt_audit/01_json_checks.py", line 42, in tab
+    for c, v in r[field].items(): acc[m][c].append(v)
+                ~^^^^^^^
+KeyError: 'probes_untrained'

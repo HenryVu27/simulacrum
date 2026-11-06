@@ -1,0 +1,26 @@
+human: test_error recomputed 0.227244 stored 0.227244
+   object_seen          recomputed +0.58621 stored +0.58621 diff +0.0e+00
+   object_hidden        recomputed +0.18336 stored +0.18336 diff +0.0e+00
+   object_now           recomputed +0.33328 stored +0.33328 diff +0.0e+00
+   object_past          recomputed +0.32963 stored +0.32963 diff +0.0e+00
+   object_allo_seen     recomputed +0.00129 stored +0.00129 diff +0.0e+00
+   object_allo_hidden   recomputed -0.07657 stored -0.07657 diff +0.0e+00
+   number               recomputed -0.00673 stored -0.00673 diff +0.0e+00
+   self_motion          recomputed +0.87572 stored +0.87572 diff +0.0e+00
+   self_location        recomputed +0.48880 stored +0.48880 diff +0.0e+00
+   cause                recomputed +0.53146 stored +0.53146 diff +0.0e+00
+   elapsed              recomputed +0.08722 stored +0.08722 diff +0.0e+00
+   relations            recomputed -0.01041 stored -0.01041 diff +0.0e+00
+memoryless: test_error recomputed 0.231690 stored 0.231690
+   object_seen          recomputed +0.58981 stored +0.58981 diff +0.0e+00
+   object_hidden        recomputed +0.18163 stored +0.18163 diff +0.0e+00
+   object_now           recomputed +0.33353 stored +0.33353 diff +0.0e+00
+   object_past          recomputed +0.32740 stored +0.32740 diff +0.0e+00
+   object_allo_seen     recomputed -0.00311 stored -0.00311 diff +0.0e+00
+   object_allo_hidden   recomputed -0.06574 stored -0.06574 diff +0.0e+00
+   number               recomputed +0.00274 stored +0.00274 diff +0.0e+00
+   self_motion          recomputed +0.81412 stored +0.81412 diff +0.0e+00
+   self_location        recomputed +0.49616 stored +0.49616 diff +0.0e+00
+   cause                recomputed +0.52336 stored +0.52336 diff +0.0e+00
+   elapsed              recomputed +0.06682 stored +0.06682 diff +0.0e+00
+   relations            recomputed -0.01119 stored -0.01119 diff +0.0e+00

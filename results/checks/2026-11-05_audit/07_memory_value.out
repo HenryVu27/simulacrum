@@ -1,0 +1,4 @@
+[confirmatory dark data seed 1, learner seed 0] M 0.0158  M at returns 0.0928  episode-bootstrap 95% [0.081, 0.105]  return-step share 0.036
+[confirmatory dark data seed 1, learner seed 1] M 0.0129  M at returns 0.0570  episode-bootstrap 95% [0.047, 0.067]  return-step share 0.036
+[calibration stage 3, dark, data seed 0, learner seed 0] M 0.0218  M at returns 0.1060  episode-bootstrap 95% [0.094, 0.117]
+[calibration stage 3, occlusion, data seed 0, learner seed 0] M 0.0165  M at returns 0.0942  episode-bootstrap 95% [0.083, 0.106]

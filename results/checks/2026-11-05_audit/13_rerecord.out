@@ -1,0 +1,2 @@
+lawful s0: 19 arrays compared on 128 episodes (the first recording chunk, same batch size as data.chunks); mismatches: none
+dark s1: 19 arrays compared on 128 episodes (the first recording chunk, same batch size as data.chunks); mismatches: none

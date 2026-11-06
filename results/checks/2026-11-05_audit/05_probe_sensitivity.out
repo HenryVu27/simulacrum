@@ -1,0 +1,7 @@
+human seed 0, probe on 1,024 episodes (as stored)          in view=+0.314 1-5=+0.000 6-20=-0.025 1-5 dark=+0.013
+human seed 0, probe on 4,096 episodes, no row cap          in view=+0.358 1-5=+0.050 6-20=+0.007 1-5 dark=+0.080
+memoryless seed 0, probe on 1,024 episodes (as stored)     in view=+0.320 1-5=-0.025 6-20=-0.037 1-5 dark=-0.061
+memoryless seed 0, probe on 4,096 episodes, no row cap     in view=+0.376 1-5=-0.001 6-20=-0.007 1-5 dark=-0.054
+human raw senses now, probe on 1,024 episodes              in view=+0.287 1-5=-0.006 6-20=-0.021 1-5 dark=-0.056
+human raw senses now + copies 2 and 4 steps back, probe on 1,024 episodes in view=+0.223 1-5=+0.056 6-20=-0.037 1-5 dark=+0.006
+human raw senses now + copies 2 and 4 steps back, probe on 4,096 episodes in view=+0.323 1-5=+0.125 6-20=+0.002 1-5 dark=+0.072

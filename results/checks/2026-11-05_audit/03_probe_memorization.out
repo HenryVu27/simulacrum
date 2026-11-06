@@ -1,0 +1,12 @@
+main/lawful_s0 human        (a) fit on training episodes: object_hidden=0.073 object_seen=0.439 skill 1-5=-0.055 skill 6-20=0.014
+main/lawful_s0 human        (b) fit on held-out episodes: object_hidden=0.079 object_seen=0.430 skill 1-5=-0.064 skill 6-20=-0.018
+main/lawful_s0 memoryless   (a) fit on training episodes: object_hidden=0.055 object_seen=0.450 skill 1-5=-0.042 skill 6-20=-0.002
+main/lawful_s0 memoryless   (b) fit on held-out episodes: object_hidden=0.068 object_seen=0.433 skill 1-5=-0.041 skill 6-20=-0.031
+main/lawful_s0 vision_only  (a) fit on training episodes: object_hidden=0.087 object_seen=0.430 skill 1-5=-0.039 skill 6-20=0.015
+main/lawful_s0 vision_only  (b) fit on held-out episodes: object_hidden=0.068 object_seen=0.430 skill 1-5=-0.065 skill 6-20=-0.039
+main/lawful_s0 passive_novest (a) fit on training episodes: object_hidden=0.076 object_seen=0.438 skill 1-5=-0.005 skill 6-20=0.016
+main/lawful_s0 passive_novest (b) fit on held-out episodes: object_hidden=0.081 object_seen=0.433 skill 1-5=-0.007 skill 6-20=-0.004
+v2/dark_s0 human        (a) fit on training episodes: object_hidden=0.016 object_seen=0.470 skill 1-5=-0.031 skill 6-20=-0.106
+v2/dark_s0 human        (b) fit on held-out episodes: object_hidden=0.015 object_seen=0.432 skill 1-5=-0.050 skill 6-20=-0.082
+v2/dark_s0 memoryless   (a) fit on training episodes: object_hidden=0.016 object_seen=0.443 skill 1-5=-0.065 skill 6-20=-0.098
+v2/dark_s0 memoryless   (b) fit on held-out episodes: object_hidden=0.009 object_seen=0.422 skill 1-5=-0.070 skill 6-20=-0.074
