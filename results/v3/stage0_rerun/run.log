@@ -1,0 +1,20 @@
+tracking mind trained in 196 s; last loss (3999, 1.7692588567733765, 0.24134913086891174, 0.5432962775230408)
+twin: {'error at object returns': 0.8780798316001892, 'error, all steps after burn-in': 0.2119600623846054, 'train seconds': 182}
+   twin permanence S -0.0003 [-0.0006, +0.0000]
+   twin solidity   S -0.0082 [-0.0111, -0.0052]
+   twin causality  S -0.0014 [-0.0385, +0.0376]
+lawful: {'error at object returns': 0.8706598281860352, 'error, all steps after burn-in': 0.22544918954372406, 'train seconds': 200}
+   lawful permanence S +0.0008 [-0.0007, +0.0024]
+   lawful solidity   S +0.0004 [-0.0034, +0.0048]
+   lawful causality  S -0.0075 [-0.0408, +0.0265]
+gate: lawful error at returns / twin's = 0.992 (FAIL); permanence interval above 0: False
+fixtures built in 58 s
+Traceback (most recent call last):
+  File "/Users/henryvu/personal/umwelt/experiments/stage0_rerun.py", line 338, in <module>
+    {"track": train_track, "probes": main_probes, "lawful": lawful}[sys.argv[1]]()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/henryvu/personal/umwelt/experiments/stage0_rerun.py", line 205, in main_probes
+    assert abs(point["object_now"] - probes._r2_cols(pp, Y, m2(Rte["present"]), m2(Rte["present"]))) < 1e-9
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+exit 1

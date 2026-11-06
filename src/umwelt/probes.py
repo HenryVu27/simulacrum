@@ -155,6 +155,42 @@ def _fit(key, X, Y, M, Xv, Yv, Mv, task, hidden, steps=1500, batch=1024):
     return best
 
 
+@partial(jax.jit, static_argnames=("task", "hidden", "batch"))
+def _fit_steps(carry, keys, X, Y, M, Xv, Yv, Mv, task, hidden, batch=1024):
+    """len(keys) steps of _fit's training loop, carrying the best parameters and the step they were reached at."""
+    opt = optax.adamw(3e-3 if hidden == 0 else 1e-3, weight_decay=1e-4)
+
+    def body(carry, k):
+        p, st, best, best_loss, best_step, step = carry
+        i = jax.random.randint(k, (batch,), 0, X.shape[0])
+        g = jax.grad(_loss)(p, X[i], Y[i], M[i], task)
+        upd, st = opt.update(g, st, p)
+        p = optax.apply_updates(p, upd)
+        vl = _loss(p, Xv, Yv, Mv, task)
+        better = vl < best_loss
+        best = jax.tree.map(lambda a, b: jnp.where(better, a, b), p, best)
+        return (p, st, best, jnp.minimum(vl, best_loss), jnp.where(better, step, best_step), step + 1), None
+
+    carry, _ = jax.lax.scan(body, carry, keys)
+    return carry
+
+
+def _fit_early(key, X, Y, M, Xv, Yv, Mv, task, hidden, max_steps=50_000, patience=3_000, chunk=500):
+    """_fit with real early stopping (v3, Amendment 6): train until the held-out loss has not improved for
+    `patience` steps, or for max_steps. Returns the best parameters and the step they were reached at."""
+    d_out = Y.shape[1] if task != "multi" else 8
+    p = _init(key, X.shape[1], d_out, hidden)
+    st = optax.adamw(3e-3 if hidden == 0 else 1e-3, weight_decay=1e-4).init(p)
+    keys = jax.random.split(key, max_steps)
+    X, Y, M, Xv, Yv, Mv = (jnp.asarray(a) for a in (X, Y, M, Xv, Yv, Mv))
+    carry = (p, st, p, jnp.inf, 0, 0)
+    for s in range(0, max_steps, chunk):
+        carry = _fit_steps(carry, keys[s : s + chunk], X, Y, M, Xv, Yv, Mv, task, hidden)
+        if int(carry[5]) - int(carry[4]) >= patience:
+            break
+    return carry[2], int(carry[4])
+
+
 def _prep(H, stride):
     return H[:, PAST::stride].reshape(-1, H.shape[-1]).astype(np.float32)
 
@@ -170,7 +206,7 @@ class Probe:
     that memorizes episodes instead of reading a concept.
     """
 
-    def __init__(self, X, Y, M, task, hidden, seed, groups, max_rows=60_000):
+    def __init__(self, X, Y, M, task, hidden, seed, groups, max_rows=60_000, early_stop=False):
         rng = np.random.default_rng(seed)
         keep = M.any(1) if M.ndim == 2 else M
         eps = np.unique(groups)
@@ -198,7 +234,10 @@ class Probe:
             pos = (Y[idx] * Mf[idx]).sum(0) / np.maximum(Mf[idx].sum(0), 1)
             pos = np.clip(pos, 0.02, 0.98)
             Mf = Mf * (Y / (2 * pos) + (1 - Y) / (2 * (1 - pos)))
-        self.p = _fit(jax.random.PRNGKey(seed), Z[tr], Y[tr], Mf[tr], Z[va], Y[va], Mf[va], task, hidden)
+        if early_stop:  # v3, Amendment 6
+            self.p, self.best_step = _fit_early(jax.random.PRNGKey(seed), Z[tr], Y[tr], Mf[tr], Z[va], Y[va], Mf[va], task, hidden)
+        else:
+            self.p = _fit(jax.random.PRNGKey(seed), Z[tr], Y[tr], Mf[tr], Z[va], Y[va], Mf[va], task, hidden)
 
     def __call__(self, X):
         out = np.asarray(_apply(self.p, jnp.asarray((X - self.mu) / self.sd)))
