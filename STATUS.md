@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-11-05, evening (surprise-test movies redesigned; surprise scored over 20 sensor-noise draws). Read this first. v2 details: `results/report_v2/REPORT.md`.
+Last updated: 2026-11-05, evening (surprise-test movies redesigned; surprise scored over 200 sensor-noise draws). Read this first. v2 details: `results/report_v2/REPORT.md`.
 v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
 GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
 
