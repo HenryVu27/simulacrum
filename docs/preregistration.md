@@ -537,3 +537,121 @@ kept under `voe_before_noise_draws` and `voe_untrained_before_noise_draws`, and 
   interval includes, is shared across runs: agreement between runs of one mind says nothing about it. (It also
   makes comparisons between runs paired, which helps H6 and P4.)
 - Percentile intervals over 18 quadruplets cover a little under 95 percent (about 92 in the simulation).
+
+## Amendment 5 (2026-11-05, v3: fix the instrument, then change the learner; before any v3 run)
+
+Written after v2, the corrections to the surprise tests and an independent audit of the whole project
+(`results/checks/2026-11-05_audit`), before any run below. The commit that adds this section is the timestamp.
+
+### Why
+
+v1 and v2 asked whether object permanence emerges in a learner that predicts its next sensations, and found
+none: no mind's permanence surprise differs from zero, a test the audit shows is well powered (a mind that
+expected a vanished object back would score about 0.01 from the first mismatched frame alone; the intervals
+are about plus or minus 0.0003). But the audit also found that the probe battery cannot register memory: given
+the human's raw senses plus exact copies of earlier frames, its hidden-object score goes down, and a perfect 2-
+and 4-step memory barely clears the bar of 0.05 that P1 set. So the probe side of every memory result so far was
+close to untestable, and v2's dark world shows a brief trace (+0.10 over raw senses at 1 to 5 steps in the dark)
+that the pooled test hid. And memory does cut prediction error where it can pay (19 to 30 percent at object
+returns and first lit steps in calibration), yet the probes saw nothing.
+
+So v3 does two things in order: it first fixes the instrument and shows it works on minds whose memory is known;
+then it changes the learner, not the world, in the dark world and on the recordings v2 used, so v2 is the
+baseline.
+
+### Stage 0. An instrument that registers memory (no new learner)
+
+Fixtures, on the dark world (data seed 0, the v2 recording, 8,192 training episodes), each known to hold a given
+amount of memory:
+- Engineered states, embedded into 128 dimensions by a fixed random linear map plus noise of the hidden states'
+  scale: Full (every object's true egocentric position, in view or not); Last seen (each object's egocentric
+  position when last in view, frozen since); Last seen, updated (its last-seen room position, re-expressed in
+  the agent's current pose: ideal permanence for objects that do not move); Raw senses.
+- An explicit memory buffer: the human's raw senses plus copies 2 and 4 steps back, and 3, 6 and 9 steps back
+  (the audit's control).
+- A mind with learned memory: the v2 learner for the human mind, trained with an auxiliary loss that predicts
+  every object's egocentric position, in view or not, from its hidden state (a tracking mind).
+
+Probe candidates, chosen on the fixtures only, never on the minds under test: the current battery; the same
+with 4,096 and with 8,192 fitting episodes; an MLP with early stopping on a held-out split of the fitting
+episodes; ridge-regularized linear probes. The first candidate, in that order, that meets all of these is fixed
+for the rest of v3:
+- Adding memory never lowers a score: each buffer scores at least as high as raw senses on object_seen,
+  object_hidden and self_location.
+- Last seen, updated exceeds Raw senses by more than 0.30 at 1 to 5 and at 6 to 20 steps; Full exceeds 0.80 at
+  every delay.
+- The tracking mind exceeds its raw senses by more than 0.10 at 1 to 5 steps.
+The surprise test is checked the same way: the tracking mind's permanence S must have an interval above 0 (200
+noise draws, bootstrap over quadruplets). If no probe candidate passes, v3 stops and reports that this battery
+cannot measure memory; if the surprise test fails on the tracking mind, it is reported as unable to show
+permanence in a mind that has it.
+
+With the fixed probe, every stored v1 and v2 mind is rescored, without retraining: P1 and H1 again, split by
+dark and lit hidden moments. These are corrections to past results, reported as such, not new tests.
+
+### Stage 1. Screening learners (calibration: dark world, data seed 0, learner seed 0)
+
+Each candidate trains the human mind and its memoryless twin (the same learner with no access to the past) on
+8,192 training episodes for 8,000 updates, on the GPU at full float32 with deterministic operations.
+Hyperparameters are fixed here:
+- L0, the v2 learner (reference).
+- L1, residual-weighted loss: each step's squared error weighted by 1 + 3 r_t / mean(r), where r_t is the error
+  of the mind's memoryless twin (trained first, then frozen) at that step, so the gradient goes where the
+  present cannot predict the next moment.
+- L2, far horizons of 5, 15 and 30 steps (tried in v1's lawful world, never where memory pays).
+- L3, a larger GRU: hidden 512, embedding 256, decoder 512.
+- L4, causal attention over the last 96 steps instead of the GRU: 4 layers, width 128, 4 heads, a learned bias
+  per relative position; its memoryless twin attends only to the current step.
+Measured on 256 held-out episodes of data seed 0: memory value at object returns M_ret and overall M (Amendment
+4's definitions, each against the v2 memoryless learner as a fixed baseline); the human's permanence gain over
+its raw senses with the Stage 0 probe, at 1 to 5 and 6 to 20 steps, in the dark and lit separately; the human's
+permanence surprise S; the gap between training and held-out error. Probes and surprise are used for selection
+here; the confirmatory test trains afresh on data seed 1.
+
+Selection rule: among candidates with overall M of at least 0 and M_ret of at least 0.10, the largest permanence
+gain at 6 to 20 steps (dark and lit averaged); within 0.02, the cheaper in the order above. If no candidate's
+gain at 1 to 5 steps exceeds 0.05 in both dark and lit moments: Stage 1b, L4 with L1's weighting, and the better
+of L3 and L4 with 32,768 training episodes (a new recording, data seed 2) and 32,000 updates, by the same rule.
+If none passes then, there is no confirmatory run.
+
+### Stage 2. Confirmatory run (chosen learner)
+
+Dark world, data seed 1 (the v2 confirmatory recording: the v2 learner's results on the same episodes are a
+paired baseline, and this learner never saw it), learner seeds 0, 1 and 2, with the probe's seed separate from
+the learner's, all 14 minds, the full battery with the Stage 0 probe, untrained and raw-sense controls on every
+seed. Hypotheses, averaged over seeds, each with an interval over seeds and episodes:
+- Q0. Manipulation check: M_ret at least 0.10 and overall M at least 0, for every seed.
+- Q1. Permanence needs memory: the human's permanence skill exceeds the better of its raw senses and the
+  memoryless mind by more than 0.05, at 1 to 5 and at 6 to 20 steps, separately in the dark and lit.
+- Q2. Updating a hidden object needs knowledge of one's own motion: at 6 to 20 steps, lit, passive_novest's skill
+  is more than 0.05 below the human's.
+- Q3. Counting needs memory when objects hide: number(human) exceeds number(memoryless) by more than 0.05.
+- Q4. Surprise: the human's permanence S has an interval above 0 for every seed, the memoryless mind's includes
+  0, and the human's S exceeds the v2 learner's on the same recording.
+- Q5. The learner did it: the human's permanence skill at 6 to 20 steps exceeds the v2 learner's on the same
+  episodes (rescored with the Stage 0 probe) by more than 0.05.
+A claim that a mind adds something requires its trained score to beat the better of its raw senses and its
+untrained network by more than the interval over seeds. Cause is not used until it is rescored within distance
+strata (the audit found it mostly reads proximity). V1 to V3 are checked as before.
+
+### Stage 3 (only if Q1 passes). Does the world force permanence once a mind can remember?
+
+Record lawful and impermanent worlds at 8,448 episodes (data seed 1, on the Mac, shared with the PC), train all
+14 minds with the chosen learner, learner seeds 0, 1 and 2, and test within each mind instead of with variance
+shares (the audit showed shares depend on which minds and worlds are sampled):
+- R1. For the human, vision_only and dog, permanence skill at 6 to 20 steps is lower after impermanent training
+  than after lawful training, by more than the interval over seeds.
+- R2. The same minds' permanence surprise S is lower after impermanent training (H6's second part, now with a
+  test that has the power to show it).
+The expectation, stated now: if the world forces permanence, both hold; if the body adds it, they hold for minds
+with memory and not for memoryless.
+
+### Known limits, stated in advance
+
+- Selecting the probe and the learner uses data seed 0; everything confirmatory trains afresh on data seed 1.
+- L1's weighting tells the learner where the senses are unpredictable, not where objects are.
+- L4 remembers at most 96 steps; dark spells last 8 to 30.
+- A new learner family needs an E7b-style check that the GPU reproduces the Mac before its results are pooled:
+  the chosen learner runs on the lawful recording (data seed 0, 1,280 episodes) on both before Stage 2.
+- Cost: Stage 0 a few CPU hours on the Mac and one GPU hour; Stage 1 about 3 GPU hours; Stage 2 about 6; Stage 3
+  about 10. The GPU is shared with another project through the lock and the schedule.
