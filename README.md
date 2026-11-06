@@ -11,7 +11,9 @@ whether one mind's inner world can be translated into another's. A second axis b
 physics on purpose (objects that jump, objects that pass through walls, causes that act at a distance),
 so each concept's variance can be split into a share the mind contributes and a share the world forces.
 
-Start with `STATUS.md`. The design and its predictions are in `docs/preregistration.md`; the related
+Round 1 (v1, v2 and v3's instrument stage, 2026-11-04 to 2026-11-06) is closed as an exploratory first round:
+`docs/round1.md` says what it found, what it withdrew, and what round 2 should do first. The full record is in
+`STATUS.md`. The design and its predictions are in `docs/preregistration.md`; the related
 work and the honest novelty claim are in `docs/related-work.md`.
 
 ## Layout

@@ -792,3 +792,13 @@ independent agent that reproduced every sampled number (`results/v3/stage0_rerun
 oracle controls (the MLP reads the latter two; ridge reads the first without losing information), the memory-cut
 network as the baseline for "memory adds" in place of raw senses, and a surprise-test control whose gate counts only
 lit re-entries and whose channel the learner demonstrably uses.
+
+## Round 1 closed (2026-11-06)
+
+Henry's decision after the Stage 0 rerun: round 1 ends here, as an exploratory first round, and a larger round 2 will
+follow when more GPU capacity is available. v3 stops after Stage 0. Stages 1 to 3 of Amendment 5 did not run, so Q0 to
+Q5 and R1 and R2 are untested, not failed. Nothing further runs under this preregistration. A round 2 starts with its own
+preregistration. At the close, the Stage 0 rerun check's memory-cut control was rerun on both dark-world
+learner seeds and saved (`results/v3/round1_memory_cut`): memory alone adds +0.086 and +0.112 at 1 to 5 steps in the
+dark, +0.008 and +0.016 at 6 to 20 steps, and nothing lit; passive, which never knows its own actions, shows the
+same trace (+0.098 and +0.107), and passive_novest, with no body sense either, a smaller one (+0.053 and +0.077). `docs/round1.md` summarizes what round 1 found, what it withdrew, and what round 2 should do first.

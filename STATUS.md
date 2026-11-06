@@ -1,8 +1,11 @@
 # STATUS
 
-Last updated: 2026-11-05, evening (surprise-test movies redesigned; surprise scored over 200 sensor-noise draws). Read this first. v2 details: `results/report_v2/REPORT.md`.
-v1 details: `results/report_main/REPORT.md`. Preregistration and Amendments 1 to 4: `docs/preregistration.md`.
-GPU machine (setup log, protocol, every check and result): `docs/gpu.md`.
+Last updated: 2026-11-06. **Round 1 is closed** (Henry's decision after the v3 Stage 0 rerun): an exploratory first
+round, to be followed by a larger round 2 when more GPU capacity is available. Read `docs/round1.md` first: what holds,
+what was withdrawn, what was never tested, and the round 2 brief. This file keeps the full record below.
+v2 details: `results/report_v2/REPORT.md`. v1 details: `results/report_main/REPORT.md`. Preregistration, Amendments 1
+to 6 and the round 1 close: `docs/preregistration.md`. GPU machine (setup log, protocol, every check and result):
+`docs/gpu.md`.
 
 ## Independent audit (2026-11-05): what holds and what does not
 
@@ -13,7 +16,9 @@ A skeptical outside audit of the whole project (scripts and outputs in `results/
   corrections fixed real defects. The permanence surprise test is well powered: a mind expecting a vanished
   object back would score about 0.01 from the first mismatched frame alone, and the observed intervals are about
   plus or minus 0.0003. So "no mind is surprised by a vanishing object" is a real null for the vision minds.
-- Does not hold: the probe battery cannot register memory. Given the human's raw senses plus exact copies of
+- Does not hold: the probe battery cannot register memory (narrowed by v3 Stage 0: it reads memory held in a
+  compact form, such as an engineered "last seen, updated" state at 0.96, but loses information as its inputs widen,
+  so memory kept as copies of past input is missed; `docs/round1.md`). Given the human's raw senses plus exact copies of
   earlier frames, its hidden-object score goes down (0.172 with none, 0.147 with three), and a perfect 2- and
   4-step memory barely clears P1's bar of 0.05; with four times the probe data it reaches 0.125. H1, P1 and P3,
   and the probe side of "every mind is reactive", were close to untestable. The ANOVA shares (H7) depend on
@@ -167,26 +172,23 @@ Open, from the GPU work:
 - Next speedup: gather training batches on the GPU instead of the CPU (the loop is about 10.6 ms per
   update, of which the update itself is about 3).
 
-## Next steps, in order
+## Next steps
 
-1. v3, preregistered as Amendment 5 (`docs/preregistration.md`). Stage 0 ran on 2026-11-05 and stopped by its rule
-   (`docs/preregistration.md`, Stage 0 result): every probe candidate failed one criterion (memory buffers
-   lowered object_seen, a criterion that turned out close to unmeetable; nothing was lost), and the tracking
-   mind meant to test the surprise test turned out not to track at all, so that check has not been done.
-   Amendment 6 reran it on a fresh recording (2026-11-06): ridge at 1,024 episodes was fixed as the probe, and
-   rescoring every stored mind with it leaves H1 and P1 failing while confirming a brief memory trace in the dark
-   (+0.086 from memory alone at 1 to 5 steps, against a memory-cut copy of the same network). But its check found
-   that ridge reads memory only when stored as linear egocentric coordinates (it scores the oracle near 0), and
-   the surprise test is still unvalidated. The next amendment is Henry's decision. The plan as written: first fix the instrument: find a probe that
-   registers memory on minds whose memory is known (engineered states, an explicit memory buffer, a learner
-   trained to track hidden objects), check the surprise test registers it too, and rescore v1 and v2 with that
-   probe. Then change the learner, not the world: five candidates screened in the dark world (residual-weighted
-   loss, far horizons, a larger GRU, causal attention), a confirmatory run on fresh training with three seeds,
-   and, if memory appears, the world question again with within-mind contrasts instead of variance shares. The
-   training runs on the RTX 5080 (see the GPU section above and `docs/gpu.md`).
-2. Test the smell-only mind's unnamed features against scent-field variables (from v1, still open).
-3. Nonlinear translation maps, to separate "different frame" from "different content" for the oracle.
-4. Aporia Atlas: join aporias that share claims and tag umwelt results to premises.
+Round 1 is closed; nothing is queued. Round 2 follows the brief in `docs/round1.md`: an outside review by several
+fields, then one amendment that designs and validates every instrument before any learner runs (positive controls for
+every memory format, a memory-cut baseline, a surprise-test control with guaranteed permanence), then the learner screen
+at scale. Still open from round 1 and carried into round 2:
+- v3 Stages 1 to 3 (Amendment 5), untested.
+- Smell-only's unnamed features against scent-field variables (from v1).
+- Nonlinear translation maps, to separate "different frame" from "different content" for the oracle.
+- Aporia Atlas: join aporias that share claims and tag umwelt results to premises.
+
+The v3 record: Stage 0 ran on 2026-11-05 and stopped by its rule; Amendment 6 reran it on 2026-11-06, fixed
+ridge at 1,024 episodes as the probe, and rescored every stored mind with it. H1 and P1 still fail, a brief memory trace
+in the dark is confirmed (+0.086 and +0.112 from memory alone at 1 to 5 steps, seeds 0 and 1, against a memory-cut copy of the same
+network; `results/v3/round1_memory_cut`), the
+probe reads memory only when it is stored as linear egocentric coordinates (it scores the oracle near 0), and the
+surprise test is still unvalidated on a mind with memory (`docs/preregistration.md`, Stage 0 rerun result).
 
 ---
 
